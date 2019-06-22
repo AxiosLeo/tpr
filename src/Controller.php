@@ -14,9 +14,9 @@ abstract class Controller
     /**
      * @var Response
      */
-    protected $response;
+    private $response;
 
-    protected $vars = [];
+    private $vars = [];
 
     public function __construct()
     {
