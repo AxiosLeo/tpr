@@ -1,7 +1,6 @@
 {
   "name": "axios/tpr",
   "description": "design for api development",
-  "version": "3.0.0",
   "keywords": [
     "framework",
     "ORM",
