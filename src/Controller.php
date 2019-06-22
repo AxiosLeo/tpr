@@ -18,15 +18,35 @@ abstract class Controller
 
     private $vars = [];
 
+    private $response_type;
+
     public function __construct()
     {
-        $this->request  = Request::instance();
-        $this->response = Response::instance();
+        $this->request       = Request::instance();
+        $this->response      = Response::instance();
+        $this->response_type = $this->response->getResponseType();
     }
 
-    protected function setResponseType($driver = 'json', $options = [])
+    /**
+     * @param string $response_type html|xml|text|json|jsonp
+     *
+     * @return $this
+     */
+    protected function setResponseType($response_type = 'json')
     {
-        $this->response->setResponseType($driver, $options);
+        $this->response->setResponseType($response_type);
+        $this->response_type = $response_type;
+        return $this;
+    }
+
+    protected function setResponseOptions($options)
+    {
+        $this->response->setResponseOptions($options);
+    }
+
+    protected function setResponseOption($key, $value = null)
+    {
+        $this->response->setResponseOption($key, $value);
         return $this;
     }
 
@@ -59,42 +79,58 @@ abstract class Controller
         App::removeHeaders($headers);
     }
 
-    protected function setResponseOption($key, $value = null)
-    {
-        $this->response->setResponseOption($key, $value);
-        return $this;
-    }
-
     /**
-     * @param string $result
+     * @param array  $result
      * @param int    $status
      * @param string $msg
      * @param array  $headers
      *
      * @return $this
      */
-    protected function response($result = "", $status = 200, $msg = "", $headers = [])
+    protected function response($result = [], $status = 200, $msg = "", $headers = [])
     {
+        if (is_null($this->response_type)) {
+            $this->setResponseType(Config::get("app.default_ajax_return_type", "json"));
+        }
         $this->response->response($result, $status, $msg, $headers);
         return $this;
     }
 
+    /**
+     * @param array $data
+     */
     protected function success($data = [])
     {
         $this->response($data, 200, "success");
     }
 
+    /**
+     * @param int    $code
+     * @param string $msg
+     */
     protected function error($code = 500, $msg = "error")
     {
         $this->response("", $code, $msg);
     }
 
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
     protected function assign($key, $value)
     {
         $this->vars[$key] = $value;
         return $this;
     }
 
+    /**
+     * @param string $template
+     * @param array  $vars
+     *
+     * @return string
+     */
     protected function fetch($template = '', $vars = [])
     {
         $dir  = "";
@@ -112,6 +148,7 @@ abstract class Controller
         if (!empty($this->vars)) {
             $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
         }
+        $this->setResponseType(Config::get("app.default_return_type", "html"));
         return Template::instance()->render($dir, $file, $vars);
     }
 }
