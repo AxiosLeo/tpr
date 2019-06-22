@@ -82,7 +82,7 @@ class Dispatch
     public function dispatch($module, $controller, $action, $params = [])
     {
         $this->module     = $module;
-        $this->controller = $controller;
+        $this->controller = ucfirst($controller);
         $this->action     = $action;
         $template         = \tpr\Config::get("app.route_class_name", "{app_namespace}{module}\\controller\\{controller}");
 
