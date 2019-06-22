@@ -12,7 +12,7 @@
 > 以前的 axios/tpr 包不再维护，已弃用
 
 ``` shell
-composer require axios/tpr:3.0-alpha-master
+composer require axios/tpr:dev-3.0-alpha
 ```
 
 * 入口文件示例
