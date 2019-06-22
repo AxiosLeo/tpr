@@ -42,7 +42,7 @@ App::mode(true)->run();
 cd /path/to/project/public/
 
 # 启动服务
-php -S locahost:8088
+php -S localhost:8088
 ```
 
 * 访问
