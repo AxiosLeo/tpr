@@ -2,9 +2,8 @@
 
 namespace tpr\exception;
 
-use tpr\Request;
+use tpr\exception\handler\JsonpHandler;
 use tpr\App;
-use tpr\Config;
 use tpr\exception\handler\DefaultHandler;
 use tpr\Response;
 use Whoops\Handler\HandlerInterface;
@@ -26,6 +25,7 @@ class Handler
         "html"    => PrettyPageHandler::class,
         "text"    => PlainTextHandler::class,
         "json"    => JsonResponseHandler::class,
+        "jsonp"   => JsonpHandler::class,
         "xml"     => XmlResponseHandler::class
     ];
 
@@ -40,9 +40,7 @@ class Handler
             if (!App::debug()) {
                 self::$handler_type = "default";
             } else {
-                self::$handler_type = Request::instance()->isAjax() ?
-                    Config::get("app.default_ajax_return_type", "json") :
-                    Config::get("app.default_return_type", "html");
+                self::$handler_type = Response::instance()->getResponseType();
             }
             self::addHandler(self::$handler_type);
             self::handleOperator()->register();
