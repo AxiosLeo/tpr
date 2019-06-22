@@ -29,21 +29,50 @@ class Response
      */
     private $response_options;
 
+    /**
+     * @var string
+     */
+    private $response_type;
+
     public function __construct()
     {
-        $this->request = Request::instance();
-        $this->setResponseType($this->request->isAjax() ?
-            Config::get("app.default_ajax_return_type", "json") :
-            Config::get("app.default_return_type", "html")
-        );
+        $this->request          = Request::instance();
         $this->response_options = Config::get("app.response", []);
+        $this->response_type    = Config::get("app.default_return_type", "html");
     }
 
-    public function setResponseType($driver = 'json', $options = [])
+    public function setResponseType(string $response_type)
+    {
+        $this->response_type = $response_type;
+        return $this;
+    }
+
+    public function setResponseOptions(array $options)
     {
         if (!empty($options)) {
             $this->response_options = array_merge($this->response_options, $options);
         }
+        return $this;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getResponseType()
+    {
+        return $this->response_type;
+    }
+
+    /**
+     * @return ResponseAbstract
+     */
+    public function getResponseDriver()
+    {
+        return $this->response_driver;
+    }
+
+    public function setResponseDriver($driver)
+    {
         if (is_string($driver)) {
             if (false === strpos($driver, "\\")) {
                 $driver = "tpr\\response\\" . ucfirst($driver);
@@ -55,16 +84,6 @@ class Response
         }
         $this->response_driver = $driver;
         return $this;
-    }
-
-    public function getResponseType()
-    {
-        return $this->response_driver->getResponseTypeName();
-    }
-
-    public function getResponseDriver()
-    {
-        return $this->response_driver;
     }
 
     public function setHeaders($key, $value = null)
@@ -86,15 +105,15 @@ class Response
 
     public function response($result = "", $status = 200, $msg = "", $headers = [])
     {
+
         if (!empty($headers)) {
             $this->headers = array_merge($this->headers, $headers);
         }
         if (App::debug()) {
             $this->setHeaders("x-mode", "debug");
         }
-        $this->setHeaders("Content-Type", $this->response_driver->content_type);
-        $this->response_driver->options($this->response_options);
-        $result = $this->response_driver->output($result);
+
+        $result = $this->output($result);
         throw new HttpResponseException($result, $status, $msg, $this->headers);
     }
 
@@ -106,5 +125,15 @@ class Response
     public function error($code = 500, $msg = "error")
     {
         $this->response("", $code, $msg);
+    }
+
+    public function output($result)
+    {
+        if (is_null($this->response_driver)) {
+            $this->setResponseDriver($this->response_type);
+        }
+        $this->setHeaders("Content-Type", $this->response_driver->content_type);
+        $this->response_driver->options($this->response_options);
+        return $this->response_driver->output($result);
     }
 }
