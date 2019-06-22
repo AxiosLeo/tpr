@@ -1,0 +1,50 @@
+<?php
+
+namespace tpr\exception;
+
+use tpr\Hook;
+
+class HttpResponseException extends \RuntimeException
+{
+    protected $result;
+    protected $http_status;
+    protected $headers;
+    protected $msg;
+
+    public function __construct($result = "", $http_status = 200, $msg = "", $headers = [])
+    {
+        $this->result      = $result;
+        $this->http_status = $http_status;
+        $this->headers     = $headers;
+        $this->msg         = $msg;
+        parent::__construct();
+    }
+
+    public function send()
+    {
+//        if (200 == $this->http_status) {
+        // http response cache in here
+//        }
+
+        if (!headers_sent() && !empty($this->headers)) {
+            // 发送状态码
+            http_response_code($this->code);
+            // 发送头部信息
+            foreach ($this->headers as $name => $val) {
+                if (is_null($val)) {
+                    header($name);
+                } else {
+                    header($name . ':' . $val);
+                }
+            }
+        }
+        echo $this->result;
+        if (function_exists('fastcgi_finish_request')) {
+            // 提高页面响应
+            fastcgi_finish_request();
+        }
+
+        // 监听response_end
+        Hook::listen('response_end');
+    }
+}

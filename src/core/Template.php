@@ -1,0 +1,58 @@
+<?php
+
+namespace tpr\core;
+
+use tpr\Path;
+use tpr\traits\InstanceTraits;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
+class Template
+{
+    use InstanceTraits;
+
+    private $options = [
+        "ext"  => "html",
+        "base" => ""
+    ];
+
+    private $base_dir;
+
+    private $template_loader;
+
+    public function __construct()
+    {
+        $options = \tpr\Config::get("views", []);
+
+        if (!empty($options)) {
+            $this->options = array_merge($this->options, $options);
+        }
+        $this->setBaseDir($this->options["base"]);
+        $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
+            'cache' => Path::cache(),
+        ]);
+    }
+
+    public function setBaseDir($base_dir = null)
+    {
+        if (empty($base_dir)) {
+            $base_dir = Path::views();
+        }
+        $this->base_dir = Path::format($base_dir);
+        return $this;
+    }
+
+    public function getExt()
+    {
+        $ext = $this->options["ext"];
+        if (false === strpos($ext, ".")) {
+            $ext = "." . $ext;
+        }
+        return $ext;
+    }
+
+    public function render($dir, $file, $params = [])
+    {
+        return $this->template_loader->render($dir . $file . $this->getExt(), $params);
+    }
+}
