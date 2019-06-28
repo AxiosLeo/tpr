@@ -1,16 +1,16 @@
 <?php
 
-namespace tpr\response;
+namespace tpr\core\response;
 
 class Xml extends ResponseAbstract
 {
-    protected $name = "xml";
+    protected $name = 'xml';
 
     protected $options = [
         // 根节点名
         'root_node' => 'data',
         // 根节点属性
-        'root_attr' => '',
+        'root_attr' => [],
         //数字索引的子节点名
         'item_node' => 'item',
         // 数字索引子节点key转换的属性名
@@ -28,7 +28,7 @@ class Xml extends ResponseAbstract
      *
      * @return string
      */
-    public function output($data = null): string
+    public function output($data = null) : string
     {
         // XML数据转换
         return $this->xmlEncode($data, $this->options['root_node'], $this->options['item_node'], $this->options['root_attr'], $this->options['item_key'], $this->options['encoding']);
@@ -58,9 +58,9 @@ class Xml extends ResponseAbstract
         $attr = trim($attr);
         $attr = empty($attr) ? '' : " {$attr}";
         $xml  = "<?xml version=\"1.0\" encoding=\"{$encoding}\"?>";
-        $xml  .= "<{$root}{$attr}>";
-        $xml  .= $this->dataToXml($data, $item, $id);
-        $xml  .= "</{$root}>";
+        $xml .= "<{$root}{$attr}>";
+        $xml .= $this->dataToXml($data, $item, $id);
+        $xml .= "</{$root}>";
 
         return $xml;
     }
@@ -80,7 +80,7 @@ class Xml extends ResponseAbstract
         foreach ($data as $key => $val) {
             if (is_numeric($key)) {
                 $id && $attr = " {$id}=\"{$key}\"";
-                $key = $item;
+                $key         = $item;
             }
             $xml .= "<{$key}{$attr}>";
             $xml .= (is_array($val) || is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;

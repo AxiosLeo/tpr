@@ -1,11 +1,11 @@
 <?php
 
-namespace tpr\lib;
+namespace tpr\library;
 
 /**
- * 数组操作类
+ * 数组操作类.
+ *
  * @desc 支持任意层级子元素的增删改查
- * @package library\logic
  */
 class ArrayTool implements \ArrayAccess
 {
@@ -25,11 +25,14 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * 数组过滤
+     * 数组过滤.
+     *
      * @desc 可自定义排除过滤
+     *
      * @param $array
      * @param string $except
-     * @param bool $reset_key 是否重置键名
+     * @param bool   $reset_key 是否重置键名
+     *
      * @return mixed
      */
     public function filter($array, $except = '', $reset_key = false)
@@ -39,6 +42,7 @@ class ArrayTool implements \ArrayAccess
         $except = explode('|', $except);
         if (empty($except)) {
             $array = array_filter($array);
+
             return $reset_key ? array_values($array) : $array;
         }
 
@@ -63,9 +67,11 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * 设置任意层级子元素
+     * 设置任意层级子元素.
+     *
      * @param string|array|int $key
-     * @param mixed $value
+     * @param mixed            $value
+     *
      * @return $this
      */
     public function set($key, $value = null)
@@ -78,13 +84,16 @@ class ArrayTool implements \ArrayAccess
             $keyArray    = $this->filter(explode($this->separator, $key), 'number', true);
             $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
         }
+
         return $this;
     }
 
     /**
-     * 获取任意层级子元素
-     * @param null|string|int $key
-     * @param mixed|\Closure $default
+     * 获取任意层级子元素.
+     *
+     * @param string|int|null $key
+     * @param mixed|\Closure  $default
+     *
      * @return mixed
      */
     public function get($key = null, $default = null)
@@ -107,6 +116,7 @@ class ArrayTool implements \ArrayAccess
                 break;
             }
         }
+
         return $tmp;
     }
 
@@ -120,8 +130,10 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * 删除任意层级子元素
+     * 删除任意层级子元素.
+     *
      * @param string|array|int $key
+     *
      * @return $this
      */
     public function delete($key)
@@ -133,44 +145,53 @@ class ArrayTool implements \ArrayAccess
         } else {
             $this->set($key, null);
         }
+
         return $this;
     }
 
     /**
-     * 正序排序
+     * 正序排序.
+     *
      * @param $key
      * @param string $rule
-     * @param bool $save_key
+     * @param bool   $save_key
+     *
      * @return $this
      */
-    public function sort($key = null, $rule = "", $save_key = true)
+    public function sort($key = null, $rule = '', $save_key = true)
     {
         $this->sortArray($key, $rule, 'asc', $save_key);
+
         return $this;
     }
 
     /**
-     * 倒序排序
+     * 倒序排序.
+     *
      * @param $key
      * @param string $rule
-     * @param bool $save_key
+     * @param bool   $save_key
+     *
      * @return $this
      */
-    public function rSort($key = null, $rule = "", $save_key = true)
+    public function rSort($key = null, $rule = '', $save_key = true)
     {
         $this->sortArray($key, $rule, 'desc', $save_key);
+
         return $this;
     }
 
     /**
-     * 支持任意层级子元素的数组排序
-     * @param mixed $key
+     * 支持任意层级子元素的数组排序.
+     *
+     * @param mixed  $key
      * @param string $sortRule
      * @param string $order
-     * @param bool $save_key
+     * @param bool   $save_key
+     *
      * @return mixed
      */
-    private function sortArray($key = null, $sortRule = "", $order = "asc", $save_key = true)
+    private function sortArray($key = null, $sortRule = '', $order = 'asc', $save_key = true)
     {
         $array = $this->get($key);
 
@@ -178,7 +199,7 @@ class ArrayTool implements \ArrayAccess
             return false;
         }
 
-        /**
+        /*
          * $array = [
          *              ["book"=>10,"version"=>10],
          *              ["book"=>19,"version"=>30],
@@ -189,7 +210,7 @@ class ArrayTool implements \ArrayAccess
          *      ];
          */
         if (is_array($sortRule)) {
-            /**
+            /*
              * $sortRule = ['book'=>"asc",'version'=>"asc"];
              */
             usort($array, function ($a, $b) use ($sortRule) {
@@ -197,13 +218,15 @@ class ArrayTool implements \ArrayAccess
                     if ($a[$sortKey] == $b[$sortKey]) {
                         continue;
                     }
-                    return (($order != 'asc') ? -1 : 1) * (($a[$sortKey] < $b[$sortKey]) ? -1 : 1);
+
+                    return (('asc' != $order) ? -1 : 1) * (($a[$sortKey] < $b[$sortKey]) ? -1 : 1);
                 }
+
                 return 0;
             });
-        } else if (is_string($sortRule)) {
+        } elseif (is_string($sortRule)) {
             if (!empty($sortRule)) {
-                /**
+                /*
                  * $sortRule = "book";
                  * $order = "asc";
                  */
@@ -211,29 +234,34 @@ class ArrayTool implements \ArrayAccess
                     if ($a[$sortRule] == $b[$sortRule]) {
                         return 0;
                     }
-                    return (($order != 'asc') ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
+
+                    return (('asc' != $order) ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
                 });
             } else {
                 if ($save_key) {
-                    $order == 'asc' ? asort($array) : arsort($array);
+                    'asc' == $order ? asort($array) : arsort($array);
                 } else {
                     usort($array, function ($a, $b) use ($order) {
                         if ($a == $b) {
                             return 0;
                         }
-                        return (($order != 'asc') ? -1 : 1) * (($a < $b) ? -1 : 1);
+
+                        return (('asc' != $order) ? -1 : 1) * (($a < $b) ? -1 : 1);
                     });
                 }
             }
         }
 
         is_null($key) ? $this->array = $array : $this->set($key, $array);
+
         return $this->array;
     }
 
     /**
-     * 获取某一节点下的子元素key列表
+     * 获取某一节点下的子元素key列表.
+     *
      * @param $key
+     *
      * @return array
      */
     public function getChildKeyList($key = null)
@@ -244,22 +272,25 @@ class ArrayTool implements \ArrayAccess
         foreach ($child as $k => $v) {
             $list[$n++] = $k;
         }
+
         return $list;
     }
 
     /**
-     * 递归遍历
+     * 递归遍历.
+     *
      * @param array $array
      * @param array $keyArray
      * @param mixed $value
+     *
      * @return array
      */
     private function recurArrayChange($array, $keyArray, $value = null)
     {
         $key0 = $keyArray[0];
-        if (count($keyArray) === 1) {
+        if (1 === count($keyArray)) {
             $this->changeValue($array, $key0, $value);
-        } else if (is_array($array) && isset($keyArray[1])) {
+        } elseif (is_array($array) && isset($keyArray[1])) {
             unset($keyArray[0]);
             $keyArray = array_values($keyArray);
             if (!isset($array[$key0])) {
@@ -269,6 +300,7 @@ class ArrayTool implements \ArrayAccess
         } else {
             $this->changeValue($array, $key0, $value);
         }
+
         return $array;
     }
 
@@ -282,8 +314,10 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * isset($array[$key])
+     * isset($array[$key]).
+     *
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -292,8 +326,10 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * $array[$key]
+     * $array[$key].
+     *
      * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -302,9 +338,11 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * $array[$key] = $value
+     * $array[$key] = $value.
+     *
      * @param mixed $offset
      * @param mixed $value
+     *
      * @return $this
      */
     public function offsetSet($offset, $value)
@@ -313,8 +351,10 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * unset($array[$key])
+     * unset($array[$key]).
+     *
      * @param mixed $offset
+     *
      * @return $this
      */
     public function offsetUnset($offset)

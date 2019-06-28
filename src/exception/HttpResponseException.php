@@ -2,7 +2,7 @@
 
 namespace tpr\exception;
 
-use tpr\Hook;
+use tpr\Event;
 
 class HttpResponseException extends \RuntimeException
 {
@@ -11,7 +11,7 @@ class HttpResponseException extends \RuntimeException
     protected $headers;
     protected $msg;
 
-    public function __construct($result = "", $http_status = 200, $msg = "", $headers = [])
+    public function __construct($result = '', $http_status = 200, $msg = '', $headers = [])
     {
         $this->result      = $result;
         $this->http_status = $http_status;
@@ -22,10 +22,6 @@ class HttpResponseException extends \RuntimeException
 
     public function send()
     {
-//        if (200 == $this->http_status) {
-        // http response cache in here
-//        }
-
         if (!headers_sent() && !empty($this->headers)) {
             // 发送状态码
             http_response_code($this->code);
@@ -45,6 +41,6 @@ class HttpResponseException extends \RuntimeException
         }
 
         // 监听response_end
-        Hook::listen('response_end');
+        Event::listen('response_end', $this);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace tpr\response;
+namespace tpr\core\response;
 
 abstract class ResponseAbstract implements ResponseInterface
 {
@@ -19,7 +19,7 @@ abstract class ResponseAbstract implements ResponseInterface
 
     abstract public function output($data = null);
 
-    public function options($key = null, $value = null): array
+    public function options($key = null, $value = null) : array
     {
         if (is_null($key) && is_null($value)) {
             return $this->options;
@@ -29,6 +29,7 @@ abstract class ResponseAbstract implements ResponseInterface
         } else {
             $this->options[$key] = $value;
         }
+
         return $this->options;
     }
 

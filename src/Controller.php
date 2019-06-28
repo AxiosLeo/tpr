@@ -2,7 +2,8 @@
 
 namespace tpr;
 
-use tpr\core\Template;
+use tpr\core\Request;
+use tpr\core\Response;
 
 abstract class Controller
 {
@@ -22,20 +23,16 @@ abstract class Controller
 
     public function __construct()
     {
-        $this->request       = Request::instance();
-        $this->response      = Response::instance();
+        $this->request       = Container::get('request');
+        $this->response      = Container::get('response');
         $this->response_type = $this->response->getResponseType();
     }
 
-    /**
-     * @param string $response_type html|xml|text|json|jsonp
-     *
-     * @return $this
-     */
     protected function setResponseType($response_type = 'json')
     {
         $this->response->setResponseType($response_type);
         $this->response_type = $response_type;
+
         return $this;
     }
 
@@ -47,6 +44,7 @@ abstract class Controller
     protected function setResponseOption($key, $value = null)
     {
         $this->response->setResponseOption($key, $value);
+
         return $this;
     }
 
@@ -62,12 +60,14 @@ abstract class Controller
         } else {
             header($key . ':' . $value);
         }
+
         return $this;
     }
 
     protected function setHeaders($key, $value = null)
     {
         $this->response->setHeaders($key, $value);
+
         return $this;
     }
 
@@ -87,12 +87,13 @@ abstract class Controller
      *
      * @return $this
      */
-    protected function response($result = [], $status = 200, $msg = "", $headers = [])
+    protected function response($result = [], $status = 200, $msg = '', $headers = [])
     {
         if (is_null($this->response_type)) {
-            $this->setResponseType(Config::get("app.default_ajax_return_type", "json"));
+            $this->setResponseType(Config::get('app.default_ajax_return_type', 'json'));
         }
         $this->response->response($result, $status, $msg, $headers);
+
         return $this;
     }
 
@@ -101,16 +102,16 @@ abstract class Controller
      */
     protected function success($data = [])
     {
-        $this->response($data, 200, "success");
+        $this->response($data, 200, 'success');
     }
 
     /**
      * @param int    $code
      * @param string $msg
      */
-    protected function error($code = 500, $msg = "error")
+    protected function error($code = 500, $msg = 'error')
     {
-        $this->response("", $code, $msg);
+        $this->response('', $code, $msg);
     }
 
     /**
@@ -122,6 +123,7 @@ abstract class Controller
     protected function assign($key, $value)
     {
         $this->vars[$key] = $value;
+
         return $this;
     }
 
@@ -133,22 +135,13 @@ abstract class Controller
      */
     protected function fetch($template = '', $vars = [])
     {
-        $dir  = "";
-        $file = "";
-        if (empty($template)) {
-            $dispatch = App::app()->getDispatch();
-            $dir      = Path::dir([
-                $dispatch->getModuleName(), $dispatch->getControllerName()
-            ]);
-            $file     = $dispatch->getActionName();
-        } else if (false !== strpos($template, ":")) {
-            list($dir, $file) = explode(":", $template);
-            $dir = Path::format($dir);
-        }
         if (!empty($this->vars)) {
             $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
         }
-        $this->setResponseType(Config::get("app.default_return_type", "html"));
-        return Template::instance()->render($dir, $file, $vars);
+        $this->setResponseType(Config::get('app.default_return_type', 'html'));
+        $this->setResponseOption('view_path', $template);
+        $this->setResponseOption('params', $vars);
+
+        return Container::response()->output();
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
-namespace tpr\lib;
+namespace tpr\library;
 
 final class Helper
 {
-    public static function renderString(string $template, array $params): string
+    public static function renderString(string $template, array $params) : string
     {
         foreach ($params as $name => $value) {
             $template = str_replace('{' . $name . '}', $value, $template);
         }
+
         return $template;
     }
 }

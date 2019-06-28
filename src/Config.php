@@ -3,21 +3,20 @@
 namespace tpr;
 
 use tpr\core\Config as CoreConfig;
-use tpr\lib\Facade;
 
 /**
- * Class Config
+ * Class Config.
  *
  * @see     CoreConfig
- * @package tpr
+ *
  * @method mixed get($name = null, $default = null) static
- * @method void load($path = null) static
+ * @method void  load($path = null)                 static
  */
 final class Config extends Facade
 {
     protected static function getContainName()
     {
-        return "config";
+        return 'config';
     }
 
     protected static function getFacadeClass()

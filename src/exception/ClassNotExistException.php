@@ -6,11 +6,11 @@ class ClassNotExistException extends \RuntimeException
 {
     protected $class;
 
-    public function __construct($message, $class = '')
+    public function __construct($class_name = '', $message = '')
     {
         parent::__construct();
-        $this->message = $message;
-        $this->class   = $class;
+        $this->message = !empty($message) ? $message : 'Class Not Exist : ' . $class_name;
+        $this->class   = $class_name;
     }
 
     public function getClass()

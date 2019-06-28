@@ -2,10 +2,10 @@
 
 namespace tpr\exception;
 
+use tpr\Container;
 use tpr\exception\handler\JsonpHandler;
 use tpr\App;
 use tpr\exception\handler\DefaultHandler;
-use tpr\Response;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
@@ -21,15 +21,15 @@ class Handler
     private static $run;
 
     private static $handle_list = [
-        "default" => DefaultHandler::class,
-        "html"    => PrettyPageHandler::class,
-        "text"    => PlainTextHandler::class,
-        "json"    => JsonResponseHandler::class,
-        "jsonp"   => JsonpHandler::class,
-        "xml"     => XmlResponseHandler::class
+        'default' => DefaultHandler::class,
+        'html'    => PrettyPageHandler::class,
+        'text'    => PlainTextHandler::class,
+        'json'    => JsonResponseHandler::class,
+        'jsonp'   => JsonpHandler::class,
+        'xml'     => XmlResponseHandler::class,
     ];
 
-    private static $handler_type = "default";
+    private static $handler_type = 'default';
 
     public static function init()
     {
@@ -38,9 +38,9 @@ class Handler
             self::$run->allowQuit();
 
             if (!App::debug()) {
-                self::$handler_type = "default";
+                self::$handler_type = 'default';
             } else {
-                self::$handler_type = Response::instance()->getResponseType();
+                self::$handler_type = Container::response()->getResponseType();
             }
             self::addHandler(self::$handler_type);
             self::handleOperator()->register();
@@ -48,8 +48,8 @@ class Handler
     }
 
     /**
-     * @param          $exception
-     * @param Response $response
+     * @param                    $exception
+     * @param \tpr\core\Response $response
      */
     public static function render($exception, $response)
     {
@@ -73,7 +73,7 @@ class Handler
             }
 
             if (!class_exists($handler)) {
-                throw new ClassNotExistException("Class Not Exist : " . $handler);
+                throw new ClassNotExistException('Class Not Exist : ' . $handler);
             }
 
             $handler = new $handler();
@@ -81,7 +81,7 @@ class Handler
 
         if (is_object($handler)) {
             /*** @var HandlerInterface $handler ** */
-            self::$run->pushHandler($handler);
+            self::$run->appendHandler($handler);
         }
     }
 

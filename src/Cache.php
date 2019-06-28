@@ -2,33 +2,26 @@
 
 namespace tpr;
 
-use tpr\lib\Facade;
-use tpr\core\Cache as CoreCache;
+use Doctrine\Common\Cache\ArrayCache;
 
 /**
- * Class Cache
+ * Class Cache.
  *
- * @package tpr
- * @method void set($key, $data, $timeout = 0) static
- * @method mixed get($key) static
- * @method bool has($key) static
- * @method bool rm($key) static
- * @method false|int inc($key, $step = 1) static
- * @method false|int dec($key, $step = 1) static
- * @method bool clear($tag = null) static
- * @method mixed pull($key) static
- * @method mixed remember($key, $value, $expire = null) static
- * @method $this tag($key, $keys = null, $overlay = false) static
+ * @method mixed      fetch($id)                      static
+ * @method bool       contains($id)                   static
+ * @method bool       save($id, $data, $lifeTime = 0) static
+ * @method bool       delete($id)                     static
+ * @method array|null getStats()
  */
 class Cache extends Facade
 {
     protected static function getContainName()
     {
-        return "cache";
+        return 'cache';
     }
 
     protected static function getFacadeClass()
     {
-        return CoreCache::class;
+        return ArrayCache::class;
     }
 }

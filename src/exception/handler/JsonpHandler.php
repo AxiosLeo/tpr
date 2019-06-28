@@ -1,15 +1,8 @@
 <?php
-/**
- * @author  : axios
- *
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2019-06-22 16:01
- */
 
 namespace tpr\exception\handler;
 
-use tpr\Response;
+use tpr\core\Response;
 use Whoops\Exception\Formatter;
 use Whoops\Handler\Handler;
 
@@ -26,7 +19,7 @@ class JsonpHandler extends Handler
     private $jsonApi = false;
 
     /**
-     * Returns errors[[]] instead of error[] to be in compliance with the json:api spec
+     * Returns errors[[]] instead of error[] to be in compliance with the json:api spec.
      *
      * @param bool $jsonApi Default is false
      *
@@ -34,22 +27,24 @@ class JsonpHandler extends Handler
      */
     public function setJsonApi($jsonApi = false)
     {
-        $this->jsonApi = (bool)$jsonApi;
+        $this->jsonApi = (bool) $jsonApi;
+
         return $this;
     }
 
     /**
-     * @param  bool|null $returnFrames
+     * @param bool|null $returnFrames
      *
      * @return bool|$this
      */
     public function addTraceToOutput($returnFrames = null)
     {
-        if (func_num_args() == 0) {
+        if (0 == func_num_args()) {
             return $this->returnFrames;
         }
 
-        $this->returnFrames = (bool)$returnFrames;
+        $this->returnFrames = (bool) $returnFrames;
+
         return $this;
     }
 
@@ -58,14 +53,14 @@ class JsonpHandler extends Handler
      */
     public function handle()
     {
-        if ($this->jsonApi === true) {
+        if (true === $this->jsonApi) {
             $response = [
                 'errors' => [
                     Formatter::formatExceptionAsDataArray(
                         $this->getInspector(),
                         $this->addTraceToOutput()
                     ),
-                ]
+                ],
             ];
         } else {
             $response = [
@@ -76,7 +71,7 @@ class JsonpHandler extends Handler
             ];
         }
 
-        echo Response::instance()->setResponseType("jsonp")->output($response);;
+        echo Response::instance()->setResponseType('jsonp')->output($response);
 
         return Handler::QUIT;
     }
