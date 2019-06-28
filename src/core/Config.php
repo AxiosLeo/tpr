@@ -43,7 +43,7 @@ class Config
             return Cache::fetch($config_cache_key);
         }
         if (!\tpr\App::debug()) {
-            Cache::save($config_cache_key, $data);
+            Cache::save($config_cache_key, $data, 600);
         }
         unset($Cache);
         unset($config_cache_key);
