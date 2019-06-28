@@ -3,9 +3,12 @@
 namespace tpr;
 
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\FilesystemCache;
 
 /**
  * Class Cache.
+ *
+ * @see ArrayCache
  *
  * @method mixed      fetch($id)                      static
  * @method bool       contains($id)                   static
@@ -22,6 +25,8 @@ class Cache extends Facade
 
     protected static function getFacadeClass()
     {
-        return ArrayCache::class;
+        $cache = new FilesystemCache(Path::cache());
+
+        return $cache;
     }
 }
