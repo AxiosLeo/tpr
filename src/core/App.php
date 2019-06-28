@@ -74,8 +74,10 @@ class App
             $headers = \tpr\Config::get('app.remove_headers', ['X-Powered-By']);
         }
 
-        foreach ($headers as $header) {
-            header_remove($header);
+        if (!headers_sent() && !empty($headers)) {
+            foreach ($headers as $header) {
+                header_remove($header);
+            }
         }
     }
 
