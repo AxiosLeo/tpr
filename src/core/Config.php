@@ -3,19 +3,19 @@
 namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
-use tpr\lib\ArrayTool;
-use tpr\Files;
-use tpr\Path;
+use tpr\Cache;
+use tpr\library\ArrayTool;
 
-final class Config
+class Config
 {
-    public $config_path = "";
+    public $config_path = '';
 
     public $config = [];
 
     public function __construct()
     {
-        $this->config_path = Path::config();
+        $this->config_path = \tpr\Path::config();
+        $this->init();
     }
 
     public function init()
@@ -34,19 +34,20 @@ final class Config
 
     private function cache($data = null)
     {
-        $Cache            = new Cache();
-        $config_cache_key = "tpr_config";
+        $config_cache_key = 'tpr_config';
         if (is_null($data)) {
-            if (\tpr\App::debug() === true || !$Cache->has($config_cache_key)) {
+            if (true === \tpr\App::debug() || !Cache::contains($config_cache_key)) {
                 return false;
             }
-            return $Cache->get($config_cache_key);
+
+            return Cache::fetch($config_cache_key);
         }
         if (!\tpr\App::debug()) {
-            $Cache->set($config_cache_key, $data);
+            Cache::save($config_cache_key, $data);
         }
         unset($Cache);
         unset($config_cache_key);
+
         return $data;
     }
 
@@ -55,9 +56,9 @@ final class Config
         if (is_null($path)) {
             $path = $this->config_path;
         } else {
-            $path = Path::format($path);
+            $path = \tpr\Path::format($path);
         }
-        $config_file_list = Files::searchAllFiles($path, ["yaml", "yml", "json", "ini", "php", "xml"]);
+        $config_file_list = \tpr\Files::searchAllFiles($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
 
         foreach ($config_file_list as $file_path => $filename) {
             $config = NoodlehausConfig::load($file_path)->all();
@@ -66,6 +67,7 @@ final class Config
             }
         }
         $this->cache($this->config);
+
         return $this->config;
     }
 
@@ -92,6 +94,7 @@ final class Config
         if (!isset($array[$key0])) {
             return $default;
         }
+
         return $this->find($keyArray, $array[$key0], $default);
     }
 }

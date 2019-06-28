@@ -1,30 +1,25 @@
 <?php
 
-namespace tpr\response;
+namespace tpr\core\response;
 
-class Jsonp extends ResponseAbstract
+class Json extends ResponseAbstract
 {
-    protected $name = "jsonp";
+    protected $name = 'json';
 
     protected $options = [
         'json_encode_param' => JSON_UNESCAPED_UNICODE,
-        'jsonp_handler'     => 'jsonpReturn',
     ];
 
-    public $content_type = 'application/javascript';
+    public $content_type = 'application/json';
 
-    public function output($data = null): string
+    public function output($data = null) : string
     {
         try {
-            $handler = !empty($var_jsonp_handler) ? $var_jsonp_handler : $this->options['jsonp_handler'];
-
+            // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data, $this->options['json_encode_param']);
-
             if (false === $data) {
                 throw new \InvalidArgumentException(json_last_error_msg());
             }
-
-            $data = $handler . '(' . $data . ');';
 
             return $data;
         } catch (\Exception $e) {

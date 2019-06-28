@@ -2,18 +2,14 @@
 
 namespace tpr\core;
 
-use tpr\Path;
-use tpr\traits\InstanceTraits;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 class Template
 {
-    use InstanceTraits;
-
     private $options = [
-        "ext"  => "html",
-        "base" => ""
+        'ext'  => 'html',
+        'base' => '',
     ];
 
     private $base_dir;
@@ -22,32 +18,34 @@ class Template
 
     public function __construct()
     {
-        $options = \tpr\Config::get("views", []);
+        $options = \tpr\Config::get('views', []);
 
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
-        $this->setBaseDir($this->options["base"]);
+        $this->setBaseDir($this->options['base']);
         $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
-            'cache' => Path::cache(),
+            'cache' => \tpr\Path::cache(),
         ]);
     }
 
     public function setBaseDir($base_dir = null)
     {
         if (empty($base_dir)) {
-            $base_dir = Path::views();
+            $base_dir = \tpr\Path::views();
         }
-        $this->base_dir = Path::format($base_dir);
+        $this->base_dir = \tpr\Path::format($base_dir);
+
         return $this;
     }
 
     public function getExt()
     {
-        $ext = $this->options["ext"];
-        if (false === strpos($ext, ".")) {
-            $ext = "." . $ext;
+        $ext = $this->options['ext'];
+        if (false === strpos($ext, '.')) {
+            $ext = '.' . $ext;
         }
+
         return $ext;
     }
 

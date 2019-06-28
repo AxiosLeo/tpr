@@ -1,6 +1,6 @@
 <?php
 
-namespace tpr\input;
+namespace tpr\library;
 
 use SplFileObject;
 
