@@ -47,7 +47,7 @@ final class Container implements \ArrayAccess
         if (!is_object($class)) {
             throw new \InvalidArgumentException('$class is invalid argument : ' . gettype($class));
         }
-        self::$object[$name] = new $class($params);
+        self::$object[$name] = $class;
     }
 
     public static function bindNotExist(string $name, $class, array $params = [])
