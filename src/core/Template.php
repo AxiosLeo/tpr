@@ -24,6 +24,9 @@ class Template
             $this->options = array_merge($this->options, $options);
         }
         $this->setBaseDir($this->options['base']);
+        if (!file_exists($this->base_dir)) {
+            @mkdir($this->base_dir, 0777, true);
+        }
         $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
             'cache' => \tpr\Path::cache(),
         ]);
