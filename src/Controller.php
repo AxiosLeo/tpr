@@ -76,7 +76,15 @@ abstract class Controller
         if (is_string($headers)) {
             $headers = [$headers];
         }
-        App::removeHeaders($headers);
+        if (empty($headers)) {
+            $headers = Config::get('app.remove_headers', ['X-Powered-By']);
+        }
+
+        if (!headers_sent() && !empty($headers)) {
+            foreach ($headers as $header) {
+                header_remove($header);
+            }
+        }
     }
 
     /**
