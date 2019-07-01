@@ -91,6 +91,7 @@ class App
     private function cgiRunner()
     {
         $dispatch = new Dispatch($this->options('namespace'));
+        Container::bind("cgi_dispatch", $dispatch);
         $dispatch->run();
     }
 

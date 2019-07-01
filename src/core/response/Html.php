@@ -3,6 +3,7 @@
 namespace tpr\core\response;
 
 use tpr\Container;
+use tpr\core\Dispatch;
 use tpr\core\Template;
 use tpr\Path;
 
@@ -38,14 +39,15 @@ class Html extends ResponseAbstract
         }
         $template = $this->options['views_path'];
         if (empty($template)) {
-            $dispatch = Container::app()->getDispatch();
+            /** @var Dispatch $dispatch **/
+            $dispatch = Container::get("cgi_dispatch");
             $dir      = Path::dir([
                 $dispatch->getModuleName(), $dispatch->getControllerName(),
             ]);
             $file     = $dispatch->getActionName();
         } elseif (false !== strpos($template, ':')) {
             list($dir, $file) = explode(':', $template);
-            $dir              = Path::format($dir);
+            $dir = Path::format($dir);
         } else {
             $dir  = DIRECTORY_SEPARATOR;
             $file = $template;
