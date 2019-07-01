@@ -24,12 +24,11 @@ class Template
             $this->options = array_merge($this->options, $options);
         }
         $this->setBaseDir($this->options['base']);
-        if (!file_exists($this->base_dir)) {
-            @mkdir($this->base_dir, 0777, true);
+        if (file_exists($this->base_dir)) {
+            $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
+                'cache' => \tpr\Path::cache(),
+            ]);
         }
-        $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
-            'cache' => \tpr\Path::cache(),
-        ]);
     }
 
     public function setBaseDir($base_dir = null)
@@ -54,6 +53,14 @@ class Template
 
     public function render($dir, $file, $params = [])
     {
+        if (is_null($this->template_loader)) {
+            if (!file_exists($this->base_dir)) {
+                @mkdir($this->base_dir, 0700, true);
+            }
+            $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
+                'cache' => \tpr\Path::cache(),
+            ]);
+        }
         return $this->template_loader->render($dir . $file . $this->getExt(), $params);
     }
 }
