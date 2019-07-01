@@ -6,6 +6,7 @@ use tpr\Container;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
 use tpr\core\response\ResponseAbstract;
+use Exception;
 
 class Response
 {
@@ -45,7 +46,7 @@ class Response
     public function setResponseType(string $response_type)
     {
         if (!in_array($response_type, $this->allow_type)) {
-            throw new \Exception('Not Allow Response Type : "' . $response_type . '"');
+            throw new Exception('Not Allow Response Type : "' . $response_type . '"');
         }
         $this->response_type = $response_type;
 

@@ -6,12 +6,14 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use FastRoute\Dispatcher\GroupCountBased;
+use tpr\Cache;
 use tpr\Container;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
 use tpr\Path;
+use Exception;
 
 class Dispatch
 {
@@ -50,7 +52,7 @@ class Dispatch
             $response->response($result);
         } catch (HttpResponseException $e) {
             $e->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Handler::render($e, Container::response());
         }
     }
@@ -97,8 +99,8 @@ class Dispatch
         $cache_key  = \tpr\App::debug() . '.routes.cache';
         $route_data = [];
         if (!\tpr\App::debug() && file_exists($cache_file)) {
-            if (\tpr\Cache::contains($cache_key)) {
-                $route_data = \tpr\Cache::fetch($cache_key);
+            if (Cache::contains($cache_key)) {
+                $route_data = Cache::fetch($cache_key);
             }
         }
 
@@ -114,7 +116,7 @@ class Dispatch
             $route_data = $routeCollector->getData();
 
             if (!\tpr\App::debug()) {
-                \tpr\Cache::save($cache_key, $route_data);
+                Cache::save($cache_key, $route_data);
                 \tpr\Files::save($cache_file, 'cache on ' . time());
             }
         }

@@ -38,7 +38,7 @@ class Path
             }
         }
         if (empty($this->path['cache'])) {
-            $this->path['cache'] = $this->path['runtime'] . \tpr\App::appName() . self::DS;
+            $this->path['cache'] = $this->path['runtime'] . \tpr\App::name() . self::DS;
         }
 
         return $this->all();

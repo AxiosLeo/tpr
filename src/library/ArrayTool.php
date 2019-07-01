@@ -2,12 +2,15 @@
 
 namespace tpr\library;
 
+use ArrayAccess;
+use Closure;
+
 /**
  * 数组操作类.
  *
  * @desc 支持任意层级子元素的增删改查
  */
-class ArrayTool implements \ArrayAccess
+class ArrayTool implements ArrayAccess
 {
     public static function instance($array = [], $separator = '.')
     {
@@ -92,7 +95,7 @@ class ArrayTool implements \ArrayAccess
      * 获取任意层级子元素.
      *
      * @param string|int|null $key
-     * @param mixed|\Closure  $default
+     * @param mixed|Closure   $default
      *
      * @return mixed
      */
@@ -122,7 +125,7 @@ class ArrayTool implements \ArrayAccess
 
     private function defaultValue($key = null, $default = null)
     {
-        if ($default instanceof \Closure) {
+        if ($default instanceof Closure) {
             return $default($key);
         }
 

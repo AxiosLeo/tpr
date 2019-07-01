@@ -2,6 +2,8 @@
 
 namespace tpr\core\response;
 
+use InvalidArgumentException;
+
 class Text extends ResponseAbstract
 {
     protected $name = 'text';
@@ -13,7 +15,7 @@ class Text extends ResponseAbstract
     public function output($data = null)
     {
         if (is_array($data) || is_object($data)) {
-            throw new \InvalidArgumentException('Not Supported Param Type : ' . gettype($data));
+            throw new InvalidArgumentException('Not Supported Param Type : ' . gettype($data));
         }
 
         return $data;

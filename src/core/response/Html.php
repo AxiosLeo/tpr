@@ -37,8 +37,6 @@ class Html extends ResponseAbstract
             return $data;
         }
         $template = $this->options['views_path'];
-        $dir      = '';
-        $file     = '';
         if (empty($template)) {
             $dispatch = Container::app()->getDispatch();
             $dir      = Path::dir([

@@ -2,7 +2,8 @@
 
 namespace tpr;
 
-use tpr\core\Event as CoreEvent;
+use tpr\exception\ClassNotExistException;
+use Closure;
 
 /**
  * Class Event.
@@ -34,11 +35,11 @@ class Event
     /**
      * 添加行为.
      *
-     * @param string                 $name
-     * @param string                 $class
-     * @param string|object|\Closure $method
-     * @param array                  $params
-     * @param bool                   $first
+     * @param string                $name
+     * @param string                $class
+     * @param string|object|Closure $method
+     * @param array                 $params
+     * @param bool                  $first
      */
     public static function add(string $name, $class, string $method = 'run', $params = [], $first = false) : void
     {
@@ -62,11 +63,11 @@ class Event
     /**
      * 监听行为.
      *
-     * @param string        $name
-     * @param mixed         $data
-     * @param \Closure|null $callback
+     * @param string       $name
+     * @param mixed        $data
+     * @param Closure|null $callback
      */
-    public static function listen(string $name, &$data = [], \Closure $callback = null) : void
+    public static function listen(string $name, &$data = [], Closure $callback = null) : void
     {
         if (isset(self::$events[$name])) {
             foreach (self::$events[$name] as $event) {
@@ -78,11 +79,11 @@ class Event
     /**
      * 仅监听某个行为数组中的第一个.
      *
-     * @param string        $name
-     * @param mixed         $data
-     * @param \Closure|null $callback
+     * @param string       $name
+     * @param mixed        $data
+     * @param Closure|null $callback
      */
-    public static function listenFirst(string $name, &$data = [], \Closure $callback = null) : void
+    public static function listenFirst(string $name, &$data = [], Closure $callback = null) : void
     {
         if (isset(self::$events[$name], self::$events[$name][0])) {
             self::exec(self::$events[$name][0], $data, $callback);
@@ -146,16 +147,16 @@ class Event
     /**
      * 执行某个行为.
      *
-     * @param               $event
-     * @param mixed         $data
-     * @param \Closure|null $callback
+     * @param              $event
+     * @param mixed        $data
+     * @param Closure|null $callback
      */
-    private static function exec($event, &$data, \Closure $callback = null) : void
+    private static function exec($event, &$data, Closure $callback = null) : void
     {
         $class       = $event['class'];
         $method      = $event['method'];
         $extra_param = $event['params'];
-        if ($class instanceof \Closure) {
+        if ($class instanceof Closure) {
             $result = call_user_func_array($class, [&$data]);
         } elseif (is_object($class)) {
             $result = call_user_func_array([$class, $method], [&$data, $extra_param]);

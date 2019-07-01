@@ -4,6 +4,7 @@ namespace tpr\core;
 
 use tpr\Container;
 use tpr\library\File;
+use InvalidArgumentException;
 
 class Request
 {
@@ -1006,7 +1007,7 @@ class Request
      * @param string $data
      * @param string $type
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function typeCast(&$data, $type)
     {
@@ -1033,7 +1034,7 @@ class Request
                 if (is_scalar($data)) {
                     $data = (string) $data;
                 } else {
-                    throw new \InvalidArgumentException('variable type error：' . gettype($data));
+                    throw new InvalidArgumentException('variable type error：' . gettype($data));
                 }
         }
     }

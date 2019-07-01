@@ -2,7 +2,7 @@
 
 namespace tpr\exception\handler;
 
-use tpr\core\Response;
+use tpr\Container;
 use Whoops\Exception\Formatter;
 use Whoops\Handler\Handler;
 
@@ -48,9 +48,6 @@ class JsonpHandler extends Handler
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function handle()
     {
         if (true === $this->jsonApi) {
@@ -71,7 +68,7 @@ class JsonpHandler extends Handler
             ];
         }
 
-        echo Response::instance()->setResponseType('jsonp')->output($response);
+        echo Container::response()->setResponseType('jsonp')->output($response);
 
         return Handler::QUIT;
     }

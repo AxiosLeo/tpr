@@ -2,7 +2,9 @@
 
 namespace tpr\exception;
 
-class NotAllowResponseType extends \RuntimeException
+use RuntimeException;
+
+class NotAllowResponseType extends RuntimeException
 {
     private $response_type_list = [];
     private $response_type      = '';

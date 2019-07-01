@@ -12,6 +12,7 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
+use tpr\core\Response;
 
 class Handler
 {
@@ -48,8 +49,8 @@ class Handler
     }
 
     /**
-     * @param                    $exception
-     * @param \tpr\core\Response $response
+     * @param          $exception
+     * @param Response $response
      */
     public static function render($exception, $response)
     {

@@ -19,10 +19,10 @@ class App
     private $dispatch;
 
     private $app_options = [
-        "name"      => "app",
-        "debug"     => false,
-        "mode"      => "cgi",
-        "namespace" => "App\\"
+        'name'      => 'app',
+        'debug'     => false,
+        'mode'      => 'cgi',
+        'namespace' => 'App\\',
     ];
 
     public function app()
@@ -41,6 +41,7 @@ class App
         }
 
         $this->app_options[$key] = $value;
+
         return $this;
     }
 
@@ -49,12 +50,13 @@ class App
         if (!isset($this->app_options[$key])) {
             throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
         }
+
         return $this->app_options[$key];
     }
 
     public function init($app_name = 'app')
     {
-        $this->setAppOption("name", $app_name);
+        $this->setAppOption('name', $app_name);
         \tpr\Path::check();
         Container::import([
             'request'  => Request::class,
@@ -69,7 +71,7 @@ class App
     public function run($app_namespace = 'App\\', $debug = null)
     {
         if (!is_null($debug)) {
-            $this->setAppOption("debug", $debug);
+            $this->setAppOption('debug', $debug);
         }
         if (is_null(\tpr\App::name())) {
             $this->init();
@@ -108,6 +110,7 @@ class App
     public function __call($name, $arguments)
     {
         unset($arguments);
+
         return $this->options($name);
     }
 }

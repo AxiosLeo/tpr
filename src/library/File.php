@@ -3,6 +3,7 @@
 namespace tpr\library;
 
 use SplFileObject;
+use Closure;
 
 class File extends SplFileObject
 {
@@ -387,7 +388,7 @@ class File extends SplFileObject
     {
         if (true === $savename) {
             // 自动生成文件名
-            if ($this->rule instanceof \Closure) {
+            if ($this->rule instanceof Closure) {
                 $savename = call_user_func_array($this->rule, [$this]);
             } else {
                 switch ($this->rule) {

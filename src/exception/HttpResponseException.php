@@ -3,8 +3,9 @@
 namespace tpr\exception;
 
 use tpr\Event;
+use RuntimeException;
 
-class HttpResponseException extends \RuntimeException
+class HttpResponseException extends RuntimeException
 {
     protected $result;
     protected $http_status;

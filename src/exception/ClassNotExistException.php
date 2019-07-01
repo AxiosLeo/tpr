@@ -2,7 +2,9 @@
 
 namespace tpr\exception;
 
-class ClassNotExistException extends \RuntimeException
+use RuntimeException;
+
+class ClassNotExistException extends RuntimeException
 {
     protected $class;
 

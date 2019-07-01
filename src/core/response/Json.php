@@ -2,6 +2,9 @@
 
 namespace tpr\core\response;
 
+use InvalidArgumentException;
+use Exception;
+
 class Json extends ResponseAbstract
 {
     protected $name = 'json';
@@ -18,11 +21,11 @@ class Json extends ResponseAbstract
             // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data, $this->options['json_encode_param']);
             if (false === $data) {
-                throw new \InvalidArgumentException(json_last_error_msg());
+                throw new InvalidArgumentException(json_last_error_msg());
             }
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }

@@ -2,6 +2,8 @@
 
 namespace tpr\exception;
 
-class ContainerNotExistException extends \RuntimeException
+use RuntimeException;
+
+class ContainerNotExistException extends RuntimeException
 {
 }

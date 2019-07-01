@@ -2,6 +2,9 @@
 
 namespace tpr\core\response;
 
+use InvalidArgumentException;
+use Exception;
+
 class Jsonp extends ResponseAbstract
 {
     protected $name = 'jsonp';
@@ -19,13 +22,13 @@ class Jsonp extends ResponseAbstract
             $data = json_encode($data, $this->options['json_encode_param']);
 
             if (false === $data) {
-                throw new \InvalidArgumentException(json_last_error_msg());
+                throw new InvalidArgumentException(json_last_error_msg());
             }
 
-            $data = $$this->options['jsonp_handler'] . '(' . $data . ');';
+            $data = $this->options['jsonp_handler'] . '(' . $data . ');';
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }

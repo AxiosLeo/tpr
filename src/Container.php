@@ -8,17 +8,20 @@ use tpr\core\Template;
 use tpr\exception\ClassNotExistException;
 use tpr\core\Config;
 use tpr\exception\ContainerNotExistException;
+use tpr\core\App as CoreApp;
+use ArrayAccess;
+use InvalidArgumentException;
 
 /**
  * Class Container.
  *
- * @method Config        config()   static
- * @method Request       request()  static
- * @method Response      response() static
- * @method Template      template() static
- * @method \tpr\core\App app()      static
+ * @method Config   config()   static
+ * @method Request  request()  static
+ * @method Response response() static
+ * @method Template template() static
+ * @method CoreApp  app()      static
  */
-final class Container implements \ArrayAccess
+final class Container implements ArrayAccess
 {
     private static $object = [];
 
@@ -45,7 +48,7 @@ final class Container implements \ArrayAccess
             $class = new $class($params);
         }
         if (!is_object($class)) {
-            throw new \InvalidArgumentException('$class is invalid argument : ' . gettype($class));
+            throw new InvalidArgumentException('$class is invalid argument : ' . gettype($class));
         }
         self::$object[$name] = $class;
     }
