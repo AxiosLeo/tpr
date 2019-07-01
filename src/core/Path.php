@@ -29,10 +29,10 @@ class Path
         'command' => 'command',
     ];
 
-    public function check() : array
+    public function check(): array
     {
         if (empty($this->path['root'])) {
-            $this->path['root'] = dirname(dirname(dirname(TPR_FRAMEWORK_PATH)));
+            $this->path['root'] = dirname(dirname(dirname(TPR_FRAMEWORK_PATH))) . self::DS;
         }
         foreach ($this->default_path as $key => $value) {
             if (empty($this->path[$key])) {
@@ -46,12 +46,12 @@ class Path
         return $this->all();
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->path;
     }
 
-    public function format($path, $create = false) : string
+    public function format($path, $create = false): string
     {
         $path = DIRECTORY_SEPARATOR != substr($path, -1) ? $path . DIRECTORY_SEPARATOR : $path;
         if ($create && !file_exists($path)) {
@@ -63,7 +63,7 @@ class Path
         return $path;
     }
 
-    public function dir($arrayDirItem, $divider = DIRECTORY_SEPARATOR) : string
+    public function dir($arrayDirItem, $divider = DIRECTORY_SEPARATOR): string
     {
         $path = '';
         foreach ($arrayDirItem as $item) {
@@ -73,12 +73,12 @@ class Path
         return $path;
     }
 
-    private function get($path_name) : string
+    private function get($path_name): string
     {
         return isset($this->path[$path_name]) ? $this->path[$path_name] : '';
     }
 
-    private function set($path_name, $path) : string
+    private function set($path_name, $path): string
     {
         $this->path[$path_name] = $path;
 

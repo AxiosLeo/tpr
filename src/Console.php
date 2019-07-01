@@ -24,6 +24,8 @@ class Console extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         self::initIO($input, $output);
+        $this->input  = self::input();
+        $this->output = self::output();
         unset($input, $output);
     }
 
