@@ -10,6 +10,7 @@ class Path
         'framework' => TPR_FRAMEWORK_PATH,
         'root'      => '',
         'app'       => '',
+        'command'   => '',
         'config'    => '',
         'runtime'   => '',
         'cache'     => '',
@@ -25,6 +26,7 @@ class Path
         'vendor'  => 'vendor',
         'index'   => 'public',
         'views'   => 'views',
+        'command' => 'command',
     ];
 
     public function check() : array

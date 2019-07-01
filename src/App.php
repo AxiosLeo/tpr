@@ -9,14 +9,14 @@ use tpr\core\App as CoreApp;
  *
  * @see     CoreApp
  *
- * @method CoreApp init($options = [])                static
- * @method void    run($app_namespace, $debug = true) static
- * @method CoreApp app()                              static
- * @method void    removeHeaders($headers = [])       static
- * @method string  name()                             static
- * @method bool    debug()                            static
- * @method string  mode()                             static
- * @method string  namespace()                        static
+ * @method CoreApp setAppOption($key, $value)                   static
+ * @method void    run($app_namespace = "App\\", $debug = true) static
+ * @method CoreApp app()                                        static
+ * @method void    removeHeaders($headers = [])                 static
+ * @method string  name()                                       static
+ * @method bool    debug()                                      static
+ * @method string  mode()                                       static
+ * @method string  namespace()                                  static
  */
 class App extends Facade
 {

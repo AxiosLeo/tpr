@@ -24,7 +24,8 @@
     "filp/whoops": "^2.3",
     "twig/twig": "^2.11",
     "vlucas/valitron": "^1.4",
-    "doctrine/cache": "^1.8"
+    "doctrine/cache": "^1.8",
+    "symfony/console": "^4.3"
   },
   "require-dev": {
     "symfony/var-dumper": "*"

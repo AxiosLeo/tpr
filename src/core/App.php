@@ -3,21 +3,14 @@
 namespace tpr\core;
 
 use Composer\Autoload\ClassLoader;
+use Symfony\Component\Console\Application;
 use tpr\Container;
 use tpr\exception\Handler;
 use tpr\exception\OptionSetErrorException;
+use Exception;
 
 class App
 {
-    private $namespace;
-
-    private $mode;
-
-    /**
-     * @var Dispatch
-     */
-    private $dispatch;
-
     private $app_options = [
         'name'      => 'app',
         'debug'     => false,
@@ -36,7 +29,7 @@ class App
             throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
         }
 
-        if (gettype($value) === gettype($this->app_options[$key])) {
+        if (gettype($value) !== gettype($this->app_options[$key])) {
             throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Value_Type);
         }
 
@@ -54,10 +47,10 @@ class App
         return $this->app_options[$key];
     }
 
-    public function init($app_name = 'app')
+    private function init($app_name = 'app')
     {
-        $this->setAppOption('name', $app_name);
         \tpr\Path::check();
+        $this->setAppOption('name', $app_name);
         Container::import([
             'request'  => Request::class,
             'response' => Response::class,
@@ -73,38 +66,62 @@ class App
         if (!is_null($debug)) {
             $this->setAppOption('debug', $debug);
         }
-        if (is_null(\tpr\App::name())) {
-            $this->init();
-        }
-        $ClassLoader = new ClassLoader();
-        $length      = strlen($app_namespace);
+
+        $length = strlen($app_namespace);
         if ('\\' !== $app_namespace[$length - 1]) {
             $app_namespace .= '\\';
         }
-        $this->namespace = $app_namespace;
+
+        $this->setAppOption('namespace', $app_namespace);
+
+        $this->init($this->options('name'));
+
+        $ClassLoader = new ClassLoader();
+        $this->setAppOption('namespace', $app_namespace);
         $ClassLoader->addPsr4($app_namespace, \tpr\Path::app());
         $ClassLoader->register();
-        $this->mode = PHP_SAPI == 'cli' ? PHP_SAPI : 'cgi';
-        if ('cgi' == $this->mode) {
-            $this->dispatch();
+        $mode = PHP_SAPI == 'cli' ? PHP_SAPI : 'cgi';
+        if ('cgi' == $mode) {
+            $this->cgiRunner();
+        } elseif ('cli' == $mode) {
+            $this->cliRunner();
         }
     }
 
-    /**
-     * @return Dispatch
-     */
-    public function getDispatch()
+    private function cgiRunner()
     {
-        if (is_null($this->dispatch)) {
-            $this->dispatch = new Dispatch($this->namespace);
-        }
-
-        return $this->dispatch;
+        $dispatch = new Dispatch($this->options('namespace'));
+        $dispatch->run();
     }
 
-    private function dispatch()
+    private function cliRunner()
     {
-        $this->getDispatch()->run();
+        $cli_config = \tpr\Config::get('cli', [
+            'name'    => 'Command Tools',
+            'version' => '0.0.1',
+        ]);
+        $app        = new Application($cli_config['name'], $cli_config['version']);
+        $commands   = \tpr\Files::searchAllFiles(\tpr\Path::command(), ['php']);
+        if (empty($commands)) {
+            throw new Exception("Not have any command file in '" . \tpr\Path::command() . "'");
+        }
+        $base_namespace = $this->options('namespace');
+        foreach ($commands as $file_path => $filename) {
+            require_once $file_path;
+            $class = $base_namespace . str_replace('/', '\\', str_replace(['.php', \tpr\Path::command()], '', $file_path));
+            if (class_exists($class)) {
+                $command = new $class();
+                $app->add($command);
+            } else {
+                echo "---------------------------------------------------\n" .
+                    CONSOLE_STYLE_BACKGROUND_31 . "Class Not Exist. Please check namespace ! \n" . CONSOLE_STYLE_DEFAULT .
+                    CONSOLE_STYLE_BACKGROUND_33 . 'target class => ' . $class . CONSOLE_STYLE_DEFAULT . "\n" .
+                    "---------------------------------------------------\n";
+                die();
+            }
+        }
+
+        $app->run();
     }
 
     public function __call($name, $arguments)
