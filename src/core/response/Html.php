@@ -9,14 +9,13 @@ use tpr\Path;
 
 class Html extends ResponseAbstract
 {
-    protected $name = 'html';
+    public $content_type = 'text/html';
+    protected $name      = 'html';
 
     protected $options = [
         'params'     => [],
         'views_path' => '',
     ];
-
-    public $content_type = 'text/html';
 
     /**
      * @var Template
@@ -25,7 +24,7 @@ class Html extends ResponseAbstract
 
     public function getTemplateDriver()
     {
-        if (is_null($this->template_driver)) {
+        if (null === $this->template_driver) {
             $this->template_driver = Container::get('template');
         }
 
@@ -39,17 +38,17 @@ class Html extends ResponseAbstract
         }
         $template = $this->options['views_path'];
         if (empty($template)) {
-            /** @var Dispatch $dispatch **/
-            $dispatch = Container::get("cgi_dispatch");
+            /** @var Dispatch $dispatch */
+            $dispatch = Container::get('cgi_dispatch');
             $dir      = Path::dir([
                 $dispatch->getModuleName(), $dispatch->getControllerName(),
             ]);
             $file     = $dispatch->getActionName();
         } elseif (false !== strpos($template, ':')) {
             list($dir, $file) = explode(':', $template);
-            $dir = Path::format($dir);
+            $dir              = Path::format($dir);
         } else {
-            $dir  = DIRECTORY_SEPARATOR;
+            $dir  = \DIRECTORY_SEPARATOR;
             $file = $template;
         }
 

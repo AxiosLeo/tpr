@@ -55,7 +55,7 @@ abstract class Controller
 
     protected function addHeader($key, $value = null)
     {
-        if (is_null($value)) {
+        if (null === $value) {
             header($key);
         } else {
             header($key . ':' . $value);
@@ -73,7 +73,7 @@ abstract class Controller
 
     protected function removeHeaders($headers = [])
     {
-        if (is_string($headers)) {
+        if (\is_string($headers)) {
             $headers = [$headers];
         }
         if (empty($headers)) {
@@ -97,7 +97,7 @@ abstract class Controller
      */
     protected function response($result = [], $status = 200, $msg = '', $headers = [])
     {
-        if (is_null($this->response_type)) {
+        if (null === $this->response_type) {
             $this->setResponseType(Config::get('app.default_ajax_return_type', 'json'));
         }
         $this->response->response($result, $status, $msg, $headers);

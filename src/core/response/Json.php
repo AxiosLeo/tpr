@@ -2,20 +2,19 @@
 
 namespace tpr\core\response;
 
-use InvalidArgumentException;
 use Exception;
+use InvalidArgumentException;
 
 class Json extends ResponseAbstract
 {
-    protected $name = 'json';
+    public $content_type = 'application/json';
+    protected $name      = 'json';
 
     protected $options = [
         'json_encode_param' => JSON_UNESCAPED_UNICODE,
     ];
 
-    public $content_type = 'application/json';
-
-    public function output($data = null) : string
+    public function output($data = null): string
     {
         try {
             // 返回JSON数据格式到客户端 包含状态信息
@@ -29,6 +28,7 @@ class Json extends ResponseAbstract
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }
+
             throw $e;
         }
     }

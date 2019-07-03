@@ -6,14 +6,13 @@ use RuntimeException;
 
 class OptionSetErrorException extends RuntimeException
 {
-    private $error_type = [
-        'Not Supported Option Name : {name}',
-        'Not Supported Option Value Type : {name}',
-    ];
-
     const Not_Supported_Option_Name = 0;
 
     const Not_Supported_Option_Value_Type = 1;
+    private $error_type                   = [
+        'Not Supported Option Name : {name}',
+        'Not Supported Option Value Type : {name}',
+    ];
 
     public function __construct($option_key, $type)
     {

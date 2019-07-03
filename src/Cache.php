@@ -14,7 +14,7 @@ use Doctrine\Common\Cache\FilesystemCache;
  * @method bool       contains($id)                   static
  * @method bool       save($id, $data, $lifeTime = 0) static
  * @method bool       delete($id)                     static
- * @method array|null getStats()
+ * @method null|array getStats()
  */
 class Cache extends Facade
 {
@@ -25,8 +25,6 @@ class Cache extends Facade
 
     protected static function getFacadeClass()
     {
-        $cache = new FilesystemCache(Path::cache());
-
-        return $cache;
+        return new FilesystemCache(Path::cache());
     }
 }

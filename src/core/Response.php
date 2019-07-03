@@ -2,11 +2,11 @@
 
 namespace tpr\core;
 
+use Exception;
 use tpr\Container;
+use tpr\core\response\ResponseAbstract;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
-use tpr\core\response\ResponseAbstract;
-use Exception;
 
 class Response
 {
@@ -45,7 +45,7 @@ class Response
 
     public function setResponseType(string $response_type)
     {
-        if (!in_array($response_type, $this->allow_type)) {
+        if (!\in_array($response_type, $this->allow_type)) {
             throw new Exception('Not Allow Response Type : "' . $response_type . '"');
         }
         $this->response_type = $response_type;
@@ -80,7 +80,7 @@ class Response
 
     public function setResponseDriver($driver)
     {
-        if (is_string($driver)) {
+        if (\is_string($driver)) {
             if (false === strpos($driver, '\\')) {
                 $driver = 'tpr\\core\\response\\' . ucfirst($driver);
             }
@@ -123,6 +123,7 @@ class Response
         }
 
         $result = $this->output($result);
+
         throw new HttpResponseException($result, $status, $msg, $this->headers);
     }
 
@@ -138,7 +139,7 @@ class Response
 
     public function output($result = null)
     {
-        if (is_null($this->response_driver)) {
+        if (null === $this->response_driver) {
             $this->setResponseDriver($this->response_type);
         }
         $this->setHeaders('Content-Type', $this->response_driver->content_type);

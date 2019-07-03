@@ -12,11 +12,6 @@ use Closure;
  */
 class ArrayTool implements ArrayAccess
 {
-    public static function instance($array = [], $separator = '.')
-    {
-        return new self($array, $separator);
-    }
-
     private $array;
 
     private $separator;
@@ -25,6 +20,11 @@ class ArrayTool implements ArrayAccess
     {
         $this->array     = $array;
         $this->separator = $separator;
+    }
+
+    public static function instance($array = [], $separator = '.')
+    {
+        return new self($array, $separator);
     }
 
     /**
@@ -50,15 +50,15 @@ class ArrayTool implements ArrayAccess
         }
 
         foreach ($array as $k => $v) {
-            if (is_numeric($v) && in_array('number', $except)) {
+            if (is_numeric($v) && \in_array('number', $except)) {
                 continue;
             }
 
-            if (is_string($v) && in_array('string', $except)) {
+            if (\is_string($v) && \in_array('string', $except)) {
                 continue;
             }
 
-            if (is_null($v) && in_array('null', $except)) {
+            if (null === $v && \in_array('null', $except)) {
                 continue;
             }
             if (empty($v)) {
@@ -72,14 +72,14 @@ class ArrayTool implements ArrayAccess
     /**
      * 设置任意层级子元素.
      *
-     * @param string|array|int $key
+     * @param array|int|string $key
      * @param mixed            $value
      *
      * @return $this
      */
     public function set($key, $value = null)
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             foreach ($key as $k => $v) {
                 $this->set($k, $v);
             }
@@ -94,14 +94,14 @@ class ArrayTool implements ArrayAccess
     /**
      * 获取任意层级子元素.
      *
-     * @param string|int|null $key
-     * @param mixed|Closure   $default
+     * @param null|int|string $key
+     * @param Closure|mixed   $default
      *
      * @return mixed
      */
     public function get($key = null, $default = null)
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $this->array;
         }
 
@@ -116,6 +116,7 @@ class ArrayTool implements ArrayAccess
                 $tmp = $tmp[$k];
             } else {
                 $tmp = $this->defaultValue($key, $default);
+
                 break;
             }
         }
@@ -123,25 +124,16 @@ class ArrayTool implements ArrayAccess
         return $tmp;
     }
 
-    private function defaultValue($key = null, $default = null)
-    {
-        if ($default instanceof Closure) {
-            return $default($key);
-        }
-
-        return $default;
-    }
-
     /**
      * 删除任意层级子元素.
      *
-     * @param string|array|int $key
+     * @param array|int|string $key
      *
      * @return $this
      */
     public function delete($key)
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             foreach ($key as $k) {
                 $this->set($k, null);
             }
@@ -185,82 +177,6 @@ class ArrayTool implements ArrayAccess
     }
 
     /**
-     * 支持任意层级子元素的数组排序.
-     *
-     * @param mixed  $key
-     * @param string $sortRule
-     * @param string $order
-     * @param bool   $save_key
-     *
-     * @return mixed
-     */
-    private function sortArray($key = null, $sortRule = '', $order = 'asc', $save_key = true)
-    {
-        $array = $this->get($key);
-
-        if (!is_array($array)) {
-            return false;
-        }
-
-        /*
-         * $array = [
-         *              ["book"=>10,"version"=>10],
-         *              ["book"=>19,"version"=>30],
-         *              ["book"=>10,"version"=>30],
-         *              ["book"=>19,"version"=>10],
-         *              ["book"=>10,"version"=>20],
-         *              ["book"=>19,"version"=>20]
-         *      ];
-         */
-        if (is_array($sortRule)) {
-            /*
-             * $sortRule = ['book'=>"asc",'version'=>"asc"];
-             */
-            usort($array, function ($a, $b) use ($sortRule) {
-                foreach ($sortRule as $sortKey => $order) {
-                    if ($a[$sortKey] == $b[$sortKey]) {
-                        continue;
-                    }
-
-                    return (('asc' != $order) ? -1 : 1) * (($a[$sortKey] < $b[$sortKey]) ? -1 : 1);
-                }
-
-                return 0;
-            });
-        } elseif (is_string($sortRule)) {
-            if (!empty($sortRule)) {
-                /*
-                 * $sortRule = "book";
-                 * $order = "asc";
-                 */
-                usort($array, function ($a, $b) use ($sortRule, $order) {
-                    if ($a[$sortRule] == $b[$sortRule]) {
-                        return 0;
-                    }
-
-                    return (('asc' != $order) ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
-                });
-            } else {
-                if ($save_key) {
-                    'asc' == $order ? asort($array) : arsort($array);
-                } else {
-                    usort($array, function ($a, $b) use ($order) {
-                        if ($a == $b) {
-                            return 0;
-                        }
-
-                        return (('asc' != $order) ? -1 : 1) * (($a < $b) ? -1 : 1);
-                    });
-                }
-            }
-        }
-
-        is_null($key) ? $this->array = $array : $this->set($key, $array);
-
-        return $this->array;
-    }
-
-    /**
      * 获取某一节点下的子元素key列表.
      *
      * @param $key
@@ -280,43 +196,6 @@ class ArrayTool implements ArrayAccess
     }
 
     /**
-     * 递归遍历.
-     *
-     * @param array $array
-     * @param array $keyArray
-     * @param mixed $value
-     *
-     * @return array
-     */
-    private function recurArrayChange($array, $keyArray, $value = null)
-    {
-        $key0 = $keyArray[0];
-        if (1 === count($keyArray)) {
-            $this->changeValue($array, $key0, $value);
-        } elseif (is_array($array) && isset($keyArray[1])) {
-            unset($keyArray[0]);
-            $keyArray = array_values($keyArray);
-            if (!isset($array[$key0])) {
-                $array[$key0] = [];
-            }
-            $array[$key0] = $this->recurArrayChange($array[$key0], $keyArray, $value);
-        } else {
-            $this->changeValue($array, $key0, $value);
-        }
-
-        return $array;
-    }
-
-    private function changeValue(&$array, $key, $value)
-    {
-        if (is_null($value)) {
-            unset($array[$key]);
-        } else {
-            $array[$key] = $value;
-        }
-    }
-
-    /**
      * isset($array[$key]).
      *
      * @param mixed $offset
@@ -325,7 +204,7 @@ class ArrayTool implements ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return !is_null($this->get($offset));
+        return null !== $this->get($offset);
     }
 
     /**
@@ -363,5 +242,125 @@ class ArrayTool implements ArrayAccess
     public function offsetUnset($offset)
     {
         return $this->delete($offset);
+    }
+
+    private function defaultValue($key = null, $default = null)
+    {
+        if ($default instanceof Closure) {
+            return $default($key);
+        }
+
+        return $default;
+    }
+
+    /**
+     * 支持任意层级子元素的数组排序.
+     *
+     * @param mixed  $key
+     * @param string $sortRule
+     * @param string $order
+     * @param bool   $save_key
+     *
+     * @return mixed
+     */
+    private function sortArray($key = null, $sortRule = '', $order = 'asc', $save_key = true)
+    {
+        $array = $this->get($key);
+
+        if (!\is_array($array)) {
+            return false;
+        }
+
+        /*
+         * $array = [
+         *              ["book"=>10,"version"=>10],
+         *              ["book"=>19,"version"=>30],
+         *              ["book"=>10,"version"=>30],
+         *              ["book"=>19,"version"=>10],
+         *              ["book"=>10,"version"=>20],
+         *              ["book"=>19,"version"=>20]
+         *      ];
+         */
+        if (\is_array($sortRule)) {
+            // $sortRule = ['book'=>"asc",'version'=>"asc"];
+            usort($array, function ($a, $b) use ($sortRule) {
+                foreach ($sortRule as $sortKey => $order) {
+                    if ($a[$sortKey] == $b[$sortKey]) {
+                        continue;
+                    }
+
+                    return (('asc' != $order) ? -1 : 1) * (($a[$sortKey] < $b[$sortKey]) ? -1 : 1);
+                }
+
+                return 0;
+            });
+        } elseif (\is_string($sortRule)) {
+            if (!empty($sortRule)) {
+                /*
+                 * $sortRule = "book";
+                 * $order = "asc";
+                 */
+                usort($array, function ($a, $b) use ($sortRule, $order) {
+                    if ($a[$sortRule] == $b[$sortRule]) {
+                        return 0;
+                    }
+
+                    return (('asc' != $order) ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
+                });
+            } else {
+                if ($save_key) {
+                    'asc' == $order ? asort($array) : arsort($array);
+                } else {
+                    usort($array, function ($a, $b) use ($order) {
+                        if ($a == $b) {
+                            return 0;
+                        }
+
+                        return (('asc' != $order) ? -1 : 1) * (($a < $b) ? -1 : 1);
+                    });
+                }
+            }
+        }
+
+        null === $key ? $this->array = $array : $this->set($key, $array);
+
+        return $this->array;
+    }
+
+    /**
+     * 递归遍历.
+     *
+     * @param array $array
+     * @param array $keyArray
+     * @param mixed $value
+     *
+     * @return array
+     */
+    private function recurArrayChange($array, $keyArray, $value = null)
+    {
+        $key0 = $keyArray[0];
+        if (1 === \count($keyArray)) {
+            $this->changeValue($array, $key0, $value);
+        } elseif (\is_array($array) && isset($keyArray[1])) {
+            unset($keyArray[0]);
+            $keyArray = array_values($keyArray);
+            if (!isset($array[$key0])) {
+                $array[$key0] = [];
+            }
+            $array[$key0] = $this->recurArrayChange($array[$key0], $keyArray, $value);
+        } else {
+            $this->changeValue($array, $key0, $value);
+        }
+
+        return $array;
+    }
+
+    private function changeValue(&$array, $key, $value)
+    {
+        if (null === $value) {
+            unset($array[$key]);
+        } else {
+            $array[$key] = $value;
+        }
     }
 }

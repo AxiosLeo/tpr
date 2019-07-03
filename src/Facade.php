@@ -6,13 +6,6 @@ use tpr\exception\ContainerNotExistException;
 
 abstract class Facade
 {
-    /**
-     * @return string
-     */
-    abstract protected static function getContainName();
-
-    abstract protected static function getFacadeClass();
-
     public function __call($func, $arguments)
     {
         return self::dispatch($func, $arguments);
@@ -23,17 +16,24 @@ abstract class Facade
         return self::dispatch($func, $arguments);
     }
 
+    /**
+     * @return string
+     */
+    abstract protected static function getContainName();
+
+    abstract protected static function getFacadeClass();
+
     private static function dispatch($func, $arguments)
     {
         $name = static::getContainName();
         if (!Container::has($name)) {
-            if (!is_null(static::getFacadeClass())) {
+            if (null !== static::getFacadeClass()) {
                 Container::bind($name, static::getFacadeClass());
             } else {
                 throw new ContainerNotExistException('`' . $name . '` Container is not exist');
             }
         }
 
-        return call_user_func_array([Container::get($name), $func], $arguments);
+        return \call_user_func_array([Container::get($name), $func], $arguments);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace tpr\core;
 
+use InvalidArgumentException;
 use tpr\Container;
 use tpr\library\File;
-use InvalidArgumentException;
 
 class Request
 {
@@ -107,7 +107,7 @@ class Request
     {
         foreach ($options as $name => $item) {
             if (property_exists($this, $name)) {
-                $this->$name = $item;
+                $this->{$name} = $item;
             }
         }
 
@@ -216,11 +216,12 @@ class Request
      */
     public function domain($domain = null)
     {
-        if (!is_null($domain)) {
+        if (null !== $domain) {
             $this->domain = $domain;
 
             return $this;
-        } elseif (!$this->domain) {
+        }
+        if (!$this->domain) {
             $this->domain = $this->scheme() . '://' . $this->host();
         }
 
@@ -236,11 +237,12 @@ class Request
      */
     public function url($url = null)
     {
-        if (!is_null($url) && true !== $url) {
+        if (null !== $url && true !== $url) {
             $this->url = $url;
 
             return $this;
-        } elseif (!$this->url) {
+        }
+        if (!$this->url) {
             if (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
                 $this->url = $_SERVER['HTTP_X_REWRITE_URL'];
             } elseif (isset($_SERVER['REQUEST_URI'])) {
@@ -264,11 +266,12 @@ class Request
      */
     public function baseUrl($url = null)
     {
-        if (!is_null($url) && true !== $url) {
+        if (null !== $url && true !== $url) {
             $this->baseUrl = $url;
 
             return $this;
-        } elseif (!$this->baseUrl) {
+        }
+        if (!$this->baseUrl) {
             $str           = $this->url();
             $this->baseUrl = strpos($str, '?') ? strstr($str, '?', true) : $str;
         }
@@ -285,11 +288,12 @@ class Request
      */
     public function baseFile($file = null)
     {
-        if (!is_null($file) && true !== $file) {
+        if (null !== $file && true !== $file) {
             $this->baseFile = $file;
 
             return $this;
-        } elseif (!$this->baseFile) {
+        }
+        if (!$this->baseFile) {
             $url            = '';
             $this->baseFile = $url;
         }
@@ -306,14 +310,15 @@ class Request
      */
     public function root($url = null)
     {
-        if (!is_null($url) && true !== $url) {
+        if (null !== $url && true !== $url) {
             $this->root = $url;
 
             return $this;
-        } elseif (!$this->root) {
+        }
+        if (!$this->root) {
             $file = $this->baseFile();
             if ($file && 0 !== strpos($this->url(), $file)) {
-                $file = str_replace('\\', '/', dirname($file));
+                $file = str_replace('\\', '/', \dirname($file));
             }
             $this->root = rtrim($file, '/');
         }
@@ -330,20 +335,21 @@ class Request
      */
     public function pathinfo($pathinfo_fetch = [])
     {
-        if (is_null($this->pathinfo)) {
+        if (null === $this->pathinfo) {
             // 分析PATHINFO信息
             if (!isset($_SERVER['PATH_INFO'])) {
-                if (is_string($pathinfo_fetch)) {
+                if (\is_string($pathinfo_fetch)) {
                     $type = $pathinfo_fetch;
                     if (!empty($_SERVER[$type])) {
                         $_SERVER['PATH_INFO'] = (0 === strpos($_SERVER[$type], $_SERVER['SCRIPT_NAME'])) ?
-                            substr($_SERVER[$type], strlen($_SERVER['SCRIPT_NAME'])) : $_SERVER[$type];
+                            substr($_SERVER[$type], \strlen($_SERVER['SCRIPT_NAME'])) : $_SERVER[$type];
                     }
                 } else {
                     foreach ($pathinfo_fetch as $type) {
                         if (!empty($_SERVER[$type])) {
                             $_SERVER['PATH_INFO'] = (0 === strpos($_SERVER[$type], $_SERVER['SCRIPT_NAME'])) ?
-                                substr($_SERVER[$type], strlen($_SERVER['SCRIPT_NAME'])) : $_SERVER[$type];
+                                substr($_SERVER[$type], \strlen($_SERVER['SCRIPT_NAME'])) : $_SERVER[$type];
+
                             break;
                         }
                     }
@@ -364,7 +370,7 @@ class Request
      */
     public function path($suffix = '')
     {
-        if (is_null($this->path)) {
+        if (null === $this->path) {
             $path_info = $this->pathinfo();
             if (false === $suffix) {
                 // 禁止伪静态访问
@@ -396,7 +402,7 @@ class Request
      *
      * @param bool $float 是否使用浮点类型
      *
-     * @return int|float
+     * @return float|int
      */
     public function time($float = false)
     {
@@ -430,12 +436,12 @@ class Request
     /**
      * 设置资源类型.
      *
-     * @param string|array $type 资源类型名
+     * @param array|string $type 资源类型名
      * @param string       $val  资源类型
      */
     public function mimeType($type, $val = '')
     {
-        if (is_array($type)) {
+        if (\is_array($type)) {
             $this->mimeType = array_merge($this->mimeType, $type);
         } else {
             $this->mimeType[$type] = $val;
@@ -454,10 +460,11 @@ class Request
         if (true === $method) {
             // 获取原始请求类型
             return isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
-        } elseif (!$this->method) {
+        }
+        if (!$this->method) {
             if (isset($_POST[$method])) {
                 $method = strtoupper($_POST[$method]);
-                if (in_array($method, ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])) {
+                if (\in_array($method, ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])) {
                     $this->method = $method;
                     unset($_POST[$method]);
                     $this->{$this->method}($_POST);
@@ -551,7 +558,7 @@ class Request
      */
     public function isCli()
     {
-        return PHP_SAPI == 'cli';
+        return \PHP_SAPI == 'cli';
     }
 
     /**
@@ -561,15 +568,15 @@ class Request
      */
     public function isCgi()
     {
-        return 0 === strpos(PHP_SAPI, 'cgi');
+        return 0 === strpos(\PHP_SAPI, 'cgi');
     }
 
     /**
      * 获取当前请求的参数.
      *
-     * @param string|array $name    变量名
+     * @param array|string $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -581,11 +588,13 @@ class Request
             switch ($method) {
                 case 'POST':
                     $vars = $this->post(false);
+
                     break;
                 case 'PUT':
                 case 'DELETE':
                 case 'PATCH':
                     $vars = $this->put(false);
+
                     break;
                 default:
                     $vars = [];
@@ -596,7 +605,7 @@ class Request
         if (true === $name) {
             // 获取包含文件上传信息的数组
             $file = $this->file();
-            $data = is_array($file) ? array_merge($this->param, $file) : $this->param;
+            $data = \is_array($file) ? array_merge($this->param, $file) : $this->param;
 
             return $this->input($data, '', $default, $filter);
         }
@@ -607,9 +616,9 @@ class Request
     /**
      * 设置获取GET参数.
      *
-     * @param string|array $name    变量名
+     * @param array|string $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -618,7 +627,7 @@ class Request
         if (empty($this->get)) {
             $this->get = $_GET;
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             $this->param = [];
 
             return $this->get = array_merge($this->get, $name);
@@ -630,9 +639,9 @@ class Request
     /**
      * 设置获取POST参数.
      *
-     * @param string|null  $name    变量名
+     * @param null|string  $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -646,7 +655,7 @@ class Request
                 $this->post = $_POST;
             }
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             $this->param = [];
 
             return $this->post = array_merge($this->post, $name);
@@ -658,15 +667,15 @@ class Request
     /**
      * 设置获取PUT参数.
      *
-     * @param string|array $name    变量名
+     * @param array|string $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
     public function put($name = '', $default = null, $filter = '')
     {
-        if (is_null($this->put)) {
+        if (null === $this->put) {
             $content = $this->input;
             if (false !== strpos($this->contentType(), 'application/json')) {
                 $this->put = (array) json_decode($content, true);
@@ -674,10 +683,10 @@ class Request
                 parse_str($content, $this->put);
             }
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             $this->param = [];
 
-            return $this->put = is_null($this->put) ? $name : array_merge($this->put, $name);
+            return $this->put = null === $this->put ? $name : array_merge($this->put, $name);
         }
 
         return $this->input($this->put, $name, $default, $filter);
@@ -686,9 +695,9 @@ class Request
     /**
      * 设置获取DELETE参数.
      *
-     * @param string|array $name    变量名
+     * @param array|string $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -700,9 +709,9 @@ class Request
     /**
      * 设置获取PATCH参数.
      *
-     * @param string|array $name    变量名
+     * @param array|string $name    变量名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -714,9 +723,9 @@ class Request
     /**
      * 获取request变量.
      *
-     * @param string|null  $name    数据名称
+     * @param null|string  $name    数据名称
      * @param string       $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -725,7 +734,7 @@ class Request
         if (empty($this->request)) {
             $this->request = $_REQUEST;
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             $this->param = [];
 
             return $this->request = array_merge($this->request, $name);
@@ -737,9 +746,9 @@ class Request
     /**
      * 获取server参数.
      *
-     * @param string|array $name    数据名称
+     * @param array|string $name    数据名称
      * @param string       $default 默认值
-     * @param string|array $filter  过滤方法
+     * @param array|string $filter  过滤方法
      *
      * @return mixed
      */
@@ -748,7 +757,7 @@ class Request
         if (empty($this->server)) {
             $this->server = $_SERVER;
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             return $this->server = array_merge($this->server, $name);
         }
 
@@ -758,16 +767,16 @@ class Request
     /**
      * 获取上传的文件信息.
      *
-     * @param string|array $name 名称
+     * @param array|string $name 名称
      *
-     * @return array|File|null
+     * @return null|array|File
      */
     public function file($name = '')
     {
         if (empty($this->file)) {
             $this->file = isset($_FILES) ? $_FILES : [];
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             return $this->file = array_merge($this->file, $name);
         }
         $files = $this->file;
@@ -775,10 +784,10 @@ class Request
             // 处理上传文件
             $array = [];
             foreach ($files as $key => $file) {
-                if (is_array($file['name'])) {
+                if (\is_array($file['name'])) {
                     $item  = [];
                     $keys  = array_keys($file);
-                    $count = count($file['name']);
+                    $count = \count($file['name']);
                     for ($i = 0; $i < $count; ++$i) {
                         if (empty($file['tmp_name'][$i]) || !is_file($file['tmp_name'][$i])) {
                             continue;
@@ -807,9 +816,11 @@ class Request
             if ('' === $name) {
                 // 获取全部文件
                 return $array;
-            } elseif (isset($sub) && isset($array[$name][$sub])) {
+            }
+            if (isset($sub, $array[$name][$sub])) {
                 return $array[$name][$sub];
-            } elseif (isset($array[$name])) {
+            }
+            if (isset($array[$name])) {
                 return $array[$name];
             }
         }
@@ -820,7 +831,7 @@ class Request
     /**
      * 设置或者获取当前的Header.
      *
-     * @param string|array $name    header名称
+     * @param array|string $name    header名称
      * @param string       $default 默认值
      *
      * @return string
@@ -829,7 +840,7 @@ class Request
     {
         if (empty($this->header)) {
             $header = [];
-            if (function_exists('apache_request_headers') && $result = apache_request_headers()) {
+            if (\function_exists('apache_request_headers') && $result = apache_request_headers()) {
                 $header = $result;
             } else {
                 $server = $this->server ?: $_SERVER;
@@ -848,7 +859,7 @@ class Request
             }
             $this->header = array_change_key_case($header);
         }
-        if (is_array($name)) {
+        if (\is_array($name)) {
             return $this->header = array_merge($this->header, $name);
         }
         if ('' === $name) {
@@ -863,9 +874,9 @@ class Request
      * 获取变量 支持过滤和默认值
      *
      * @param array        $data    数据源
-     * @param string|false $name    字段名
+     * @param false|string $name    字段名
      * @param mixed        $default 默认值
-     * @param string|array $filter  过滤函数
+     * @param array|string $filter  过滤函数
      *
      * @return mixed
      */
@@ -892,7 +903,7 @@ class Request
                     return $default;
                 }
             }
-            if (is_object($data)) {
+            if (\is_object($data)) {
                 return $data;
             }
         }
@@ -900,7 +911,7 @@ class Request
         // 解析过滤器
         $filter = $this->getFilter($filter, $default);
 
-        if (is_array($data)) {
+        if (\is_array($data)) {
             array_walk_recursive($data, [$this, 'filterValue'], $filter);
             reset($data);
         } else {
@@ -924,68 +935,12 @@ class Request
      */
     public function filter($filter = null)
     {
-        if (is_null($filter)) {
+        if (null === $filter) {
             return $this->filter;
-        } else {
-            $this->filter = $filter;
         }
+        $this->filter = $filter;
 
         return null;
-    }
-
-    protected function getFilter($filter, $default)
-    {
-        if (is_null($filter)) {
-            $filter = [];
-        } else {
-            $filter = $filter ?: $this->filter;
-            if (is_string($filter) && false === strpos($filter, '/')) {
-                $filter = explode(',', $filter);
-            } else {
-                $filter = (array) $filter;
-            }
-        }
-
-        $filter[] = $default;
-
-        return $filter;
-    }
-
-    /**
-     * 递归过滤给定的值
-     *
-     * @param mixed $value   键值
-     * @param mixed $key     键名
-     * @param array $filters 过滤方法+默认值
-     */
-    private function filterValue(&$value, $key, $filters)
-    {
-        unset($key);
-        $default = array_pop($filters);
-        foreach ($filters as $filter) {
-            if (is_callable($filter)) {
-                // 调用函数或者方法过滤
-                $value = call_user_func($filter, $value);
-            } elseif (is_scalar($value)) {
-                if (false !== strpos($filter, '/')) {
-                    // 正则过滤
-                    if (!preg_match($filter, $value)) {
-                        // 匹配不成功返回默认值
-                        $value = $default;
-                        break;
-                    }
-                } elseif (!empty($filter)) {
-                    // filter函数不存在时, 则使用filter_var进行过滤
-                    // filter为非整形值时, 调用filter_id取得过滤id
-                    $value = filter_var($value, is_int($filter) ? $filter : filter_id($filter));
-                    if (false === $value) {
-                        $value = $default;
-                        break;
-                    }
-                }
-            }
-        }
-        $this->filterExp($value);
     }
 
     /**
@@ -996,46 +951,8 @@ class Request
     public function filterExp(&$value)
     {
         // 过滤查询特殊字符
-        if (is_string($value) && preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT LIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i', $value)) {
+        if (\is_string($value) && preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT LIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i', $value)) {
             $value .= ' ';
-        }
-    }
-
-    /**
-     * 强制类型转换.
-     *
-     * @param string $data
-     * @param string $type
-     *
-     * @throws InvalidArgumentException
-     */
-    private function typeCast(&$data, $type)
-    {
-        switch (strtolower($type)) {
-            // 数组
-            case 'a':
-                $data = (array) $data;
-                break;
-            // 数字
-            case 'd':
-                $data = (int) $data;
-                break;
-            // 浮点
-            case 'f':
-                $data = (float) $data;
-                break;
-            // 布尔
-            case 'b':
-                $data = (bool) $data;
-                break;
-            // 字符串
-            case 's':
-            default:
-                if (is_scalar($data)) {
-                    $data = (string) $data;
-                } else {
-                    throw new InvalidArgumentException('variable type error：' . gettype($data));
-                }
         }
     }
 
@@ -1050,10 +967,10 @@ class Request
      */
     public function has($name, $type = 'param', $checkEmpty = false)
     {
-        if (empty($this->$type)) {
-            $param = $this->$type();
+        if (empty($this->{$type})) {
+            $param = $this->{$type}();
         } else {
-            $param = $this->$type;
+            $param = $this->{$type};
         }
         // 按.拆分成多维数组进行判断
         foreach (explode('.', $name) as $val) {
@@ -1070,15 +987,15 @@ class Request
     /**
      * 获取指定的参数.
      *
-     * @param string|array $name 变量名
+     * @param array|string $name 变量名
      * @param string       $type 变量类型
      *
-     * @return mixed|array
+     * @return array|mixed
      */
     public function only($name, $type = 'param')
     {
-        $param = $this->$type();
-        if (is_string($name)) {
+        $param = $this->{$type}();
+        if (\is_string($name)) {
             $name = explode(',', $name);
         }
         $item = [];
@@ -1094,15 +1011,15 @@ class Request
     /**
      * 排除指定参数获取.
      *
-     * @param string|array $name 变量名
+     * @param array|string $name 变量名
      * @param string       $type 变量类型
      *
      * @return mixed
      */
     public function except($name, $type = 'param')
     {
-        $param = $this->$type();
-        if (is_string($name)) {
+        $param = $this->{$type}();
+        if (\is_string($name)) {
             $name = explode(',', $name);
         }
         foreach ($name as $key) {
@@ -1124,11 +1041,14 @@ class Request
         $server = array_merge($_SERVER, $this->server);
         if (isset($server['HTTPS']) && ('1' == $server['HTTPS'] || 'on' == strtolower($server['HTTPS']))) {
             return true;
-        } elseif (isset($server['REQUEST_SCHEME']) && 'https' == $server['REQUEST_SCHEME']) {
+        }
+        if (isset($server['REQUEST_SCHEME']) && 'https' == $server['REQUEST_SCHEME']) {
             return true;
-        } elseif (isset($server['SERVER_PORT']) && ('443' == $server['SERVER_PORT'])) {
+        }
+        if (isset($server['SERVER_PORT']) && ('443' == $server['SERVER_PORT'])) {
             return true;
-        } elseif (isset($server['HTTP_X_FORWARDED_PROTO']) && 'https' == $server['HTTP_X_FORWARDED_PROTO']) {
+        }
+        if (isset($server['HTTP_X_FORWARDED_PROTO']) && 'https' == $server['HTTP_X_FORWARDED_PROTO']) {
             return true;
         }
 
@@ -1154,7 +1074,7 @@ class Request
      */
     public function isPjax()
     {
-        return !is_null($this->server('HTTP_X_PJAX')) ? true : false;
+        return null !== $this->server('HTTP_X_PJAX') ? true : false;
     }
 
     /**
@@ -1205,15 +1125,18 @@ class Request
     {
         if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) {
             return true;
-        } elseif (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtoupper($_SERVER['HTTP_ACCEPT']), 'VND.WAP.WML')) {
-            return true;
-        } elseif (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) {
-            return true;
-        } elseif (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up.browser|up.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) {
-            return true;
-        } else {
-            return false;
         }
+        if (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtoupper($_SERVER['HTTP_ACCEPT']), 'VND.WAP.WML')) {
+            return true;
+        }
+        if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) {
+            return true;
+        }
+        if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up.browser|up.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1302,7 +1225,7 @@ class Request
      *
      * @param array $route 路由名称
      *
-     * @return array|null
+     * @return null|array
      */
     public function routeInfo($route = [])
     {
@@ -1322,7 +1245,7 @@ class Request
      */
     public function getContent()
     {
-        if (is_null($this->content)) {
+        if (null === $this->content) {
             $this->content = $this->input;
         }
 
@@ -1349,12 +1272,111 @@ class Request
      */
     public function token($name = '__token__', $type = 'md5')
     {
-        $type  = is_callable($type) ? $type : 'md5';
-        $token = call_user_func($type, $_SERVER['REQUEST_TIME_FLOAT']);
+        $type  = \is_callable($type) ? $type : 'md5';
+        $token = \call_user_func($type, $_SERVER['REQUEST_TIME_FLOAT']);
         if ($this->isAjax()) {
             header($name . ': ' . $token);
         }
 
         return $token;
+    }
+
+    protected function getFilter($filter, $default)
+    {
+        if (null === $filter) {
+            $filter = [];
+        } else {
+            $filter = $filter ?: $this->filter;
+            if (\is_string($filter) && false === strpos($filter, '/')) {
+                $filter = explode(',', $filter);
+            } else {
+                $filter = (array) $filter;
+            }
+        }
+
+        $filter[] = $default;
+
+        return $filter;
+    }
+
+    /**
+     * 递归过滤给定的值
+     *
+     * @param mixed $value   键值
+     * @param mixed $key     键名
+     * @param array $filters 过滤方法+默认值
+     */
+    private function filterValue(&$value, $key, $filters)
+    {
+        unset($key);
+        $default = array_pop($filters);
+        foreach ($filters as $filter) {
+            if (\is_callable($filter)) {
+                // 调用函数或者方法过滤
+                $value = \call_user_func($filter, $value);
+            } elseif (is_scalar($value)) {
+                if (false !== strpos($filter, '/')) {
+                    // 正则过滤
+                    if (!preg_match($filter, $value)) {
+                        // 匹配不成功返回默认值
+                        $value = $default;
+
+                        break;
+                    }
+                } elseif (!empty($filter)) {
+                    // filter函数不存在时, 则使用filter_var进行过滤
+                    // filter为非整形值时, 调用filter_id取得过滤id
+                    $value = filter_var($value, \is_int($filter) ? $filter : filter_id($filter));
+                    if (false === $value) {
+                        $value = $default;
+
+                        break;
+                    }
+                }
+            }
+        }
+        $this->filterExp($value);
+    }
+
+    /**
+     * 强制类型转换.
+     *
+     * @param string $data
+     * @param string $type
+     *
+     * @throws InvalidArgumentException
+     */
+    private function typeCast(&$data, $type)
+    {
+        switch (strtolower($type)) {
+            // 数组
+            case 'a':
+                $data = (array) $data;
+
+                break;
+            // 数字
+            case 'd':
+                $data = (int) $data;
+
+                break;
+            // 浮点
+            case 'f':
+                $data = (float) $data;
+
+                break;
+            // 布尔
+            case 'b':
+                $data = (bool) $data;
+
+                break;
+            // 字符串
+            case 's':
+            default:
+                if (is_scalar($data)) {
+                    $data = (string) $data;
+                } else {
+                    throw new InvalidArgumentException('variable type error：' . \gettype($data));
+                }
+        }
     }
 }

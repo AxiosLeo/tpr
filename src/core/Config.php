@@ -32,28 +32,9 @@ class Config
         }
     }
 
-    private function cache($data = null)
-    {
-        $config_cache_key = 'tpr_config';
-        if (is_null($data)) {
-            if (true === \tpr\App::debug() || !Cache::contains($config_cache_key)) {
-                return false;
-            }
-
-            return Cache::fetch($config_cache_key);
-        }
-        if (!\tpr\App::debug()) {
-            Cache::save($config_cache_key, $data, 600);
-        }
-        unset($Cache);
-        unset($config_cache_key);
-
-        return $data;
-    }
-
     public function load($path = null)
     {
-        if (is_null($path)) {
+        if (null === $path) {
             $path = $this->config_path;
         } else {
             $path = \tpr\Path::format($path);
@@ -76,6 +57,24 @@ class Config
         return $this->find(explode('.', $name), $this->config, $default);
     }
 
+    private function cache($data = null)
+    {
+        $config_cache_key = 'tpr_config';
+        if (null === $data) {
+            if (true === \tpr\App::debug() || !Cache::contains($config_cache_key)) {
+                return false;
+            }
+
+            return Cache::fetch($config_cache_key);
+        }
+        if (!\tpr\App::debug()) {
+            Cache::save($config_cache_key, $data, 600);
+        }
+        unset($Cache, $config_cache_key);
+
+        return $data;
+    }
+
     /**
      * @param $keyArray
      * @param $array
@@ -85,7 +84,7 @@ class Config
      */
     private function find($keyArray, $array, $default = null)
     {
-        if (1 === count($keyArray)) {
+        if (1 === \count($keyArray)) {
             return isset($array[$keyArray[0]]) ? $array[$keyArray[0]] : $default;
         }
         $key0 = $keyArray[0];
