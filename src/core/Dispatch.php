@@ -32,7 +32,7 @@ class Dispatch
     {
         $dispatcher = new GroupCountBased($this->getRoutes());
         $request    = Container::request();
-        $routeInfo  = $dispatcher->dispatch($request->method(), $request->pathinfo());
+        $routeInfo  = $dispatcher->dispatch($request->method(), $request->url());
         $result     = null;
         Event::listen('app_cgi_dispatch', $routeInfo);
 
@@ -50,7 +50,8 @@ class Dispatch
                     $handler              = $routeInfo[1];
                     $vars                 = $routeInfo[2];
                     list($class, $action) = explode('::', $handler);
-                    $result               = $this->exec($class, $action, $vars);
+                    $request->routeInfo($routeInfo);
+                    $result = $this->exec($class, $action, $vars);
 
                     break;
             }
@@ -117,11 +118,11 @@ class Dispatch
             );
 
             $routes = \tpr\Config::get('routes', []);
+
             foreach ($routes as $route_name => $route) {
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-
             if (!\tpr\App::debug()) {
                 Cache::save($cache_key, $route_data);
                 \tpr\Files::save($cache_file, 'cache on ' . time());
