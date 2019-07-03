@@ -8,14 +8,14 @@ abstract class ResponseAbstract implements ResponseInterface
 
     protected $request;
 
+    protected $options = [];
+
+    public $content_type;
+
     public function __construct($options = [])
     {
         $this->options = array_merge($this->options, $options);
     }
-
-    protected $options = [];
-
-    public $content_type;
 
     abstract public function output($data = null);
 

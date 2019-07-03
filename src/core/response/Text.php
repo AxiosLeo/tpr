@@ -8,7 +8,7 @@ class Text extends ResponseAbstract
 {
     protected $name = 'text';
 
-    protected $options;
+    protected $options = [];
 
     public $content_type = 'text/html';
 
