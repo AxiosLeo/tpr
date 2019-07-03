@@ -147,7 +147,7 @@ abstract class Controller
             $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
         }
         $this->setResponseType(Config::get('app.default_return_type', 'html'));
-        $this->setResponseOption('view_path', $template);
+        $this->setResponseOption('views_path', $template);
         $this->setResponseOption('params', $vars);
 
         return Container::response()->output();
