@@ -18,11 +18,7 @@ class Template
 
     public function __construct()
     {
-        $options = \tpr\Config::get('views', []);
-
-        if (!empty($options)) {
-            $this->options = array_merge($this->options, $options);
-        }
+        $this->options = \tpr\Config::get('views', $this->options);
         $this->setBaseDir($this->options['base']);
     }
 
