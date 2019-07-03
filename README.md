@@ -23,13 +23,8 @@ use tpr\App;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// true : 调试模式 ; false 生产模式
-App::mode(true)->run();
-// or App::run();
-
-
-// 设置应用基础命名空间
-// App::run($app_namespace = "App\\");
+$app_namespace = "App\\";      // 设置应用基础命名空间
+App::run(app_namespace, true); // true : 调试模式 ; false 生产模式
 
 ```
 
