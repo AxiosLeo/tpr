@@ -4,7 +4,6 @@ namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\Cache;
-use tpr\library\ArrayTool;
 
 class Config
 {
@@ -25,7 +24,7 @@ class Config
             if (false === $config) {
                 $this->load();
             } else {
-                $this->config = ArrayTool::instance($config);
+                $this->config = $config;
             }
         } else {
             $this->load();
@@ -40,11 +39,22 @@ class Config
             $path = \tpr\Path::format($path);
         }
         $config_file_list = \tpr\Files::searchAllFiles($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
-
         foreach ($config_file_list as $file_path => $filename) {
+            $group = str_replace(\tpr\Path::config(), '', $file_path);
+
+            if (false === strpos($group, '/')) {
+                $group = $filename;
+            } else {
+                $group = substr($group, 0, strpos($group, '/'));
+            }
+
             $config = NoodlehausConfig::load($file_path)->all();
             if (!empty($config)) {
-                $this->config[$filename] = $config;
+                if (isset($this->config[$group]) && !empty($this->config[$group])) {
+                    $this->config[$group] = array_merge($this->config[$group], $config);
+                } else {
+                    $this->config[$group] = $config;
+                }
             }
         }
         $this->cache($this->config);
@@ -54,6 +64,9 @@ class Config
 
     public function get($name = null, $default = null)
     {
+        if (null === $name) {
+            return $this->config;
+        }
         $config = $this->find(explode('.', $name), $this->config, $default);
         if (!empty($default) && \is_array($default)) {
             $config = array_merge($default, $config);
