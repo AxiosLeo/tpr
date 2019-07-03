@@ -13,10 +13,11 @@ use tpr\exception\OptionSetErrorException;
 class App
 {
     private $app_options = [
-        'name'      => 'app',
-        'debug'     => false,
-        'mode'      => 'cgi',
-        'namespace' => 'App\\',
+        'name'         => 'app',
+        'debug'        => false,
+        'mode'         => 'cgi',
+        'namespace'    => 'App\\',
+        'config_cache' => 600,
     ];
 
     public function __call($name, $arguments)
@@ -80,7 +81,7 @@ class App
         Event::trigger('app_end');
     }
 
-    private function options($key)
+    public function options($key)
     {
         if (!isset($this->app_options[$key])) {
             throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
