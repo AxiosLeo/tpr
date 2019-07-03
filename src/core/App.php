@@ -48,15 +48,15 @@ class App
 
     public function run($app_namespace = 'App\\', $debug = null)
     {
+        if (null !== $debug) {
+            $this->setAppOption('debug', $debug);
+        }
         \tpr\Path::check();
         $event = \tpr\Config::get('event', []);
         if (!empty($event)) {
             Event::import($event);
         }
         Event::trigger('app_begin', $this->app_options);
-        if (null !== $debug) {
-            $this->setAppOption('debug', $debug);
-        }
 
         $length = \strlen($app_namespace);
         if ('\\' !== $app_namespace[$length - 1]) {
