@@ -45,9 +45,9 @@ class Template
     public function render($dir, $file, $params = [])
     {
         if (null === $this->template_loader) {
-            $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
-                'cache' => \tpr\Path::cache(),
-            ]);
+            $template_config          = \tpr\Config::get('template', []);
+            $template_config['cache'] = \tpr\App::debug() ? false : \tpr\Path::cache();
+            $this->template_loader    = new Environment(new FilesystemLoader($this->base_dir), $template_config);
         }
 
         return $this->template_loader->render($dir . $file . $this->getExt(), $params);
