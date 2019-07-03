@@ -7,7 +7,6 @@ use Closure;
 
 /**
  * Class Event.
- *
  * @see CoreEvent
  */
 class Event
@@ -15,11 +14,11 @@ class Event
     private static $events = [];
 
     /**
-     * 批量添加行为，不支持自定义方法和操作置顶.
+     * 批量添加事件，不支持自定义方法和操作置顶
      *
      * @param array $events
      */
-    public static function import(array $events) : void
+    public static function import(array $events): void
     {
         foreach ($events as $event_name => $event) {
             if (is_string($event)) {
@@ -33,7 +32,7 @@ class Event
     }
 
     /**
-     * 添加行为.
+     * 添加事件
      *
      * @param string                $name
      * @param string                $class
@@ -41,7 +40,7 @@ class Event
      * @param array                 $params
      * @param bool                  $first
      */
-    public static function add(string $name, $class, string $method = 'run', $params = [], $first = false) : void
+    public static function add(string $name, $class, string $method = 'run', $params = [], $first = false): void
     {
         if (!isset(self::$events[$name])) {
             self::$events[$name] = [];
@@ -61,13 +60,24 @@ class Event
     }
 
     /**
-     * 监听行为.
+     * 事件触发器
+     *
+     * @param string $name
+     * @param array  $data
+     */
+    public static function trigger(string $name, ...$data): void
+    {
+        self::listen($name, $data);
+    }
+
+    /**
+     * 监听事件
      *
      * @param string       $name
      * @param mixed        $data
      * @param Closure|null $callback
      */
-    public static function listen(string $name, &$data = [], Closure $callback = null) : void
+    public static function listen(string $name, &$data = [], Closure $callback = null): void
     {
         if (isset(self::$events[$name])) {
             foreach (self::$events[$name] as $event) {
@@ -77,13 +87,13 @@ class Event
     }
 
     /**
-     * 仅监听某个行为数组中的第一个.
+     * 仅监听某个事件组中的第一个
      *
      * @param string       $name
      * @param mixed        $data
      * @param Closure|null $callback
      */
-    public static function listenFirst(string $name, &$data = [], Closure $callback = null) : void
+    public static function listenFirst(string $name, &$data = [], Closure $callback = null): void
     {
         if (isset(self::$events[$name], self::$events[$name][0])) {
             self::exec(self::$events[$name][0], $data, $callback);
@@ -91,13 +101,13 @@ class Event
     }
 
     /**
-     * 获取行为数组.
+     * 获取事件数组
      *
      * @param string|null $name
      *
      * @return array
      */
-    public static function get(string $name = null) : array
+    public static function get(string $name = null): array
     {
         if (is_null($name)) {
             return self::$events;
@@ -107,14 +117,14 @@ class Event
     }
 
     /**
-     * 移除行为中的某个操作.
+     * 移除事件中的某个操作
      *
      * @param string $name
      * @param int    $index
      *
      * @return bool
      */
-    public static function remove(string $name, int $index) : bool
+    public static function remove(string $name, int $index): bool
     {
         if (isset(self::$events[$name][$index])) {
             unset(self::$events[$name][$index]);
@@ -127,13 +137,13 @@ class Event
     }
 
     /**
-     * 删除行为.
+     * 删除事件
      *
      * @param string $name
      *
      * @return bool
      */
-    public static function delete(string $name) : bool
+    public static function delete(string $name): bool
     {
         if (isset(self::$events[$name])) {
             unset(self::$events[$name]);
@@ -145,13 +155,13 @@ class Event
     }
 
     /**
-     * 执行某个行为.
+     * 执行某个事件
      *
      * @param              $event
      * @param mixed        $data
      * @param Closure|null $callback
      */
-    private static function exec($event, &$data, Closure $callback = null) : void
+    private static function exec($event, &$data, Closure $callback = null): void
     {
         $class       = $event['class'];
         $method      = $event['method'];

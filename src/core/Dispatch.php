@@ -8,6 +8,7 @@ use FastRoute\RouteParser\Std;
 use FastRoute\Dispatcher\GroupCountBased;
 use tpr\Cache;
 use tpr\Container;
+use tpr\Event;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
@@ -33,6 +34,7 @@ class Dispatch
         $request    = Container::request();
         $routeInfo  = $dispatcher->dispatch($request->method(), $request->pathinfo());
         $result     = null;
+        Event::listen("app_cgi_dispatch", $routeInfo);
         try {
             switch ($routeInfo[0]) {
                 case Dispatcher::NOT_FOUND:
@@ -42,10 +44,10 @@ class Dispatch
                     Container::response()->response('Not Allowed Method', 405, []);
                     break;
                 case Dispatcher::FOUND:
-                    $handler              = $routeInfo[1];
-                    $vars                 = $routeInfo[2];
+                    $handler = $routeInfo[1];
+                    $vars    = $routeInfo[2];
                     list($class, $action) = explode('::', $handler);
-                    $result               = $this->exec($class, $action, $vars);
+                    $result = $this->exec($class, $action, $vars);
                     break;
             }
             $response = Container::response();
@@ -109,7 +111,7 @@ class Dispatch
                 new Std(), new \FastRoute\DataGenerator\GroupCountBased()
             );
 
-            $routes = \tpr\Config::get('routes');
+            $routes = \tpr\Config::get('routes', []);
             foreach ($routes as $route_name => $route) {
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }

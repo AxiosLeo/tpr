@@ -23,6 +23,7 @@ class HttpResponseException extends RuntimeException
 
     public function send()
     {
+        Event::trigger('app_response_before');
         if (!headers_sent() && !empty($this->headers)) {
             // 发送状态码
             http_response_code($this->code);
@@ -42,6 +43,7 @@ class HttpResponseException extends RuntimeException
         }
 
         // 监听response_end
-        Event::listen('response_end', $this);
+        Event::listen('app_response_after', $this->result);
+        unset($this->result);
     }
 }
