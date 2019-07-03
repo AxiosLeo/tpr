@@ -48,11 +48,12 @@ class Template
 
     public function render($dir, $file, $params = [])
     {
-        if (is_null($this->template_loader)) {
+        if (null === $this->template_loader) {
             $this->template_loader = new Environment(new FilesystemLoader($this->base_dir), [
                 'cache' => \tpr\Path::cache(),
             ]);
         }
+
         return $this->template_loader->render($dir . $file . $this->getExt(), $params);
     }
 }

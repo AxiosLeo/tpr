@@ -2,15 +2,15 @@
 
 namespace tpr;
 
+use ArrayAccess;
+use InvalidArgumentException;
+use tpr\core\App as CoreApp;
+use tpr\core\Config;
 use tpr\core\Request;
 use tpr\core\Response;
 use tpr\core\Template;
 use tpr\exception\ClassNotExistException;
-use tpr\core\Config;
 use tpr\exception\ContainerNotExistException;
-use tpr\core\App as CoreApp;
-use ArrayAccess;
-use InvalidArgumentException;
 
 /**
  * Class Container.
@@ -36,19 +36,19 @@ final class Container implements ArrayAccess
 
     /**
      * @param string        $name
-     * @param string|object $class
+     * @param object|string $class
      * @param array         $params
      */
-    public static function bind(string $name, $class, array $params = []) : void
+    public static function bind(string $name, $class, array $params = []): void
     {
-        if (is_string($class)) {
+        if (\is_string($class)) {
             if (!class_exists($class)) {
                 throw new ClassNotExistException($name);
             }
             $class = new $class($params);
         }
-        if (!is_object($class)) {
-            throw new InvalidArgumentException('$class is invalid argument : ' . gettype($class));
+        if (!\is_object($class)) {
+            throw new InvalidArgumentException('$class is invalid argument : ' . \gettype($class));
         }
         self::$object[$name] = $class;
     }
@@ -60,7 +60,7 @@ final class Container implements ArrayAccess
         }
     }
 
-    public static function import(array $classArray) : void
+    public static function import(array $classArray): void
     {
         foreach ($classArray as $key => $class) {
             self::bind($key, $class);
@@ -76,19 +76,19 @@ final class Container implements ArrayAccess
         return null;
     }
 
-    public static function has(string $name) : bool
+    public static function has(string $name): bool
     {
         return isset(self::$object[$name]);
     }
 
-    public static function delete(string $name) : void
+    public static function delete(string $name): void
     {
         if (isset(self::$object[$name])) {
             unset(self::$object[$name]);
         }
     }
 
-    public function offsetExists($key) : bool
+    public function offsetExists($key): bool
     {
         return self::has($key);
     }
@@ -98,12 +98,12 @@ final class Container implements ArrayAccess
         return self::get($key);
     }
 
-    public function offsetSet($key, $value) : void
+    public function offsetSet($key, $value): void
     {
         self::bind($key, $value);
     }
 
-    public function offsetUnset($key) : void
+    public function offsetUnset($key): void
     {
         self::delete($key);
     }

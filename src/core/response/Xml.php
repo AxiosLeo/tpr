@@ -4,7 +4,8 @@ namespace tpr\core\response;
 
 class Xml extends ResponseAbstract
 {
-    protected $name = 'xml';
+    public $content_type = 'text/xml';
+    protected $name      = 'xml';
 
     protected $options = [
         // 根节点名
@@ -19,8 +20,6 @@ class Xml extends ResponseAbstract
         'encoding'  => 'utf-8',
     ];
 
-    public $content_type = 'text/xml';
-
     /**
      * 处理数据.
      *
@@ -28,7 +27,7 @@ class Xml extends ResponseAbstract
      *
      * @return string
      */
-    public function output($data = null) : string
+    public function output($data = null): string
     {
         // XML数据转换
         return $this->xmlEncode($data, $this->options['root_node'], $this->options['item_node'], $this->options['root_attr'], $this->options['item_key'], $this->options['encoding']);
@@ -48,7 +47,7 @@ class Xml extends ResponseAbstract
      */
     protected function xmlEncode($data, $root, $item, $attr, $id, $encoding)
     {
-        if (is_array($attr)) {
+        if (\is_array($attr)) {
             $array = [];
             foreach ($attr as $key => $value) {
                 $array[] = "{$key}=\"{$value}\"";
@@ -83,7 +82,7 @@ class Xml extends ResponseAbstract
                 $key         = $item;
             }
             $xml .= "<{$key}{$attr}>";
-            $xml .= (is_array($val) || is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;
+            $xml .= (\is_array($val) || \is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;
             $xml .= "</{$key}>";
         }
 

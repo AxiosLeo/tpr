@@ -21,14 +21,6 @@ class Console extends Command
     private static $inputHandle;
     private static $outputHandle;
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        self::initIO($input, $output);
-        $this->input  = self::input();
-        $this->output = self::output();
-        unset($input, $output);
-    }
-
     /**
      * @return InputInterface
      */
@@ -43,6 +35,14 @@ class Console extends Command
     public static function output()
     {
         return self::$outputHandle;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        self::initIO($input, $output);
+        $this->input  = self::input();
+        $this->output = self::output();
+        unset($input, $output);
     }
 
     private static function initIO(InputInterface $input, OutputInterface $output)

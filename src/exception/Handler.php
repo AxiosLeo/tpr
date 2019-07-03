@@ -2,17 +2,17 @@
 
 namespace tpr\exception;
 
-use tpr\Container;
-use tpr\exception\handler\JsonpHandler;
 use tpr\App;
+use tpr\Container;
+use tpr\core\Response;
 use tpr\exception\handler\DefaultHandler;
+use tpr\exception\handler\JsonpHandler;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
-use tpr\core\Response;
 
 class Handler
 {
@@ -34,7 +34,7 @@ class Handler
 
     public static function init()
     {
-        if (is_null(self::$run)) {
+        if (null === self::$run) {
             self::$run = new Run();
             self::$run->allowQuit();
 
@@ -68,7 +68,7 @@ class Handler
 
     public static function addHandler($handler)
     {
-        if (is_string($handler)) {
+        if (\is_string($handler)) {
             if (isset(self::$handle_list[$handler])) {
                 $handler = self::$handle_list[$handler];
             }
@@ -80,8 +80,8 @@ class Handler
             $handler = new $handler();
         }
 
-        if (is_object($handler)) {
-            /*** @var HandlerInterface $handler ** */
+        if (\is_object($handler)) {
+            // @var HandlerInterface $handler
             self::$run->appendHandler($handler);
         }
     }

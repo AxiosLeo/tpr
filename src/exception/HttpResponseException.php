@@ -2,8 +2,8 @@
 
 namespace tpr\exception;
 
-use tpr\Event;
 use RuntimeException;
+use tpr\Event;
 
 class HttpResponseException extends RuntimeException
 {
@@ -29,7 +29,7 @@ class HttpResponseException extends RuntimeException
             http_response_code($this->code);
             // 发送头部信息
             foreach ($this->headers as $name => $val) {
-                if (is_null($val)) {
+                if (null === $val) {
                     header($name);
                 } else {
                     header($name . ':' . $val);
@@ -37,7 +37,7 @@ class HttpResponseException extends RuntimeException
             }
         }
         echo $this->result;
-        if (function_exists('fastcgi_finish_request')) {
+        if (\function_exists('fastcgi_finish_request')) {
             // 提高页面响应
             fastcgi_finish_request();
         }

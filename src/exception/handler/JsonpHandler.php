@@ -33,13 +33,13 @@ class JsonpHandler extends Handler
     }
 
     /**
-     * @param bool|null $returnFrames
+     * @param null|bool $returnFrames
      *
-     * @return bool|$this
+     * @return $this|bool
      */
     public function addTraceToOutput($returnFrames = null)
     {
-        if (0 == func_num_args()) {
+        if (0 == \func_num_args()) {
             return $this->returnFrames;
         }
 

@@ -2,8 +2,8 @@
 
 namespace tpr\exception;
 
-use Throwable;
 use RuntimeException;
+use Throwable;
 
 class FileNotFoundException extends RuntimeException
 {

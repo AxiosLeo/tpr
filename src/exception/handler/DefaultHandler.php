@@ -7,7 +7,7 @@ use Whoops\Handler\Handler;
 class DefaultHandler extends Handler
 {
     /**
-     * @return int|null
+     * @return null|int
      */
     public function handle()
     {

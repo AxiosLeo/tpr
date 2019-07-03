@@ -2,11 +2,12 @@
 
 namespace tpr;
 
-use tpr\exception\ClassNotExistException;
 use Closure;
+use tpr\exception\ClassNotExistException;
 
 /**
  * Class Event.
+ *
  * @see CoreEvent
  */
 class Event
@@ -14,16 +15,16 @@ class Event
     private static $events = [];
 
     /**
-     * 批量添加事件，不支持自定义方法和操作置顶
+     * 批量添加事件，不支持自定义方法和操作置顶.
      *
      * @param array $events
      */
     public static function import(array $events): void
     {
         foreach ($events as $event_name => $event) {
-            if (is_string($event)) {
+            if (\is_string($event)) {
                 self::add($event_name, $event);
-            } elseif (is_array($event)) {
+            } elseif (\is_array($event)) {
                 foreach ($event as $event_item) {
                     self::add($event_name, $event_item);
                 }
@@ -32,11 +33,11 @@ class Event
     }
 
     /**
-     * 添加事件
+     * 添加事件.
      *
      * @param string                $name
      * @param string                $class
-     * @param string|object|Closure $method
+     * @param Closure|object|string $method
      * @param array                 $params
      * @param bool                  $first
      */
@@ -46,7 +47,7 @@ class Event
             self::$events[$name] = [];
         }
 
-        if (is_string($class) && !class_exists($class)) {
+        if (\is_string($class) && !class_exists($class)) {
             throw new ClassNotExistException($class);
         }
 
@@ -60,7 +61,7 @@ class Event
     }
 
     /**
-     * 事件触发器
+     * 事件触发器.
      *
      * @param string $name
      * @param array  $data
@@ -71,11 +72,11 @@ class Event
     }
 
     /**
-     * 监听事件
+     * 监听事件.
      *
      * @param string       $name
      * @param mixed        $data
-     * @param Closure|null $callback
+     * @param null|Closure $callback
      */
     public static function listen(string $name, &$data = [], Closure $callback = null): void
     {
@@ -87,11 +88,11 @@ class Event
     }
 
     /**
-     * 仅监听某个事件组中的第一个
+     * 仅监听某个事件组中的第一个.
      *
      * @param string       $name
      * @param mixed        $data
-     * @param Closure|null $callback
+     * @param null|Closure $callback
      */
     public static function listenFirst(string $name, &$data = [], Closure $callback = null): void
     {
@@ -101,15 +102,15 @@ class Event
     }
 
     /**
-     * 获取事件数组
+     * 获取事件数组.
      *
-     * @param string|null $name
+     * @param null|string $name
      *
      * @return array
      */
     public static function get(string $name = null): array
     {
-        if (is_null($name)) {
+        if (null === $name) {
             return self::$events;
         }
 
@@ -117,7 +118,7 @@ class Event
     }
 
     /**
-     * 移除事件中的某个操作
+     * 移除事件中的某个操作.
      *
      * @param string $name
      * @param int    $index
@@ -137,7 +138,7 @@ class Event
     }
 
     /**
-     * 删除事件
+     * 删除事件.
      *
      * @param string $name
      *
@@ -155,11 +156,11 @@ class Event
     }
 
     /**
-     * 执行某个事件
+     * 执行某个事件.
      *
      * @param              $event
      * @param mixed        $data
-     * @param Closure|null $callback
+     * @param null|Closure $callback
      */
     private static function exec($event, &$data, Closure $callback = null): void
     {
@@ -167,15 +168,15 @@ class Event
         $method      = $event['method'];
         $extra_param = $event['params'];
         if ($class instanceof Closure) {
-            $result = call_user_func_array($class, [&$data]);
-        } elseif (is_object($class)) {
-            $result = call_user_func_array([$class, $method], [&$data, $extra_param]);
+            $result = \call_user_func_array($class, [&$data]);
+        } elseif (\is_object($class)) {
+            $result = \call_user_func_array([$class, $method], [&$data, $extra_param]);
         } else {
             $obj    = new $class();
-            $result = call_user_func_array([$obj, $method], [&$data, $extra_param]);
+            $result = \call_user_func_array([$obj, $method], [&$data, $extra_param]);
         }
-        if (!is_null($callback)) {
-            call_user_func_array($callback, [&$data, $result]);
+        if (null !== $callback) {
+            \call_user_func_array($callback, [&$data, $result]);
         }
     }
 }

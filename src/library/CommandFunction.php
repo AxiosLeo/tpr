@@ -35,7 +35,7 @@ trait CommandFunction
             $action = Console::input()->getArgument('action');
         }
 
-        if ($use_option && is_null($action)) {
+        if ($use_option && null === $action) {
             $action = Console::input()->getOption('action');
         }
 
@@ -44,7 +44,7 @@ trait CommandFunction
         }
 
         if (empty($action)) {
-            if (is_null($default)) {
+            if (null === $default) {
                 $default = $action_list[0];
             } elseif (is_numeric($default) && isset($action_list[$default])) {
                 $default = $action_list[$default];

@@ -4,13 +4,12 @@ namespace tpr\core\response;
 
 abstract class ResponseAbstract implements ResponseInterface
 {
+    public $content_type;
     protected $name;
 
     protected $request;
 
     protected $options = [];
-
-    public $content_type;
 
     public function __construct($options = [])
     {
@@ -19,12 +18,12 @@ abstract class ResponseAbstract implements ResponseInterface
 
     abstract public function output($data = null);
 
-    public function options($key = null, $value = null) : array
+    public function options($key = null, $value = null): array
     {
-        if (is_null($key) && is_null($value)) {
+        if (null === $key && null === $value) {
             return $this->options;
         }
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $this->options = array_merge($this->options, $key);
         } else {
             $this->options[$key] = $value;

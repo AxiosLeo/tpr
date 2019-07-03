@@ -4,7 +4,7 @@ namespace tpr\core;
 
 class Path
 {
-    const DS = DIRECTORY_SEPARATOR;
+    const DS = \DIRECTORY_SEPARATOR;
 
     private $path = [
         'framework' => TPR_FRAMEWORK_PATH,
@@ -29,10 +29,22 @@ class Path
         'command' => 'command',
     ];
 
+    public function __call($name, $arguments)
+    {
+        if (empty($arguments)) {
+            return $this->get($name);
+        }
+        if (empty($arguments[0])) {
+            return $this->get($name);
+        }
+
+        return $this->set($name, $arguments[0]);
+    }
+
     public function check(): array
     {
         if (empty($this->path['root'])) {
-            $this->path['root'] = dirname(dirname(dirname(TPR_FRAMEWORK_PATH))) . self::DS;
+            $this->path['root'] = \dirname(\dirname(\dirname(TPR_FRAMEWORK_PATH))) . self::DS;
         }
         foreach ($this->default_path as $key => $value) {
             if (empty($this->path[$key])) {
@@ -53,7 +65,7 @@ class Path
 
     public function format($path, $create = false): string
     {
-        $path = DIRECTORY_SEPARATOR != substr($path, -1) ? $path . DIRECTORY_SEPARATOR : $path;
+        $path = \DIRECTORY_SEPARATOR != substr($path, -1) ? $path . \DIRECTORY_SEPARATOR : $path;
         if ($create && !file_exists($path)) {
             if (!mkdir($path, 0700, true)) {
                 return null;
@@ -63,7 +75,7 @@ class Path
         return $path;
     }
 
-    public function dir($arrayDirItem, $divider = DIRECTORY_SEPARATOR): string
+    public function dir($arrayDirItem, $divider = \DIRECTORY_SEPARATOR): string
     {
         $path = '';
         foreach ($arrayDirItem as $item) {
@@ -83,16 +95,5 @@ class Path
         $this->path[$path_name] = $path;
 
         return $this->path[$path_name];
-    }
-
-    public function __call($name, $arguments)
-    {
-        if (empty($arguments)) {
-            return $this->get($name);
-        } elseif (empty($arguments[0])) {
-            return $this->get($name);
-        } else {
-            return $this->set($name, $arguments[0]);
-        }
     }
 }
