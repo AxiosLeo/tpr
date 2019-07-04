@@ -47,11 +47,12 @@ class App
         return $this;
     }
 
-    public function run($app_namespace = 'App\\', $debug = null)
+    public function run($debug = null)
     {
         if (null !== $debug) {
             $this->setAppOption('debug', $debug);
         }
+        $app_namespace = $this->options('namespace');
         \tpr\Path::check();
         $event = \tpr\Config::get('event', []);
         if (!empty($event)) {
