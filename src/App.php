@@ -11,7 +11,7 @@ use tpr\core\App as CoreApp;
  *
  * @method CoreApp setAppOption($key, $value)               static
  * @method mixed   options($key)                            static
- * @method void    run($namespace = "App\\", $debug = true) static
+ * @method void    run($debug = true) static
  * @method CoreApp app()                                    static
  * @method void    removeHeaders($headers = [])             static
  * @method string  name()                                   static
