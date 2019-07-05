@@ -95,11 +95,6 @@ class App
     {
         Event::trigger('app_ini_begin');
         $this->setAppOption('name', $app_name);
-        Container::import([
-            'request'  => Request::class,
-            'response' => Response::class,
-            'template' => Template::class,
-        ]);
         Handler::init();
         Event::trigger('app_ini_end');
 
@@ -109,7 +104,12 @@ class App
     private function cgiRunner()
     {
         $dispatch = new Dispatch($this->options('namespace'));
-        Container::bind('cgi_dispatch', $dispatch);
+        Container::import([
+            'request'      => Request::class,
+            'response'     => Response::class,
+            'template'     => Template::class,
+            'cgi_dispatch' => $dispatch
+        ]);
         $dispatch->run();
     }
 

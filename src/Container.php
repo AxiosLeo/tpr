@@ -14,7 +14,6 @@ use tpr\exception\ContainerNotExistException;
 
 /**
  * Class Container.
- *
  * @method Config   config()   static
  * @method Request  request()  static
  * @method Response response() static
@@ -53,7 +52,14 @@ final class Container implements ArrayAccess
         self::$object[$name] = $class;
     }
 
-    public static function bindNotExist(string $name, $class, array $params = [])
+    /**
+     * Bind when not exist
+     *
+     * @param string $name
+     * @param        $class
+     * @param array  $params
+     */
+    public static function bindNX(string $name, $class, array $params = [])
     {
         if (!self::has($name)) {
             self::bind($name, $class, $params);
@@ -63,7 +69,7 @@ final class Container implements ArrayAccess
     public static function import(array $classArray): void
     {
         foreach ($classArray as $key => $class) {
-            self::bind($key, $class);
+            self::bindNX($key, $class);
         }
     }
 
