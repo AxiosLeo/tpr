@@ -108,8 +108,9 @@ class App
             'request'      => Request::class,
             'response'     => Response::class,
             'template'     => Template::class,
-            'cgi_dispatch' => $dispatch
+            'cgi_dispatch' => $dispatch,
         ]);
+
         $dispatch->run();
     }
 

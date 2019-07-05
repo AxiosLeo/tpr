@@ -14,6 +14,7 @@ use tpr\exception\ContainerNotExistException;
 
 /**
  * Class Container.
+ *
  * @method Config   config()   static
  * @method Request  request()  static
  * @method Response response() static
@@ -53,7 +54,7 @@ final class Container implements ArrayAccess
     }
 
     /**
-     * Bind when not exist
+     * Bind when not exist.
      *
      * @param string $name
      * @param        $class

@@ -3,11 +3,9 @@
 namespace tpr\exception;
 
 use tpr\App;
-use tpr\Container;
 use tpr\core\Response;
 use tpr\exception\handler\DefaultHandler;
 use tpr\exception\handler\JsonpHandler;
-use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -41,7 +39,7 @@ class Handler
             if (!App::debug()) {
                 self::$handler_type = 'default';
             } else {
-                self::$handler_type = Container::response()->getResponseType();
+                self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
             }
             self::addHandler(self::$handler_type);
             self::handleOperator()->register();
