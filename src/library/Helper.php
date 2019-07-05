@@ -12,4 +12,21 @@ final class Helper
 
         return $template;
     }
+
+    public static function xmlToArray($xml)
+    {
+        libxml_disable_entity_loader(true);
+
+        return json_decode(
+            json_encode(
+                simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)
+            ),
+            true
+        );
+    }
+
+    public static function nonce($salt)
+    {
+        return md5($salt . uniqid(md5(microtime(true)), true));
+    }
 }

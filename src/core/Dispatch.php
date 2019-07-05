@@ -39,7 +39,7 @@ class Dispatch
         try {
             switch ($routeInfo[0]) {
                 case Dispatcher::NOT_FOUND:
-                    $result = $this->defaultRoute($request->pathinfo(), $request->param());
+                    $result = $this->defaultRoute($request->pathInfo(), $request->param());
 
                     break;
                 case Dispatcher::METHOD_NOT_ALLOWED:
