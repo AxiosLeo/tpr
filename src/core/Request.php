@@ -162,7 +162,7 @@ class Request
         $post = $this->getRequestData('post', function () {
             $type = $this->contentType();
             if ('json' === $type) {
-                $post = (array)json_decode($this->contentType(), true);
+                $post = (array) json_decode($this->contentType(), true);
             } elseif ('xml' === $type) {
                 $post = Helper::xmlToArray($this->content());
             } else {
@@ -180,7 +180,7 @@ class Request
     {
         $put = $this->getRequestData('put', function () {
             if ('json' === $this->contentType()) {
-                $put = (array)json_decode($this->content(), true);
+                $put = (array) json_decode($this->content(), true);
             } else {
                 parse_str($this->content(), $put);
             }
@@ -395,7 +395,8 @@ class Request
         if ($refresh) {
             return $this->refreshToken();
         }
-        return $this->getRequestData("token", function () {
+
+        return $this->getRequestData('token', function () {
             return $this->refreshToken();
         });
     }
@@ -406,7 +407,8 @@ class Request
     private function refreshToken()
     {
         $token = md5(\tpr\App::name() . uniqid(md5($this->time(true)), true));
-        return $this->setRequestData("token", $token);
+
+        return $this->setRequestData('token', $token);
     }
 
     /**
