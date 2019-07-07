@@ -13,11 +13,12 @@ use tpr\exception\OptionSetErrorException;
 class App
 {
     private $app_options = [
-        'name'         => 'app',
-        'debug'        => false,
-        'mode'         => 'cgi',
-        'namespace'    => 'App\\',
-        'config_cache' => 600,
+        'name'       => 'app',
+        'debug'      => false,
+        'mode'       => 'cgi',
+        'namespace'  => 'App\\',
+        'cache_time' => 600,
+        'lang'       => 'zh-cn',
     ];
 
     public function __call($name, $arguments)

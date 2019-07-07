@@ -15,6 +15,7 @@ use tpr\core\App as CoreApp;
  * @method CoreApp app()                        static
  * @method void    removeHeaders($headers = []) static
  * @method string  name()                       static
+ * @method string  lang()                       static
  * @method bool    debug()                      static
  * @method string  mode()                       static
  * @method string  namespace()                  static
