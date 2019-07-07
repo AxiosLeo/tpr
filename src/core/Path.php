@@ -17,7 +17,7 @@ class Path
         'vendor'    => '',
         'index'     => '',
         'views'     => '',
-        'lang'      => ''
+        'lang'      => '',
     ];
 
     private $default_path = [
@@ -28,7 +28,7 @@ class Path
         'index'   => 'public',
         'views'   => 'views',
         'command' => 'command',
-        'lang'    => 'lang'
+        'lang'    => 'lang',
     ];
 
     public function __call($name, $arguments)
