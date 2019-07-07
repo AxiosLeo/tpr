@@ -6,6 +6,7 @@ use ArrayAccess;
 use InvalidArgumentException;
 use tpr\core\App as CoreApp;
 use tpr\core\Config;
+use tpr\core\Lang as CoreLang;
 use tpr\core\Request;
 use tpr\core\Response;
 use tpr\core\Template;
@@ -20,6 +21,7 @@ use tpr\exception\ContainerNotExistException;
  * @method Response response() static
  * @method Template template() static
  * @method CoreApp  app()      static
+ * @method CoreLang lang()     static
  */
 final class Container implements ArrayAccess
 {

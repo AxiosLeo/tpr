@@ -94,6 +94,7 @@ class App
 
     private function init($app_name = 'app')
     {
+        Container::bindNX('lang', new Lang());
         Event::trigger('app_ini_begin');
         $this->setAppOption('name', $app_name);
         Handler::init();

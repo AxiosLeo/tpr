@@ -2,6 +2,7 @@
 
 namespace tpr\core;
 
+use tpr\Container;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -48,6 +49,7 @@ class Template
             $template_config          = \tpr\Config::get('template', []);
             $template_config['cache'] = \tpr\App::debug() ? false : \tpr\Path::cache();
             $this->template_loader    = new Environment(new FilesystemLoader($this->base_dir), $template_config);
+            $this->template_loader->addGlobal('lang', Container::get('lang'));
         }
 
         return $this->template_loader->render($dir . $file . $this->getExt(), $params);
