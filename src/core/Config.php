@@ -86,9 +86,9 @@ class Config
             return Cache::fetch($config_cache_key);
         }
         if (!\tpr\App::debug()) {
-            Cache::save($config_cache_key, $data, \tpr\App::options('config_cache'));
+            Cache::save($config_cache_key, $data, \tpr\App::options('cache_time'));
         }
-        unset($Cache, $config_cache_key);
+        unset($config_cache_key);
 
         return $data;
     }
