@@ -87,12 +87,12 @@ class Path
         return $path;
     }
 
-    private function get($path_name): string
+    public function get($path_name): string
     {
         return isset($this->path[$path_name]) ? $this->path[$path_name] : '';
     }
 
-    private function set($path_name, $path): string
+    public function set($path_name, $path): string
     {
         $this->path[$path_name] = $path;
 

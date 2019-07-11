@@ -24,6 +24,8 @@ use tpr\core\Path as CorePath;
  * @method string cache($path = null)                                static
  * @method string format($path, $create = false)                     static
  * @method string dir($arrayDirItem, $divider = DIRECTORY_SEPARATOR) static
+ * @method string get($path_name)                                    static
+ * @method string set($path_name, $path)                             static
  */
 class Path extends Facade
 {

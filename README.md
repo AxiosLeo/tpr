@@ -9,8 +9,6 @@
 
 ## 安装使用
 
-> 以前的 axios/tpr 包不再维护，已弃用
-
 ``` shell
 composer require axios/tpr:dev-3.0-beta
 ```
@@ -27,21 +25,6 @@ $app_namespace = "App\\";      // 设置应用基础命名空间
 App::run(app_namespace, true); // true : 调试模式 ; false 生产模式
 
 ```
-
-* 启动 web 服务
-
-> index.php 为入口文件
-
-```shell
-# 进入具有入口文件的项目目录
-cd /path/to/project/public/
-
-# 启动服务
-php -S localhost:8088
-```
-
-* 访问
-> [locahost::8088/index.php](locahost::8088/index.php])
 
 ## 简单应用
 
