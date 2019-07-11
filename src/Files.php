@@ -9,7 +9,7 @@ use tpr\core\Files as CoreFiles;
  *
  * @see     CoreFiles
  *
- * @method readJson($filename, $is_array = true)                                                 static
+ * @method readJsonFile($filename, $is_array = true)                                             static
  * @method searchFile($dir, $extArray = [], $exclude = [])                                       static
  * @method searchDir($dir, $exclude = [])                                                        static
  * @method save($filename, $text, $blank = 0)                                                    static
