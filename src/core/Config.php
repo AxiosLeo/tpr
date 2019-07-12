@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;

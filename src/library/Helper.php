@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tpr\library;
 
 final class Helper
@@ -13,7 +15,7 @@ final class Helper
         return $template;
     }
 
-    public static function xmlToArray($xml)
+    public static function xmlToArray(string $xml)
     {
         libxml_disable_entity_loader(true);
 
@@ -25,7 +27,7 @@ final class Helper
         );
     }
 
-    public static function nonce($salt)
+    public static function nonce(string $salt)
     {
         return md5($salt . uniqid(md5(microtime(true)), true));
     }

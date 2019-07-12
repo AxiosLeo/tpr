@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tpr\core;
 
 class Path
@@ -69,9 +71,7 @@ class Path
     {
         $path = \DIRECTORY_SEPARATOR != substr($path, -1) ? $path . \DIRECTORY_SEPARATOR : $path;
         if ($create && !file_exists($path)) {
-            if (!mkdir($path, 0700, true)) {
-                return null;
-            }
+            @mkdir($path, 0700, true);
         }
 
         return $path;

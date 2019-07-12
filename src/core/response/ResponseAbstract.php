@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tpr\core\response;
 
 abstract class ResponseAbstract implements ResponseInterface
