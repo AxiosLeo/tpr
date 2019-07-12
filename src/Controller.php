@@ -25,7 +25,6 @@ abstract class Controller
     {
         $this->request       = Container::get('request');
         $this->response      = Container::get('response');
-        $this->response_type = $this->response->getResponseType();
     }
 
     protected function setResponseType($response_type = 'json')
@@ -146,7 +145,9 @@ abstract class Controller
         if (!empty($this->vars)) {
             $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
         }
-        $this->setResponseType(Config::get('app.default_return_type', 'html'));
+        if (null === $this->response_type) {
+            $this->setResponseType(Config::get('app.default_return_type', 'html'));
+        }
         $this->setResponseOption('views_path', $template);
         $this->setResponseOption('params', $vars);
 
