@@ -130,6 +130,8 @@ class App
         }
         if (empty($cli_config['namespace'])) {
             $cli_config['namespace'] = $this->options('namespace');
+        } else {
+            $this->setAppOption('namespace', $cli_config['namespace']);
         }
         Event::trigger('app_load_command');
         foreach ($commands as $file_path => $filename) {
