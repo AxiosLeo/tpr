@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tpr\core;
 
 class Files
 {
-    public function readJsonFile($filename, $is_array = true)
+    public function readJsonFile(string $filename)
     {
         if (!file_exists($filename)) {
             return null;
         }
-        $content = file_get_contents($filename);
 
-        return $is_array ? json_decode($content, true) : $content;
+        return json_decode($this->read($filename), true);
     }
 
-    public function searchFile($dir, $extArray = [], $exclude = [])
+    public function searchFile(string $dir, $extArray = [], $exclude = []): array
     {
         $list = [];
         if (is_dir($dir)) {
@@ -37,7 +38,7 @@ class Files
         return $list;
     }
 
-    public function searchDir($dir, $exclude = [])
+    public function searchDir($dir, $exclude = []): array
     {
         $list = [];
         if (is_dir($dir)) {
@@ -64,7 +65,7 @@ class Files
      *
      * @return array
      */
-    public function searchAllFiles($dir, $extInclude = '*', $asc = false, $sorting_type = SORT_FLAG_CASE)
+    public function searchAllFiles($dir, $extInclude = '*', $asc = false, $sorting_type = SORT_FLAG_CASE): array
     {
         $list = [];
         if (is_dir($dir)) {
@@ -96,7 +97,7 @@ class Files
         return $list;
     }
 
-    public function append($filename, $text, $blank = 0)
+    public function append($filename, $text, $blank = 0): void
     {
         if (!file_exists(\dirname($filename))) {
             @mkdir(\dirname($filename));
@@ -113,7 +114,7 @@ class Files
         fclose($fp);
     }
 
-    public function save($filename, $text, $blank = 0)
+    public function save($filename, $text, $blank = 0): void
     {
         if (!file_exists(\dirname($filename))) {
             @mkdir(\dirname($filename), 0777, true);
@@ -130,7 +131,7 @@ class Files
         fclose($fp);
     }
 
-    public function delete($path)
+    public function delete($path): void
     {
         if (is_dir($path)) {
             $path   = \tpr\Path::format($path);
@@ -149,5 +150,20 @@ class Files
         } else {
             @unlink($path);
         }
+    }
+
+    public function move($source, $target): bool
+    {
+        return rename($source, $target);
+    }
+
+    public function copy(string $source, string $target): bool
+    {
+        return copy($source, $target);
+    }
+
+    public function read(string $path, int $offset = 0, $maxlen = null): string
+    {
+        return file_get_contents($path, false, null, $offset, $maxlen);
     }
 }
