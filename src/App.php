@@ -4,33 +4,71 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\App as CoreApp;
+use tpr\client\ClientAbstract;
+use tpr\client\DefaultClient;
+use tpr\client\SwooleHttpClient;
+use tpr\client\SwooleTcpClient;
 
 /**
- * Class App.
+ * Class Client.
  *
- * @see     CoreApp
- *
- * @method CoreApp setAppOption($key, $value)   static
- * @method mixed   options($key)                static
- * @method void    run($debug = true)           static
- * @method CoreApp app()                        static
- * @method void    removeHeaders($headers = []) static
- * @method string  name()                       static
- * @method string  lang()                       static
- * @method bool    debug()                      static
- * @method string  mode()                       static
- * @method string  namespace()                  static
+ * @method DefaultClient    default()    static
+ * @method SwooleHttpClient swooleHttp() static
+ * @method SwooleTcpClient  swooleTcp()  static
  */
-class App extends Facade
+class App
 {
-    protected static function getContainName()
+    public static $clients = [
+        'default'    => DefaultClient::class,
+        'swooleHttp' => SwooleHttpClient::class,
+        'swooleTcp'  => SwooleTcpClient::class,
+    ];
+
+    private static $client;
+
+    public static function __callStatic($name, $arguments)
     {
-        return 'app';
+        return self::client($name);
     }
 
-    protected static function getFacadeClass()
+    /**
+     * @param string $name
+     * @param string $class
+     */
+    public static function setClient(string $name, string $class)
     {
-        return CoreApp::class;
+        self::$clients[$name] = $class;
+    }
+
+    /**
+     * @param null $name
+     *
+     * @throws \Exception
+     *
+     * @return ClientAbstract
+     */
+    public static function client($name = null)
+    {
+        if (null === $name) {
+            return self::$client;
+        }
+
+        if (null === self::$client) {
+            if (isset(self::$clients[$name])) {
+                Container::bind('client', self::$clients[$name]);
+            } else {
+                $tmp = [];
+                $n   = 0;
+                foreach (self::$clients as $key => $client) {
+                    $tmp[$n++] = $key . ' => ' . $client;
+                }
+
+                throw new \Exception("Client not Exist. Supported Clients : \n" . implode("\n", $tmp));
+            }
+
+            self::$client = Container::get('client');
+        }
+
+        return self::$client;
     }
 }

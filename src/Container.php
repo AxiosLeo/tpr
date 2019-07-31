@@ -6,10 +6,10 @@ namespace tpr;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use tpr\core\App as CoreApp;
+use tpr\client\ClientAbstract;
 use tpr\core\Config;
 use tpr\core\Lang as CoreLang;
-use tpr\core\Request;
+use tpr\core\request\RequestAbstract;
 use tpr\core\Response;
 use tpr\core\Template;
 use tpr\exception\ClassNotExistException;
@@ -18,12 +18,12 @@ use tpr\exception\ContainerNotExistException;
 /**
  * Class Container.
  *
- * @method Config   config()   static
- * @method Request  request()  static
- * @method Response response() static
- * @method Template template() static
- * @method CoreApp  app()      static
- * @method CoreLang lang()     static
+ * @method Config          config()   static
+ * @method RequestAbstract request()  static
+ * @method Response        response() static
+ * @method Template        template() static
+ * @method ClientAbstract  app()      static
+ * @method CoreLang        lang()     static
  */
 final class Container implements ArrayAccess
 {
