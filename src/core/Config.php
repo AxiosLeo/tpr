@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
+use tpr\App;
 use tpr\Cache;
 
 class Config
@@ -21,7 +22,7 @@ class Config
 
     public function init()
     {
-        if (!\tpr\App::debug()) {
+        if (!App::client()->debug()) {
             $config = $this->cache();
             if (false === $config) {
                 $this->load();
@@ -81,14 +82,14 @@ class Config
     {
         $config_cache_key = 'tpr_config';
         if (null === $data) {
-            if (true === \tpr\App::debug() || !Cache::contains($config_cache_key)) {
+            if (true === App::client()->debug() || !Cache::contains($config_cache_key)) {
                 return false;
             }
 
             return Cache::fetch($config_cache_key);
         }
-        if (!\tpr\App::debug()) {
-            Cache::save($config_cache_key, $data, \tpr\App::options('cache_time'));
+        if (!App::client()->debug()) {
+            Cache::save($config_cache_key, $data, App::client()->options('cache_time'));
         }
         unset($config_cache_key);
 

@@ -38,7 +38,7 @@ class Handler
             self::$run = new Run();
             self::$run->allowQuit();
 
-            if (!App::debug()) {
+            if (!App::client()->debug()) {
                 self::$handler_type = 'default';
             } else {
                 self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
@@ -49,12 +49,14 @@ class Handler
     }
 
     /**
-     * @param          $exception
+     * @param $exception
      * @param Response $response
+     *
+     * @throws \Exception
      */
     public static function render($exception, $response)
     {
-        if (App::debug() && $response->getResponseType() !== self::$handler_type) {
+        if (App::client()->debug() && $response->getResponseType() !== self::$handler_type) {
             self::$handler_type = $response->getResponseType();
             if (isset(self::$handle_list[self::$handler_type])) {
                 self::handleOperator()->clearHandlers();

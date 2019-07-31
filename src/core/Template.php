@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
+use tpr\App;
 use tpr\Container;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -49,7 +50,7 @@ class Template
     {
         if (null === $this->template_loader) {
             $template_config          = \tpr\Config::get('template', []);
-            $template_config['cache'] = \tpr\App::debug() ? false : \tpr\Path::cache();
+            $template_config['cache'] = App::client()->debug() ? false : \tpr\Path::cache();
             $this->template_loader    = new Environment(new FilesystemLoader($this->base_dir), $template_config);
             $this->template_loader->addGlobal('lang', Container::get('lang'));
         }

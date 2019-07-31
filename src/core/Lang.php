@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
+use tpr\App;
 use tpr\Cache;
 use tpr\Event;
 
@@ -18,7 +19,7 @@ class Lang
 
     public function __construct()
     {
-        $this->langDefault = \tpr\App::lang();
+        $this->langDefault = App::client()->options('lang');
         $this->langDir     = \tpr\Path::lang();
     }
 
@@ -77,7 +78,7 @@ class Lang
     private function loadCache()
     {
         if (empty($this->word)) {
-            if (true === \tpr\App::debug() || !Cache::contains(self::LANG_CACHE_KEY)) {
+            if (true === App::client()->debug() || !Cache::contains(self::LANG_CACHE_KEY)) {
                 return;
             }
 
@@ -87,8 +88,8 @@ class Lang
 
     private function setCache()
     {
-        if (!\tpr\App::debug()) {
-            Cache::save(self::LANG_CACHE_KEY, $this->word, \tpr\App::options('cache_time'));
+        if (!App::client()->debug()) {
+            Cache::save(self::LANG_CACHE_KEY, $this->word, App::client()->options('cache_time'));
         }
 
         return true;

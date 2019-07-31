@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use Exception;
+use tpr\App;
 use tpr\Container;
 use tpr\core\response\ResponseAbstract;
 use tpr\exception\ClassNotExistException;
@@ -120,7 +121,7 @@ class Response
         if (!empty($headers)) {
             $this->headers = array_merge($this->headers, $headers);
         }
-        if (\tpr\App::debug()) {
+        if (App::client()) {
             $this->setHeaders('x-mode', 'debug');
         }
 

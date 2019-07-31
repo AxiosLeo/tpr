@@ -9,6 +9,7 @@ use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
+use tpr\App;
 use tpr\Cache;
 use tpr\Container;
 use tpr\Event;
@@ -41,7 +42,8 @@ class Dispatch
         try {
             switch ($routeInfo[0]) {
                 case Dispatcher::NOT_FOUND:
-                    $result = $this->defaultRoute($request->pathInfo(), $request->param());
+                    $pathinfo = $request->pathInfo() ?? '';
+                    $result   = $this->defaultRoute($pathinfo, $request->param());
 
                     break;
                 case Dispatcher::METHOD_NOT_ALLOWED:
@@ -60,7 +62,7 @@ class Dispatch
             $response = Container::response();
             $response->response($result);
         } catch (HttpResponseException $e) {
-            $e->send();
+            Event::listen('http_response', $e);
         } catch (Exception $e) {
             Handler::render($e, Container::response());
         }
@@ -105,9 +107,9 @@ class Dispatch
     private function getRoutes()
     {
         $cache_file = Path::cache() . 'routes.lock';
-        $cache_key  = \tpr\App::debug() . '.routes.cache';
+        $cache_key  = App::client()->debug() . '.routes.cache';
         $route_data = [];
-        if (!\tpr\App::debug() && file_exists($cache_file)) {
+        if (!App::client()->debug() && file_exists($cache_file)) {
             if (Cache::contains($cache_key)) {
                 $route_data = Cache::fetch($cache_key);
             }
@@ -125,7 +127,7 @@ class Dispatch
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-            if (!\tpr\App::debug()) {
+            if (!App::client()->debug()) {
                 Cache::save($cache_key, $route_data);
                 \tpr\Files::save($cache_file, 'cache on ' . time());
             }
