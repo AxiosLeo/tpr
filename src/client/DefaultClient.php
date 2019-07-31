@@ -2,62 +2,38 @@
 
 declare(strict_types=1);
 
-namespace tpr\core;
+namespace tpr\client;
 
 use Composer\Autoload\ClassLoader;
-use Exception;
 use Symfony\Component\Console\Application;
+use tpr\Config;
 use tpr\Container;
+use tpr\core\Dispatch;
+use tpr\core\Lang;
+use tpr\core\request\DefaultRequest;
+use tpr\core\Response;
+use tpr\core\Template;
 use tpr\Event;
 use tpr\exception\Handler;
-use tpr\exception\OptionSetErrorException;
+use tpr\exception\HttpResponseException;
+use tpr\Files;
+use tpr\Path;
 
-class App
+class DefaultClient extends ClientAbstract
 {
-    private $app_options = [
+    protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
-        'mode'       => 'cgi',
         'namespace'  => 'App\\',
         'cache_time' => 600,
         'lang'       => 'zh-cn',
     ];
 
-    public function __call($name, $arguments)
+    public function run()
     {
-        unset($arguments);
-
-        return $this->options($name);
-    }
-
-    public function app()
-    {
-        return $this;
-    }
-
-    public function setAppOption($key, $value)
-    {
-        if (!isset($this->app_options[$key])) {
-            throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
-        }
-
-        if (\gettype($value) !== \gettype($this->app_options[$key])) {
-            throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Value_Type);
-        }
-
-        $this->app_options[$key] = $value;
-
-        return $this;
-    }
-
-    public function run($debug = null)
-    {
-        if (null !== $debug) {
-            $this->setAppOption('debug', $debug);
-        }
         $app_namespace = $this->options('namespace');
-        \tpr\Path::check();
-        $event = \tpr\Config::get('event', []);
+        Path::check();
+        $event = Config::get('event', []);
         if (!empty($event)) {
             Event::import($event);
         }
@@ -66,15 +42,51 @@ class App
         $length = \strlen($app_namespace);
         if ('\\' !== $app_namespace[$length - 1]) {
             $app_namespace .= '\\';
+            $this->setOption('namespace', $app_namespace);
         }
 
-        $this->setAppOption('namespace', $app_namespace);
+        $this->init();
+        $this->dispatch();
+    }
 
-        $this->init($this->options('name'));
+    public function send(HttpResponseException $httpException)
+    {
+        Event::trigger('app_response_before');
+        if (!headers_sent() && !empty($httpException->headers)) {
+            // 发送状态码
+            http_response_code($httpException->http_status);
+            // 发送头部信息
+            foreach ($httpException->headers as $name => $val) {
+                if (null === $val) {
+                    header($name);
+                } else {
+                    header($name . ':' . $val);
+                }
+            }
+        }
+        echo $httpException->result;
+        if (\function_exists('fastcgi_finish_request')) {
+            // 提高页面响应
+            fastcgi_finish_request();
+        }
 
+        // 监听response_end
+        Event::listen('app_response_after', $httpException->result);
+        unset($httpException->result);
+    }
+
+    protected function init()
+    {
+        Handler::init();
+        Container::bindNX('lang', new Lang());
+        Event::trigger('app_ini_begin');
+        Event::trigger('app_ini_end');
+    }
+
+    private function dispatch()
+    {
         $ClassLoader = new ClassLoader();
-        $this->setAppOption('namespace', $app_namespace);
-        $ClassLoader->addPsr4($app_namespace, \tpr\Path::app());
+        $ClassLoader->addPsr4($this->options('namespace'), Path::app());
         $ClassLoader->register();
         $mode = \PHP_SAPI == 'cli' ? \PHP_SAPI : 'cgi';
         if ('cgi' == $mode) {
@@ -85,60 +97,42 @@ class App
         Event::trigger('app_end');
     }
 
-    public function options($key)
-    {
-        if (!isset($this->app_options[$key])) {
-            throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
-        }
-
-        return $this->app_options[$key];
-    }
-
-    private function init($app_name = 'app')
-    {
-        Container::bindNX('lang', new Lang());
-        Event::trigger('app_ini_begin');
-        $this->setAppOption('name', $app_name);
-        Handler::init();
-        Event::trigger('app_ini_end');
-
-        return $this;
-    }
-
     private function cgiRunner()
     {
         $dispatch = new Dispatch($this->options('namespace'));
         Container::import([
-            'request'      => Request::class,
             'response'     => Response::class,
             'template'     => Template::class,
             'cgi_dispatch' => $dispatch,
         ]);
+        Container::bind('request', DefaultRequest::class);
+
+        Event::add('http_response', $this, 'send');
 
         $dispatch->run();
     }
 
     private function cliRunner()
     {
-        $cli_config = \tpr\Config::get('cli', [
+        $cli_config = Config::get('cli', [
             'name'      => 'Command Tools',
             'version'   => '0.0.1',
             'namespace' => '',
         ]);
         $app        = new Application($cli_config['name'], $cli_config['version']);
-        $commands   = \tpr\Files::searchAllFiles(\tpr\Path::command(), ['php']);
+        $commands   = Files::searchAllFiles(Path::command(), ['php']);
         if (empty($commands)) {
-            throw new Exception("Not have any command file in '" . \tpr\Path::command() . "'");
+            throw new \Exception("Not have any command file in '" . Path::command() . "'");
         }
         if (empty($cli_config['namespace'])) {
             $cli_config['namespace'] = $this->options('namespace');
         } else {
-            $this->setAppOption('namespace', $cli_config['namespace']);
+            $this->setOption('namespace', $cli_config['namespace']);
         }
         Event::trigger('app_load_command');
         foreach ($commands as $file_path => $filename) {
             require_once $file_path;
-            $class = $cli_config['namespace'] . str_replace('/', '\\', str_replace(['.php', \tpr\Path::command()], '', $file_path));
+            $class = $cli_config['namespace'] . str_replace('/', '\\', str_replace(['.php', Path::command()], '', $file_path));
             if (class_exists($class)) {
                 $command = new $class();
                 $app->add($command);
