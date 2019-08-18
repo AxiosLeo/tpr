@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\Request;
+use tpr\core\request\RequestAbstract;
 use tpr\core\Response;
 
 abstract class Controller
 {
     /**
-     * @var Request
+     * @var RequestAbstract
      */
     protected $request;
 
