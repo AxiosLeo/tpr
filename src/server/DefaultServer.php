@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tpr\client;
+namespace tpr\server;
 
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application;
@@ -19,7 +19,7 @@ use tpr\exception\HttpResponseException;
 use tpr\Files;
 use tpr\Path;
 
-class DefaultClient extends ClientAbstract
+class DefaultServer extends ServerAbstract
 {
     protected $app_options = [
         'name'       => 'app',

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tpr\client;
+namespace tpr\server;
 
 use tpr\exception\OptionSetErrorException;
 
@@ -13,7 +13,7 @@ use tpr\exception\OptionSetErrorException;
  * @method bool   debug()
  * @method string namespace()
  */
-abstract class ClientAbstract implements ClientInterFace
+abstract class ServerAbstract implements ServerInterFace
 {
     protected $app_options = [];
 

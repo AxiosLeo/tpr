@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tpr\client;
+namespace tpr\server;
 
-interface ClientInterFace
+interface ServerInterFace
 {
     public function run();
 

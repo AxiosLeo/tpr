@@ -6,7 +6,7 @@ namespace tpr;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use tpr\client\ClientAbstract;
+use tpr\server\ServerAbstract;
 use tpr\core\Config;
 use tpr\core\Lang as CoreLang;
 use tpr\core\request\RequestAbstract;
@@ -22,7 +22,7 @@ use tpr\exception\ContainerNotExistException;
  * @method RequestAbstract request()  static
  * @method Response        response() static
  * @method Template        template() static
- * @method ClientAbstract  app()      static
+ * @method ServerAbstract  app()      static
  * @method CoreLang        lang()     static
  */
 final class Container implements ArrayAccess

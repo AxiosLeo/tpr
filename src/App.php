@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\client\ClientAbstract;
-use tpr\client\DefaultClient;
-use tpr\client\SwooleHttpClient;
-use tpr\client\SwooleTcpClient;
+use tpr\server\ServerAbstract;
+use tpr\server\DefaultServer;
+use tpr\server\SwooleHttpServer;
+use tpr\server\SwooleTcpServer;
 
 /**
  * Class Client.
  *
- * @method DefaultClient    default()    static
- * @method SwooleHttpClient swooleHttp() static
- * @method SwooleTcpClient  swooleTcp()  static
+ * @method DefaultServer    default()    static
+ * @method SwooleHttpServer swooleHttp() static
+ * @method SwooleTcpServer  swooleTcp()  static
  */
 class App
 {
     public static $clients = [
-        'default'    => DefaultClient::class,
-        'swooleHttp' => SwooleHttpClient::class,
-        'swooleTcp'  => SwooleTcpClient::class,
+        'default'    => DefaultServer::class,
+        'swooleHttp' => SwooleHttpServer::class,
+        'swooleTcp'  => SwooleTcpServer::class,
     ];
 
     private static $client;
@@ -45,7 +45,7 @@ class App
      *
      * @throws \Exception
      *
-     * @return ClientAbstract
+     * @return ServerAbstract
      */
     public static function client($name = null)
     {

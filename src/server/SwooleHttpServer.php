@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tpr\client;
+namespace tpr\server;
 
 use Composer\Autoload\ClassLoader;
 use Swoole\Http\Request;
@@ -18,7 +18,7 @@ use tpr\exception\HttpResponseException;
 use tpr\Lang;
 use tpr\Path;
 
-class SwooleHttpClient extends ClientAbstract
+class SwooleHttpServer extends ServerAbstract
 {
     protected $app_options = [
         'name'       => 'app',
