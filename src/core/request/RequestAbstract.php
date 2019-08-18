@@ -6,6 +6,15 @@ namespace tpr\core\request;
 
 use tpr\App;
 
+/**
+ * Class RequestAbstract
+ *
+ * @package tpr\core\request
+ * @method string method()
+ * @method string url()
+ * @method string pathInfo()
+ * @method mixed param()
+ */
 abstract class RequestAbstract
 {
     private $request_data = [];
@@ -13,6 +22,8 @@ abstract class RequestAbstract
     abstract public function __call($name, $arguments);
 
     abstract public function time($format = null, $micro = false);
+
+    abstract public function routeInfo($routeInfo = null);
 
     public function token($refresh = false)
     {
