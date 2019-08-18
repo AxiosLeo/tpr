@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\server;
 
 use tpr\exception\OptionSetErrorException;
+use tpr\library\ArrayTool;
 
 /**
  * Class ClientAbstract.
@@ -17,14 +18,15 @@ abstract class ServerAbstract implements ServerInterFace
 {
     protected $app_options = [];
 
+    /**
+     * @var ArrayTool
+     */
+    protected $options;
+
     public function __call($name, $arguments)
     {
         unset($arguments);
-        if (isset($this->app_options[$name])) {
-            return $this->app_options[$name];
-        }
-
-        return null;
+        return $this->optionsProvider()->get($name);
     }
 
     abstract public function run();
@@ -37,19 +39,7 @@ abstract class ServerAbstract implements ServerInterFace
      */
     public function setOption($key, $value = null)
     {
-        if (\is_array($key)) {
-            $this->app_options = array_merge($this->app_options, $key);
-        } else {
-            if (!isset($this->app_options[$key])) {
-                throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
-            }
-
-            if (\gettype($value) !== \gettype($this->app_options[$key])) {
-                throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Value_Type);
-            }
-
-            $this->app_options[$key] = $value;
-        }
+        $this->optionsProvider()->set($key, $value);
 
         return $this;
     }
@@ -59,11 +49,20 @@ abstract class ServerAbstract implements ServerInterFace
         if (null === $key) {
             return $this->app_options;
         }
-        if (!isset($this->app_options[$key])) {
+        $value = $this->optionsProvider()->get($key);
+        if (null === $value) {
             throw new OptionSetErrorException($key, OptionSetErrorException::Not_Supported_Option_Name);
         }
 
-        return $this->app_options[$key];
+        return $value;
+    }
+
+    private function optionsProvider()
+    {
+        if (null === $this->options) {
+            $this->options = new ArrayTool($this->app_options);
+        }
+        return $this->options;
     }
 
     abstract protected function init();

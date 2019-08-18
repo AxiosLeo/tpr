@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\server;
 
@@ -27,13 +27,15 @@ class SwooleHttpServer extends ServerAbstract
         'cache_time' => 600,
         'lang'       => 'zh-cn',
         'swoole'     => [
-            'mode'       => SWOOLE_BASE,
-            'sock_type'  => SWOOLE_SOCK_TCP,
-            'listen'     => '0.0.0.0',
-            'port'       => 8080,
-            'worker_num' => 4,
-            'daemonize'  => false,
-            'backlog'    => 128,
+            'mode'          => SWOOLE_BASE,
+            'sock_type'     => SWOOLE_SOCK_TCP,
+            'listen'        => '0.0.0.0',
+            'port'          => 8080,
+            'worker_num'    => 4,
+            'daemonize'     => false,
+            'backlog'       => 128,
+            'max_request'   => 100,
+            'dispatch_mode' => 1,
         ],
     ];
 
