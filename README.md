@@ -10,7 +10,7 @@
 ## 安装使用
 
 ``` shell
-composer require axios/tpr:dev-3.0-beta
+composer require axios/tpr:dev-3.0
 ```
 
 * 入口文件示例
