@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core;
 
@@ -96,7 +96,7 @@ class Path
 
     public function set($path_name, $path): string
     {
-        $this->path[$path_name] = $path;
+        $this->path[$path_name] = $this->format($path);
 
         return $this->path[$path_name];
     }
