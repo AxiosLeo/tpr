@@ -1,19 +1,18 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\core\request;
 
 use tpr\App;
 
 /**
- * Class RequestAbstract
+ * Class RequestAbstract.
  *
- * @package tpr\core\request
  * @method string method()
  * @method string url()
  * @method string pathInfo()
- * @method mixed param()
+ * @method mixed  param()
  */
 abstract class RequestAbstract
 {

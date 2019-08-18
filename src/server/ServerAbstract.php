@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\server;
 
@@ -26,6 +26,7 @@ abstract class ServerAbstract implements ServerInterFace
     public function __call($name, $arguments)
     {
         unset($arguments);
+
         return $this->optionsProvider()->get($name);
     }
 
@@ -57,13 +58,14 @@ abstract class ServerAbstract implements ServerInterFace
         return $value;
     }
 
+    abstract protected function init();
+
     private function optionsProvider()
     {
         if (null === $this->options) {
             $this->options = new ArrayTool($this->app_options);
         }
+
         return $this->options;
     }
-
-    abstract protected function init();
 }

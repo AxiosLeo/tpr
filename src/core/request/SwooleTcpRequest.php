@@ -1,17 +1,14 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace tpr\core\request;
 
 /**
- * Class SwooleTcpRequest
- *
- * @package tpr\core\request
+ * Class SwooleTcpRequest.
  */
 class SwooleTcpRequest extends RequestAbstract
 {
-
     private $id;
     private $from_id;
     private $data;
@@ -29,7 +26,6 @@ class SwooleTcpRequest extends RequestAbstract
 
     public function time($format = null, $micro = false)
     {
-
     }
 
     public function id()
@@ -45,5 +41,14 @@ class SwooleTcpRequest extends RequestAbstract
     public function data()
     {
         return $this->data();
+    }
+
+    public function routeInfo($routeInfo = null)
+    {
+        if (null === $routeInfo) {
+            return $this->getRequestData('route_info');
+        }
+
+        return $this->setRequestData('route_info', $routeInfo);
     }
 }

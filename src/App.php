@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\server\ServerAbstract;
 use tpr\server\DefaultServer;
+use tpr\server\ServerAbstract;
 use tpr\server\SwooleHttpServer;
 use tpr\server\SwooleTcpServer;
 

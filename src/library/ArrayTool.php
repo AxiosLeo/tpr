@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\library;
 
@@ -85,7 +85,7 @@ class ArrayTool implements ArrayAccess
             foreach ($key as $k => $v) {
                 $this->set($k, $v);
             }
-        } else if (null !== $key) {
+        } elseif (null !== $key) {
             $keyArray    = $this->filter(explode($this->separator, $key), 'number', true);
             $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
         }
@@ -118,6 +118,7 @@ class ArrayTool implements ArrayAccess
                 $tmp = $tmp[$k];
             } else {
                 $tmp = $this->defaultValue($key, $default);
+
                 break;
             }
         }

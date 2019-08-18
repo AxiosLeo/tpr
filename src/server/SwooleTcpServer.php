@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\server;
 
@@ -44,7 +44,6 @@ class SwooleTcpServer extends ServerAbstract
 
     public function run()
     {
-
         $this->init();
         $this->server->start();
     }

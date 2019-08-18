@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\core\request;
 
@@ -10,9 +10,8 @@ use tpr\library\File;
 use tpr\library\Helper;
 
 /**
- * Class DefaultRequest
+ * Class DefaultRequest.
  *
- * @package tpr\core\request
  * @method string method()
  * @method string env()
  * @method string protocol()
@@ -163,7 +162,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         $post = $this->getRequestData('post', function () {
             $type = $this->contentType();
             if ('json' === $type) {
-                $post = (array)json_decode($this->contentType(), true);
+                $post = (array) json_decode($this->contentType(), true);
             } elseif ('xml' === $type) {
                 $post = Helper::xmlToArray($this->content());
             } else {
@@ -181,7 +180,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     {
         $put = $this->getRequestData('put', function () {
             if ('json' === $this->contentType()) {
-                $put = (array)json_decode($this->content(), true);
+                $put = (array) json_decode($this->content(), true);
             } else {
                 parse_str($this->content(), $put);
             }

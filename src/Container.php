@@ -6,7 +6,6 @@ namespace tpr;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use tpr\server\ServerAbstract;
 use tpr\core\Config;
 use tpr\core\Lang as CoreLang;
 use tpr\core\request\RequestAbstract;
@@ -14,6 +13,7 @@ use tpr\core\Response;
 use tpr\core\Template;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
+use tpr\server\ServerAbstract;
 
 /**
  * Class Container.

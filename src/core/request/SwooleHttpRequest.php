@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\core\request;
 
@@ -9,9 +9,8 @@ use tpr\Event;
 use tpr\library\ArrayTool;
 
 /**
- * Class SwooleHttpRequest
+ * Class SwooleHttpRequest.
  *
- * @package tpr\core\request
  * @method string method()
  * @method string protocol()
  * @method string port()
@@ -58,27 +57,27 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function accept()
     {
-        return $this->header("accept-language");
+        return $this->header('accept-language');
     }
 
     public function host()
     {
-        return $this->header("host");
+        return $this->header('host');
     }
 
     public function userAgent()
     {
-        return $this->header("user-agent");
+        return $this->header('user-agent');
     }
 
     public function url($is_whole = false)
     {
-        return $this->server("request_uri");
+        return $this->server('request_uri');
     }
 
     public function contentType()
     {
-        return $this->header("content-type");
+        return $this->header('content-type');
     }
 
     public function param($name = null, $default = null)
@@ -113,15 +112,15 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function get($name = null, $default = null)
     {
-        return $this->getRequestData("get", function () {
-            return $this->setRequestData("get", $this->swoole_request->get);
+        return $this->getRequestData('get', function () {
+            return $this->setRequestData('get', $this->swoole_request->get);
         });
     }
 
     public function post($name = null, $default = null)
     {
-        return $this->getRequestData("post", function () {
-            return $this->setRequestData("post", $this->swoole_request->post);
+        return $this->getRequestData('post', function () {
+            return $this->setRequestData('post', $this->swoole_request->post);
         });
     }
 
@@ -129,7 +128,7 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
     {
         $put = $this->getRequestData('put', function () {
             if ('json' === $this->contentType()) {
-                $put = (array)json_decode($this->content(), true);
+                $put = (array) json_decode($this->content(), true);
             } else {
                 parse_str($this->content(), $put);
             }
@@ -152,15 +151,15 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function request($name = null, $default = null)
     {
-        return $this->getRequestData("request", function () {
-            return $this->setRequestData("request", $this->swoole_request->request);
+        return $this->getRequestData('request', function () {
+            return $this->setRequestData('request', $this->swoole_request->request);
         });
     }
 
     public function content()
     {
-        return $this->getRequestData("content", function () {
-            return $this->setRequestData("content", $this->swoole_request->rawContent());
+        return $this->getRequestData('content', function () {
+            return $this->setRequestData('content', $this->swoole_request->rawContent());
         });
     }
 
@@ -209,8 +208,8 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function header($name = null, $default = null)
     {
-        $header = $this->getRequestData("header", function () {
-            return $this->setRequestData("header", $this->swoole_request->header);
+        $header = $this->getRequestData('header', function () {
+            return $this->setRequestData('header', $this->swoole_request->header);
         });
 
         if (null === $name) {
