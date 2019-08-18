@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core\request;
 
@@ -30,7 +30,7 @@ interface RequestInterface
 
     public function content();
 
-    public function time($micro = false, $format = null);
+    public function time($format = null, $micro = false);
 
     public function server($name = null);
 

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core\request;
 
@@ -9,7 +9,33 @@ use tpr\library\ArrayTool;
 use tpr\library\File;
 use tpr\library\Helper;
 
-class DefaultRequest extends RequestAbstract
+/**
+ * Class DefaultRequest
+ *
+ * @package tpr\core\request
+ * @method string method()
+ * @method string env()
+ * @method string protocol()
+ * @method string host()
+ * @method string domain()
+ * @method string port()
+ * @method string pathInfo()
+ * @method string indexFile()
+ * @method string userAgent()
+ * @method string accept()
+ * @method string lang()
+ * @method string encoding()
+ * @method string query()
+ * @method string remotePort()
+ * @method bool   isGet()
+ * @method bool   isPost()
+ * @method bool   isPut()
+ * @method bool   isDelete()
+ * @method bool   isHead()
+ * @method bool   isPatch()
+ * @method bool   isOptions()
+ */
+class DefaultRequest extends RequestAbstract implements RequestInterface
 {
     private $server_map = [
         'method'     => 'REQUEST_METHOD',
@@ -137,7 +163,7 @@ class DefaultRequest extends RequestAbstract
         $post = $this->getRequestData('post', function () {
             $type = $this->contentType();
             if ('json' === $type) {
-                $post = (array) json_decode($this->contentType(), true);
+                $post = (array)json_decode($this->contentType(), true);
             } elseif ('xml' === $type) {
                 $post = Helper::xmlToArray($this->content());
             } else {
@@ -155,7 +181,7 @@ class DefaultRequest extends RequestAbstract
     {
         $put = $this->getRequestData('put', function () {
             if ('json' === $this->contentType()) {
-                $put = (array) json_decode($this->content(), true);
+                $put = (array)json_decode($this->content(), true);
             } else {
                 parse_str($this->content(), $put);
             }
@@ -199,11 +225,11 @@ class DefaultRequest extends RequestAbstract
         });
     }
 
-    public function time($micro = false, $format = null)
+    public function time($format = null, $micro = false)
     {
         $time = $micro ? $this->server('REQUEST_TIME_FLOAT') : $this->server('REQUEST_TIME');
 
-        return null === $format ? $time : date($format, $time);
+        return null === $format || 'timeout' === $format ? $time : date($format, $time);
     }
 
     public function server($name = null)

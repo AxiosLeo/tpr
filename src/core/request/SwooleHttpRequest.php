@@ -1,12 +1,38 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core\request;
 
 use Swoole\Http\Request;
 
-class SwooleHttpRequest extends RequestAbstract
+/**
+ * Class SwooleHttpRequest
+ *
+ * @package tpr\core\request
+ * @method string method()
+ * @method string env()
+ * @method string protocol()
+ * @method string host()
+ * @method string domain()
+ * @method string port()
+ * @method string pathInfo()
+ * @method string indexFile()
+ * @method string userAgent()
+ * @method string accept()
+ * @method string lang()
+ * @method string encoding()
+ * @method string query()
+ * @method string remotePort()
+ * @method bool   isGet()
+ * @method bool   isPost()
+ * @method bool   isPut()
+ * @method bool   isDelete()
+ * @method bool   isHead()
+ * @method bool   isPatch()
+ * @method bool   isOptions()
+ */
+class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 {
     private $swoole_request;
 
@@ -63,7 +89,7 @@ class SwooleHttpRequest extends RequestAbstract
     {
     }
 
-    public function time($micro = false, $format = null)
+    public function time($format = null, $micro = false)
     {
     }
 
