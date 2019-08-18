@@ -16,13 +16,10 @@ use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\Lang;
-use tpr\library\CommandFunction;
 use tpr\Path;
 
 class SwooleHttpClient extends ClientAbstract
 {
-    use CommandFunction;
-
     protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
@@ -44,11 +41,6 @@ class SwooleHttpClient extends ClientAbstract
      * @var Server
      */
     private $server;
-
-    /**
-     * @var Dispatch
-     */
-    private $dispatch;
 
     public function run()
     {
