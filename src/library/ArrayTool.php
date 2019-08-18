@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\library;
 
@@ -34,7 +34,7 @@ class ArrayTool implements ArrayAccess
      *
      * @desc 可自定义排除过滤
      *
-     * @param $array
+     * @param        $array
      * @param string $except
      * @param bool   $reset_key 是否重置键名
      *
@@ -118,12 +118,16 @@ class ArrayTool implements ArrayAccess
                 $tmp = $tmp[$k];
             } else {
                 $tmp = $this->defaultValue($key, $default);
-
                 break;
             }
         }
 
         return $tmp;
+    }
+
+    public function has($key)
+    {
+        return null === $this->get($key) ? false : true;
     }
 
     /**
@@ -149,7 +153,7 @@ class ArrayTool implements ArrayAccess
     /**
      * 正序排序.
      *
-     * @param $key
+     * @param        $key
      * @param string $rule
      * @param bool   $save_key
      *
@@ -165,7 +169,7 @@ class ArrayTool implements ArrayAccess
     /**
      * 倒序排序.
      *
-     * @param $key
+     * @param        $key
      * @param string $rule
      * @param bool   $save_key
      *
