@@ -85,7 +85,7 @@ class ArrayTool implements ArrayAccess
             foreach ($key as $k => $v) {
                 $this->set($k, $v);
             }
-        } else {
+        } else if (null !== $key) {
             $keyArray    = $this->filter(explode($this->separator, $key), 'number', true);
             $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
         }
