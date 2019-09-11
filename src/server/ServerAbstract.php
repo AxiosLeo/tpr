@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\server;
 
@@ -16,6 +16,7 @@ use tpr\library\ArrayTool;
  */
 abstract class ServerAbstract implements ServerInterFace
 {
+    protected $server_name;
     protected $app_options = [];
 
     /**
@@ -56,6 +57,11 @@ abstract class ServerAbstract implements ServerInterFace
         }
 
         return $value;
+    }
+
+    public function getServerName()
+    {
+        return $this->server_name;
     }
 
     abstract protected function init();

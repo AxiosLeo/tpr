@@ -21,6 +21,7 @@ use tpr\Path;
 
 class DefaultServer extends ServerAbstract
 {
+    protected $server_name = ServerNameEnum::DEFAULT_SERVER;
     protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
