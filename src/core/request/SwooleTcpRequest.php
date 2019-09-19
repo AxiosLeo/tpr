@@ -12,6 +12,7 @@ class SwooleTcpRequest extends RequestAbstract
     private $id;
     private $from_id;
     private $data;
+    private $microtime = 0;
 
     public function __construct($id, $from_id, $data)
     {
@@ -24,8 +25,14 @@ class SwooleTcpRequest extends RequestAbstract
     {
     }
 
-    public function time($format = null, $micro = false)
+    public function time($format = null, $micro = false, $microtime = null)
     {
+        if (null !== $microtime) {
+            $this->microtime = $microtime;
+        }
+        $time = $micro ? $this->microtime : (int) $microtime;
+
+        return null === $format ? $time : date($format, $time);
     }
 
     public function id()

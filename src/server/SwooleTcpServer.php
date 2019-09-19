@@ -83,6 +83,7 @@ class SwooleTcpServer extends ServerAbstract
         $this->server->on('receive', static function (Server $server, $id, $from_id, $data) {
             Event::trigger('swoole_request');
             $request = new SwooleTcpRequest($id, $from_id, $data);
+            $request->time(null, false, microtime(true));
             Container::bind('request', $request);
             Event::delete('http_response');
             Event::add('http_response', __CLASS__, 'send', [$server, $id]);

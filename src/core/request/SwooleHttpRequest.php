@@ -167,7 +167,7 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
     {
         $time = $micro ? $this->server('request_time_float') : $this->server('request_time');
 
-        return null === $format || 'timeout' === $format ? $time : date($format, $time);
+        return null === $format ? $time : date($format, $time);
     }
 
     public function server($name = null)

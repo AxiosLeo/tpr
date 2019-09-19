@@ -228,7 +228,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     {
         $time = $micro ? $this->server('REQUEST_TIME_FLOAT') : $this->server('REQUEST_TIME');
 
-        return null === $format || 'timeout' === $format ? $time : date($format, $time);
+        return null === $format ? $time : date($format, $time);
     }
 
     public function server($name = null)
