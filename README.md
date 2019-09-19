@@ -21,10 +21,11 @@ use tpr\App;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-App::default()                        // 选择服务端类型 DefaultServer | SwooleHttpServer | SwooleTcpServer
-    ->setOption("namespace","App\\")  // 设置应用基础命名空间
-    ->setOption('name', 'app_name')   // 设置 app 标识
-    ->setOption('debug', true)        // true : 调试模式 ; false 生产模式
+App::default()                                  // 选择服务端类型 DefaultServer | SwooleHttpServer | SwooleTcpServer
+    ->setOption("namespace","App\\")            // 设置应用基础命名空间
+    ->setOption('name', 'app_name')             // 设置 app 标识
+    ->setOption('debug', true)                  // true : 调试模式 ; false 生产模式
+    ->setOption('option_name', 'option_value')  // 设置其它任意应用全局配置
     ->run();
 
 ```
