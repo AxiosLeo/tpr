@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace tpr;
 
 use tpr\core\request\RequestAbstract;
+use tpr\core\request\RequestInterface;
 use tpr\core\Response;
 
 abstract class Controller
 {
     /**
-     * @var RequestAbstract
+     * @var RequestAbstract|RequestInterface
      */
     protected $request;
 
@@ -25,8 +26,8 @@ abstract class Controller
 
     public function __construct()
     {
-        $this->request       = Container::get('request');
-        $this->response      = Container::get('response');
+        $this->request  = Container::get('request');
+        $this->response = Container::get('response');
     }
 
     protected function setResponseType($response_type = 'json')

@@ -200,10 +200,23 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function isHttps()
     {
+        $is_https = $this->getRequestData('is_https', function () {
+            return $this->setRequestData('is_https', 'https' === $this->scheme());
+        });
+
+        return $is_https;
     }
 
     public function scheme()
     {
+        $scheme = $this->getRequestData('scheme', function () {
+            return $this->setRequestData(
+                'scheme',
+                strpos($this->server('server_protocol'), 'HTTP/1.1') ? 'http' : 'https'
+            );
+        });
+
+        return $scheme;
     }
 
     public function header($name = null, $default = null)
@@ -221,5 +234,10 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function file($name = null)
     {
+        $files = $this->getRequestData('files', function () {
+            return $this->setRequestData('files', $this->resolveFiles($this->swoole_request->files));
+        });
+
+        return $this->getFile($files, $name);
     }
 }
