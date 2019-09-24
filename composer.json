@@ -26,10 +26,12 @@
     "vlucas/valitron": "^1.4",
     "doctrine/cache": "^1.8",
     "symfony/console": "^4.3",
-    "ralouphie/mimey": "^2.1"
+    "ralouphie/mimey": "^2.1",
+    "myclabs/php-enum": "^1.7"
   },
   "require-dev": {
-    "symfony/var-dumper": "*"
+    "symfony/var-dumper": "*",
+    "swoft/swoole-ide-helper": "^4.4"
   },
   "autoload": {
     "psr-4": {
