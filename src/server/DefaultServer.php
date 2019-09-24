@@ -21,7 +21,6 @@ use tpr\Path;
 
 class DefaultServer extends ServerAbstract
 {
-    protected $server_name = ServerNameEnum::DEFAULT_SERVER;
     protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
@@ -29,6 +28,11 @@ class DefaultServer extends ServerAbstract
         'cache_time' => 600,
         'lang'       => 'zh-cn',
     ];
+
+    public function __construct()
+    {
+        $this->server_name = ServerNameEnum::DEFAULT_SERVER();
+    }
 
     public function run()
     {

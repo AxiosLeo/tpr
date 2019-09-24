@@ -18,7 +18,6 @@ use tpr\Path;
 
 class SwooleTcpServer extends ServerAbstract
 {
-    protected $server_name = ServerNameEnum::SWOOLE_TCP_SERVER;
     protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
@@ -42,6 +41,11 @@ class SwooleTcpServer extends ServerAbstract
      * @var Server
      */
     private $server;
+
+    public function __construct()
+    {
+        $this->server_name = ServerNameEnum::SWOOLE_TCP_SERVER();
+    }
 
     public function run()
     {

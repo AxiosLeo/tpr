@@ -16,6 +16,9 @@ use tpr\library\ArrayTool;
  */
 abstract class ServerAbstract implements ServerInterFace
 {
+    /**
+     * @var ServerNameEnum
+     */
     protected $server_name;
     protected $app_options = [];
 
