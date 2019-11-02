@@ -7,9 +7,12 @@ namespace tpr\core;
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
 use tpr\Cache;
+use tpr\library\traits\FindDataFromArray;
 
 class Config
 {
+    use FindDataFromArray;
+
     public $config_path = '';
 
     public $config = [];
@@ -71,7 +74,7 @@ class Config
             return $this->config;
         }
         $config = $this->find(explode('.', $name), $this->config, $default);
-        if (!empty($default) && \is_array($default)) {
+        if (!empty($default) && is_array($default)) {
             $config = array_merge($default, $config);
         }
 
@@ -94,27 +97,5 @@ class Config
         unset($config_cache_key);
 
         return $data;
-    }
-
-    /**
-     * @param $keyArray
-     * @param $array
-     * @param $default
-     *
-     * @return mixed
-     */
-    private function find($keyArray, $array, $default = null)
-    {
-        if (1 === \count($keyArray)) {
-            return isset($array[$keyArray[0]]) ? $array[$keyArray[0]] : $default;
-        }
-        $key0 = $keyArray[0];
-        unset($keyArray[0]);
-        $keyArray = array_values($keyArray);
-        if (!isset($array[$key0])) {
-            return $default;
-        }
-
-        return $this->find($keyArray, $array[$key0], $default);
     }
 }
