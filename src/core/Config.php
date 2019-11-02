@@ -74,7 +74,7 @@ class Config
             return $this->config;
         }
         $config = $this->find(explode('.', $name), $this->config, $default);
-        if (!empty($default) && is_array($default)) {
+        if (!empty($default) && \is_array($default)) {
             $config = array_merge($default, $config);
         }
 
