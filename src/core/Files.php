@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core;
 
@@ -164,6 +164,9 @@ class Files
 
     public function read(string $path, int $offset = 0, $maxlen = null): string
     {
+        if (null === $maxlen) {
+            return file_get_contents($path, false, null);
+        }
         return file_get_contents($path, false, null, $offset, $maxlen);
     }
 }
