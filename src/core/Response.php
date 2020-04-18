@@ -8,6 +8,7 @@ use Exception;
 use tpr\App;
 use tpr\Container;
 use tpr\core\response\ResponseAbstract;
+use tpr\core\response\ResponseInterface;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
 
@@ -46,6 +47,13 @@ class Response
         $this->response_type    = \tpr\Config::get('app.default_return_type', 'text');
     }
 
+    /**
+     * @param string $response_type
+     *
+     * @throws Exception
+     *
+     * @return $this
+     */
     public function setResponseType(string $response_type)
     {
         if (!\in_array($response_type, $this->allow_type)) {
@@ -56,6 +64,11 @@ class Response
         return $this;
     }
 
+    /**
+     * @param array $options
+     *
+     * @return $this
+     */
     public function setResponseOptions(array $options)
     {
         if (!empty($options)) {
@@ -81,6 +94,11 @@ class Response
         return $this->response_driver;
     }
 
+    /**
+     * @param ResponseInterface $driver
+     *
+     * @return $this
+     */
     public function setResponseDriver($driver)
     {
         if (\is_string($driver)) {
@@ -97,6 +115,12 @@ class Response
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param null   $value
+     *
+     * @return $this
+     */
     public function setHeaders($key, $value = null)
     {
         $this->headers[$key] = $value;
@@ -104,11 +128,20 @@ class Response
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getHeaders()
     {
         return $this->headers;
     }
 
+    /**
+     * @param string $key
+     * @param null   $value
+     *
+     * @return $this
+     */
     public function setResponseOption($key, $value = null)
     {
         $this->response_options[$key] = $value;
@@ -116,6 +149,14 @@ class Response
         return $this;
     }
 
+    /**
+     * @param mixed  $result
+     * @param int    $status
+     * @param string $msg
+     * @param array  $headers
+     *
+     * @throws Exception
+     */
     public function response($result = '', $status = 200, $msg = '', $headers = [])
     {
         if (!empty($headers)) {
@@ -130,16 +171,32 @@ class Response
         throw new HttpResponseException($result, $status, $msg, $this->headers);
     }
 
+    /**
+     * @param array $data
+     *
+     * @throws Exception
+     */
     public function success($data = [])
     {
         $this->response($data, 200, 'success');
     }
 
+    /**
+     * @param int    $code
+     * @param string $msg
+     *
+     * @throws Exception
+     */
     public function error($code = 500, $msg = 'error')
     {
         $this->response('', $code, $msg);
     }
 
+    /**
+     * @param null|mixed $result
+     *
+     * @return mixed
+     */
     public function output($result = null)
     {
         if (null === $this->response_driver) {

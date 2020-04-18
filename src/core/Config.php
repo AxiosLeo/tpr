@@ -25,7 +25,7 @@ class Config
 
     public function init()
     {
-        if (!App::client()->debug()) {
+        if (null !== App::client() && !App::client()->debug()) {
             $config = $this->cache();
             if (false === $config) {
                 $this->load();

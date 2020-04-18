@@ -26,6 +26,11 @@ class Template
         $this->setBaseDir($this->options['base']);
     }
 
+    /**
+     * @param null $base_dir
+     *
+     * @return $this
+     */
     public function setBaseDir($base_dir = null)
     {
         if (empty($base_dir)) {
@@ -36,6 +41,9 @@ class Template
         return $this;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getExt()
     {
         $ext = $this->options['ext'];
@@ -46,7 +54,28 @@ class Template
         return $ext;
     }
 
+    /**
+     * @param       $dir
+     * @param       $file
+     * @param array $params
+     *
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     *
+     * @return string
+     */
     public function render($dir, $file, $params = [])
+    {
+        return $this->driver()->render($dir . $file . $this->getExt(), $params);
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return Environment
+     */
+    public function driver()
     {
         if (null === $this->template_loader) {
             $template_config          = \tpr\Config::get('template', []);
@@ -55,6 +84,6 @@ class Template
             $this->template_loader->addGlobal('lang', Container::get('lang'));
         }
 
-        return $this->template_loader->render($dir . $file . $this->getExt(), $params);
+        return $this->template_loader;
     }
 }
