@@ -23,7 +23,23 @@ abstract class RequestAbstract
 
     abstract public function time($format = null, $micro = false);
 
-    abstract public function routeInfo($routeInfo = null);
+    public function routeInfo($routeInfo = null)
+    {
+        if (null === $routeInfo) {
+            return $this->getRequestData('route_info');
+        }
+
+        return $this->setRequestData('route_info', $routeInfo);
+    }
+
+    public function accessInfo($accessInfo = null)
+    {
+        if (null === $accessInfo) {
+            return $this->getRequestData('access_info');
+        }
+
+        return $this->setRequestData('access_info', $accessInfo);
+    }
 
     public function token($refresh = false)
     {

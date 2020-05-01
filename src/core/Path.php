@@ -47,6 +47,11 @@ class Path
         return $this->set($name, $arguments[0]);
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return array
+     */
     public function check(): array
     {
         if (empty($this->path['root'])) {
@@ -64,11 +69,20 @@ class Path
         return $this->all();
     }
 
+    /**
+     * @return array
+     */
     public function all(): array
     {
         return $this->path;
     }
 
+    /**
+     * @param string $path
+     * @param bool   $create
+     *
+     * @return string
+     */
     public function format($path, $create = false): string
     {
         $path = \DIRECTORY_SEPARATOR != substr($path, -1) ? $path . \DIRECTORY_SEPARATOR : $path;
@@ -79,6 +93,12 @@ class Path
         return $path;
     }
 
+    /**
+     * @param array  $arrayDirItem
+     * @param string $divider
+     *
+     * @return string
+     */
     public function dir($arrayDirItem, $divider = \DIRECTORY_SEPARATOR): string
     {
         $path = '';
@@ -86,14 +106,25 @@ class Path
             $path .= $item . $divider;
         }
 
-        return $path;
+        return implode($divider, $arrayDirItem);
     }
 
+    /**
+     * @param $path_name
+     *
+     * @return string
+     */
     public function get($path_name): string
     {
         return isset($this->path[$path_name]) ? $this->path[$path_name] : '';
     }
 
+    /**
+     * @param $path_name
+     * @param $path
+     *
+     * @return string
+     */
     public function set($path_name, $path): string
     {
         $this->path[$path_name] = $this->format($path);

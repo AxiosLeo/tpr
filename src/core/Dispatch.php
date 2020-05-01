@@ -35,7 +35,7 @@ class Dispatch
     {
         $dispatcher = new GroupCountBased($this->getRoutes());
         $request    = Container::request();
-        $routeInfo  = $dispatcher->dispatch($request->method(), $request->url());
+        $routeInfo  = $dispatcher->dispatch($request->method(), $request->pathInfo());
         $result     = null;
         Event::listen('app_cgi_dispatch', $routeInfo);
 
@@ -55,6 +55,9 @@ class Dispatch
                     $vars                 = $routeInfo[2];
                     list($class, $action) = explode('::', $handler);
                     $request->routeInfo($routeInfo);
+                    $request->accessInfo([
+                        $class, $action, $vars,
+                    ]);
                     $result = $this->exec($class, $action, $vars);
 
                     break;

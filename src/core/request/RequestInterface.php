@@ -36,6 +36,8 @@ interface RequestInterface
 
     public function routeInfo($routeInfo = null);
 
+    public function accessInfo($accessInfo = null);
+
     public function isHttps();
 
     public function scheme();

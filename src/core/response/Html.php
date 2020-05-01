@@ -11,8 +11,8 @@ use tpr\Path;
 
 class Html extends ResponseAbstract
 {
-    public $content_type = 'text/html';
-    protected $name      = 'html';
+    public $content_type    = 'text/html';
+    protected $name         = 'html';
 
     protected $options = [
         'params'     => [],
@@ -24,6 +24,9 @@ class Html extends ResponseAbstract
      */
     private $template_driver;
 
+    /**
+     * @return null|mixed|Template
+     */
     public function getTemplateDriver()
     {
         if (null === $this->template_driver) {
@@ -33,6 +36,15 @@ class Html extends ResponseAbstract
         return $this->template_driver;
     }
 
+    /**
+     * @param null $data
+     *
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     *
+     * @return string
+     */
     public function output($data = null)
     {
         if (!empty($data)) {
@@ -47,12 +59,15 @@ class Html extends ResponseAbstract
             ]);
             $file     = $dispatch->getActionName();
         } elseif (false !== strpos($template, ':')) {
-            list($dir, $file) = explode(':', $template);
-            $dir              = Path::format($dir);
+            $tmp  = explode(':', $template);
+            $file = array_pop($tmp);
+            $dir  = Path::format(Path::dir($tmp));
+            unset($tmp);
         } else {
             $dir  = \DIRECTORY_SEPARATOR;
             $file = $template;
         }
+        unset($template);
 
         return $this->getTemplateDriver()->render($dir, $file, $this->options['params']);
     }

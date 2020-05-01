@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\core;
 
@@ -167,6 +167,7 @@ class Files
         if (null === $maxlen) {
             return file_get_contents($path, false, null);
         }
+
         return file_get_contents($path, false, null, $offset, $maxlen);
     }
 }
