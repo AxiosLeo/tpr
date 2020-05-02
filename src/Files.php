@@ -21,6 +21,7 @@ use tpr\core\Files as CoreFiles;
  * @method bool   move($source, $target)                                                                static
  * @method bool   copy($source, $target)                                                                static
  * @method string read($path, $offset = 0, $maxlen = null)                                              static
+ * @method bool   exist($path)                                                                          static
  */
 class Files extends Facade
 {

@@ -170,4 +170,9 @@ class Files
 
         return file_get_contents($path, false, null, $offset, $maxlen);
     }
+
+    public function exist(string $path)
+    {
+        return file_exists($path);
+    }
 }

@@ -10,7 +10,6 @@ use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use tpr\App;
-use tpr\Cache;
 use tpr\Container;
 use tpr\Event;
 use tpr\exception\ClassNotExistException;
@@ -111,28 +110,23 @@ class Dispatch
         $this->action     = $action;
         $template         = \tpr\Config::get('app.route_class_name', self::$defaultRouteClassName);
 
-        $class       = Helper::renderString($template, [
+        $class = Helper::renderString($template, [
             'app_namespace' => $this->app_namespace,
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
         ]);
-        $this->class = $class;
 
         return $this->exec($class, $action, $params);
     }
 
     private function getRoutes()
     {
-        $cache_file = Path::cache() . 'routes.lock';
-        $cache_key  = App::client()->debug() . '.routes.cache';
-        $route_data = [];
-        if (!App::client()->debug() && file_exists($cache_file)) {
-            if (Cache::contains($cache_key)) {
-                $route_data = Cache::fetch($cache_key);
-            }
+        $route_data = null;
+        if (!App::client()->debug()) {
+            $route_data = $this->cache();
         }
 
-        if (empty($route_data)) {
+        if (null === $route_data) {
             $routeCollector = new RouteCollector(
                 new Std(),
                 new \FastRoute\DataGenerator\GroupCountBased()
@@ -144,10 +138,7 @@ class Dispatch
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-            if (!App::client()->debug()) {
-                Cache::save($cache_key, $route_data);
-                \tpr\Files::save($cache_file, 'cache on ' . time());
-            }
+            $this->cache($route_data);
         }
 
         return $route_data;
@@ -177,5 +168,20 @@ class Dispatch
         $class = new $class();
 
         return $class->{$action}($vars);
+    }
+
+    private function cache($route_data = null)
+    {
+        $cache_file = Path::cache() . \DIRECTORY_SEPARATOR . '.' . App::client()->name() . \DIRECTORY_SEPARATOR . 'route.cache';
+        if (null === $route_data) {
+            if (\tpr\Files::exist($cache_file)) {
+                return \tpr\Files::readJsonFile($cache_file);
+            }
+
+            return null;
+        }
+        \tpr\Files::save($cache_file, json_encode($route_data));
+
+        return $route_data;
     }
 }

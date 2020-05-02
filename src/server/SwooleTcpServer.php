@@ -22,7 +22,6 @@ class SwooleTcpServer extends ServerAbstract
         'name'       => 'app',
         'debug'      => false,
         'namespace'  => 'App\\',
-        'cache_time' => 600,
         'lang'       => 'zh-cn',
         'swoole'     => [
             'mode'          => SWOOLE_BASE,

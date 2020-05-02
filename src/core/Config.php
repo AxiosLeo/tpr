@@ -6,7 +6,6 @@ namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
-use tpr\Cache;
 use tpr\library\traits\FindDataFromArray;
 
 class Config
@@ -83,22 +82,18 @@ class Config
 
     private function cache($data = null)
     {
-        $config_cache_key = 'tpr_config';
+        $config_cache_file = \tpr\Path::cache() . \DIRECTORY_SEPARATOR . '.' . App::client()->name() . \DIRECTORY_SEPARATOR . 'config.cache';
         if (null === $data) {
-            if (true === App::client()->debug() || !Cache::hasItem($config_cache_key)) {
+            if (true === App::client()->debug() || !\tpr\Files::exist($config_cache_file)) {
                 return false;
             }
-            $item = Cache::getItem($config_cache_key);
 
-            return $item->get();
+            return \tpr\Files::readJsonFile($config_cache_file);
         }
         if (!App::client()->debug()) {
-            $item = Cache::getItem($config_cache_key);
-            $item->set($data);
-            $item->expiresAfter(App::client()->options('cache_time'));
-            Cache::save($item);
+            \tpr\Files::save($config_cache_file, json_encode($config_cache_file));
         }
-        unset($config_cache_key);
+        unset($config_cache_file);
 
         return $data;
     }

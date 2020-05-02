@@ -26,8 +26,7 @@
     "vlucas/valitron": "^1.4",
     "symfony/console": "^4.3",
     "ralouphie/mimey": "^2.1",
-    "myclabs/php-enum": "^1.7",
-    "topthink/think-cache": "^2.0"
+    "myclabs/php-enum": "^1.7"
   },
   "require-dev": {
     "symfony/var-dumper": "*",
