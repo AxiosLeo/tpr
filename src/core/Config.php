@@ -85,14 +85,18 @@ class Config
     {
         $config_cache_key = 'tpr_config';
         if (null === $data) {
-            if (true === App::client()->debug() || !Cache::contains($config_cache_key)) {
+            if (true === App::client()->debug() || !Cache::hasItem($config_cache_key)) {
                 return false;
             }
+            $item = Cache::getItem($config_cache_key);
 
-            return Cache::fetch($config_cache_key);
+            return $item->get();
         }
         if (!App::client()->debug()) {
-            Cache::save($config_cache_key, $data, App::client()->options('cache_time'));
+            $item = Cache::getItem($config_cache_key);
+            $item->set($data);
+            $item->expiresAfter(App::client()->options('cache_time'));
+            Cache::save($item);
         }
         unset($config_cache_key);
 
