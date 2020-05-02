@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace tpr\core\response;
 
-use tpr\App;
 use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\core\Template;
@@ -40,9 +39,9 @@ class Html extends ResponseAbstract
     /**
      * @param null $data
      *
+     * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
      *
      * @return string
      */
@@ -54,19 +53,12 @@ class Html extends ResponseAbstract
         $template = $this->options['views_path'];
         if (null === $template) {
             /** @var Dispatch $dispatch */
-            $dispatch   = Container::get('cgi_dispatch');
-            $moduleName = $dispatch->getModuleName();
-            $dirPath    = [];
-            if (null === $moduleName) {
-                $tmp        = explode('\\', $dispatch->getClassName());
-                $dirPath[0] = App::client()->name();
-                $dirPath[1] = array_pop($tmp);
-            } else {
-                $dirPath[0] = $moduleName;
-                $dirPath[1] = $dispatch->getControllerName();
-            }
-            $dir  = Path::dir($dirPath);
-            $file = $dispatch->getActionName();
+            $dispatch = Container::get('cgi_dispatch');
+            $dir      = Path::dir([
+                $dispatch->getModuleName(),
+                $dispatch->getControllerName(),
+            ]);
+            $file     = $dispatch->getActionName();
         } elseif (false !== strpos($template, ':')) {
             $tmp  = explode(':', $template);
             $file = array_pop($tmp);

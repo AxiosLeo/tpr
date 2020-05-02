@@ -25,7 +25,8 @@ class Dispatch
     private $module;
     private $controller;
     private $action;
-    private $class;
+
+    private static $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
 
     public function __construct($app_namespace)
     {
@@ -60,11 +61,15 @@ class Dispatch
                     $vars                 = $routeInfo[2];
                     list($class, $action) = explode('::', $handler);
                     $request->routeInfo($routeInfo);
-                    $request->accessInfo([
-                        'class'  => $class,
-                        'action' => $action,
-                        'vars'   => $vars,
-                    ]);
+                    $rule = explode('\\', \tpr\Config::get('app.route_class_name', self::$defaultRouteClassName));
+                    $tmp  = explode('\\', $class);
+                    foreach ($rule as $i => $str) {
+                        if ('{module}' === $str) {
+                            $this->module = $tmp[$i];
+                        } elseif ('{controller}' === $str) {
+                            $this->controller = $tmp[$i];
+                        }
+                    }
                     $this->action = $action;
                     $result       = $this->exec($class, $action, $vars);
 
@@ -99,23 +104,19 @@ class Dispatch
         return $this->action;
     }
 
-    public function getClassName()
-    {
-        return $this->class;
-    }
-
     public function dispatch($module, $controller, $action, $params = [])
     {
         $this->module     = $module;
         $this->controller = $controller;
         $this->action     = $action;
-        $template         = \tpr\Config::get('app.route_class_name', '{app_namespace}\\{module}\\controller\\{controller}');
+        $template         = \tpr\Config::get('app.route_class_name', self::$defaultRouteClassName);
 
-        $class = Helper::renderString($template, [
+        $class       = Helper::renderString($template, [
             'app_namespace' => $this->app_namespace,
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
         ]);
+        $this->class = $class;
 
         return $this->exec($class, $action, $params);
     }

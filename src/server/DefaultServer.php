@@ -94,7 +94,7 @@ class DefaultServer extends ServerAbstract
     private function dispatch()
     {
         $ClassLoader = new ClassLoader();
-        $ClassLoader->addPsr4($this->options('namespace'), Path::app());
+        $ClassLoader->addPsr4($this->options('namespace') . '\\', Path::app());
         $ClassLoader->register();
         $mode = \PHP_SAPI == 'cli' ? \PHP_SAPI : 'cgi';
         if ('cgi' == $mode) {

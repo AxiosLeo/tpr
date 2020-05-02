@@ -32,15 +32,6 @@ abstract class RequestAbstract
         return $this->setRequestData('route_info', $routeInfo);
     }
 
-    public function accessInfo($accessInfo = null)
-    {
-        if (null === $accessInfo) {
-            return $this->getRequestData('access_info');
-        }
-
-        return $this->setRequestData('access_info', $accessInfo);
-    }
-
     public function token($refresh = false)
     {
         if ($refresh) {

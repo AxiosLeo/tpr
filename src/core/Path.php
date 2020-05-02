@@ -101,12 +101,7 @@ class Path
      */
     public function dir($arrayDirItem, $divider = \DIRECTORY_SEPARATOR): string
     {
-        $path = '';
-        foreach ($arrayDirItem as $item) {
-            $path .= $item . $divider;
-        }
-
-        return implode($divider, $arrayDirItem);
+        return implode($divider, $arrayDirItem) . \DIRECTORY_SEPARATOR;
     }
 
     /**
