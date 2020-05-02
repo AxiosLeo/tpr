@@ -24,7 +24,7 @@ class DefaultServer extends ServerAbstract
     protected $app_options = [
         'name'       => 'app',
         'debug'      => false,
-        'namespace'  => 'App\\',
+        'namespace'  => 'App',
         'cache_time' => 600,
         'lang'       => 'zh-cn',
     ];
@@ -45,9 +45,12 @@ class DefaultServer extends ServerAbstract
         Event::trigger('app_begin', $this->app_options);
 
         $length = \strlen($app_namespace);
-        if ('\\' !== $app_namespace[$length - 1]) {
-            $app_namespace .= '\\';
-            $this->setOption('namespace', $app_namespace);
+        if ('\\' === $app_namespace[$length - 1]) {
+            throw new \InvalidArgumentException(
+                'namespace mustn\'t end with a namespace separator "\". ' .
+                'now is "' . $app_namespace . '". ' .
+                'should be "' . str_replace('\\', '', $app_namespace) . '".'
+            );
         }
 
         $this->init();
@@ -137,7 +140,9 @@ class DefaultServer extends ServerAbstract
         Event::trigger('app_load_command');
         foreach ($commands as $file_path => $filename) {
             require_once $file_path;
-            $class = $cli_config['namespace'] . str_replace('/', '\\', str_replace(['.php', Path::command()], '', $file_path));
+            $tmp   = str_replace(['.php', Path::command()], '', $file_path);
+            $tmp   = str_replace('/', '\\', $tmp);
+            $class = $cli_config['namespace'] . '\\' . $tmp;
             if (class_exists($class)) {
                 $command = new $class();
                 $app->add($command);

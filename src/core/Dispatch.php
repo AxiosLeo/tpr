@@ -25,6 +25,7 @@ class Dispatch
     private $module;
     private $controller;
     private $action;
+    private $class;
 
     public function __construct($app_namespace)
     {
@@ -42,8 +43,12 @@ class Dispatch
         try {
             switch ($routeInfo[0]) {
                 case Dispatcher::NOT_FOUND:
-                    $pathinfo = $request->pathInfo() ?? '';
-                    $result   = $this->defaultRoute($pathinfo, $request->param());
+                    if (\tpr\Config::get('app.force_route', true)) {
+                        $pathInfo = $request->pathInfo() ?? '';
+                        $result   = $this->defaultRoute($pathInfo, $request->param());
+                    } else {
+                        Container::response()->response('Route Not Found', 404, []);
+                    }
 
                     break;
                 case Dispatcher::METHOD_NOT_ALLOWED:
@@ -56,9 +61,12 @@ class Dispatch
                     list($class, $action) = explode('::', $handler);
                     $request->routeInfo($routeInfo);
                     $request->accessInfo([
-                        $class, $action, $vars,
+                        'class'  => $class,
+                        'action' => $action,
+                        'vars'   => $vars,
                     ]);
-                    $result = $this->exec($class, $action, $vars);
+                    $this->action = $action;
+                    $result       = $this->exec($class, $action, $vars);
 
                     break;
             }
@@ -91,12 +99,17 @@ class Dispatch
         return $this->action;
     }
 
+    public function getClassName()
+    {
+        return $this->class;
+    }
+
     public function dispatch($module, $controller, $action, $params = [])
     {
         $this->module     = $module;
         $this->controller = $controller;
         $this->action     = $action;
-        $template         = \tpr\Config::get('app.route_class_name', '{app_namespace}{module}\\controller\\{controller}');
+        $template         = \tpr\Config::get('app.route_class_name', '{app_namespace}\\{module}\\controller\\{controller}');
 
         $class = Helper::renderString($template, [
             'app_namespace' => $this->app_namespace,

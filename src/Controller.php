@@ -143,7 +143,7 @@ abstract class Controller
      *
      * @return string
      */
-    protected function fetch($template = '', $vars = [])
+    protected function fetch($template = null, $vars = [])
     {
         if (!empty($this->vars)) {
             $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
