@@ -24,7 +24,10 @@ class Config
 
     public function init()
     {
-        if (null !== App::client() && !App::client()->debug()) {
+        if (null === App::client()) {
+            throw new \RuntimeException('Need init app client first. Like example: App::default()');
+        }
+        if (!App::client()->debug()) {
             $config = $this->cache();
             if (false === $config) {
                 $this->load();

@@ -180,7 +180,9 @@ class Dispatch
 
             return null;
         }
-        \tpr\Files::save($cache_file, json_encode($route_data));
+        if (!App::client()->debug()) {
+            \tpr\Files::save($cache_file, json_encode($route_data));
+        }
 
         return $route_data;
     }

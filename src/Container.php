@@ -7,6 +7,7 @@ namespace tpr;
 use ArrayAccess;
 use InvalidArgumentException;
 use tpr\core\Config;
+use tpr\core\Dispatch;
 use tpr\core\Lang as CoreLang;
 use tpr\core\request\RequestAbstract;
 use tpr\core\Response;
@@ -36,6 +37,14 @@ final class Container implements ArrayAccess
         }
 
         return self::$object[$name];
+    }
+
+    /**
+     * @return Dispatch
+     */
+    public static function dispatch()
+    {
+        return self::get('cgi_dispatch');
     }
 
     /**
