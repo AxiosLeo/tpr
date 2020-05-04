@@ -25,11 +25,14 @@ class Dispatch
     private $controller;
     private $action;
 
+    private $cache_file;
+
     private static $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
 
     public function __construct($app_namespace)
     {
         $this->app_namespace = $app_namespace;
+        $this->cache_file    = Path::cache() . \DIRECTORY_SEPARATOR . 'routes.cache';
     }
 
     public function run()
@@ -122,8 +125,8 @@ class Dispatch
     private function getRoutes()
     {
         $route_data = null;
-        if (!App::client()->debug()) {
-            $route_data = $this->cache();
+        if (!App::debugMode()) {
+            $route_data = Helper::tmp($this->cache_file);
         }
 
         if (null === $route_data) {
@@ -138,7 +141,7 @@ class Dispatch
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-            $this->cache($route_data);
+            Helper::tmp($this->cache_file, $route_data);
         }
 
         return $route_data;
@@ -168,22 +171,5 @@ class Dispatch
         $class = new $class();
 
         return $class->{$action}($vars);
-    }
-
-    private function cache($route_data = null)
-    {
-        $cache_file = Path::cache() . \DIRECTORY_SEPARATOR . '.' . App::client()->name() . \DIRECTORY_SEPARATOR . 'route.cache';
-        if (null === $route_data) {
-            if (\tpr\Files::exist($cache_file)) {
-                return \tpr\Files::readJsonFile($cache_file);
-            }
-
-            return null;
-        }
-        if (!App::client()->debug()) {
-            \tpr\Files::save($cache_file, json_encode($route_data));
-        }
-
-        return $route_data;
     }
 }

@@ -79,7 +79,7 @@ class Template
     {
         if (null === $this->template_loader) {
             $template_config          = \tpr\Config::get('template', []);
-            $template_config['cache'] = App::client()->debug() ? false : \tpr\Path::cache();
+            $template_config['cache'] = App::debugMode() ? false : \tpr\Path::cache();
             $this->template_loader    = new Environment(new FilesystemLoader($this->base_dir), $template_config);
             $this->template_loader->addGlobal('lang', Container::get('lang'));
         }

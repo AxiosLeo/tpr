@@ -11,7 +11,6 @@ use tpr\library\ArrayTool;
  * Class ClientAbstract.
  *
  * @method string name()
- * @method bool   debug()
  * @method string namespace()
  */
 abstract class ServerAbstract implements ServerInterFace

@@ -19,11 +19,11 @@ use tpr\Path;
 class SwooleTcpServer extends ServerAbstract
 {
     protected $app_options = [
-        'name'       => 'app',
-        'debug'      => false,
-        'namespace'  => 'App\\',
-        'lang'       => 'zh-cn',
-        'swoole'     => [
+        'name'      => 'app',
+        'debug'     => false,
+        'namespace' => 'App',
+        'lang'      => 'zh-cn',
+        'swoole'    => [
             'mode'          => SWOOLE_BASE,
             'sock_type'     => SWOOLE_SOCK_TCP,
             'listen'        => '127.0.0.1',
@@ -48,6 +48,7 @@ class SwooleTcpServer extends ServerAbstract
 
     public function run()
     {
+        Handler::init();
         $this->init();
         $this->server->start();
     }
@@ -65,7 +66,6 @@ class SwooleTcpServer extends ServerAbstract
         Container::bind('swoole_server', $this->server);
         unset($config['listen'], $config['port'], $config['mode'], $config['sock_type']);
         $this->server->set($config);
-        Handler::init();
         Container::bindNX('lang', new Lang());
         Event::trigger('app_ini_begin');
         $dispatch = new Dispatch($this->options('namespace'));

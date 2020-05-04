@@ -6,6 +6,7 @@ namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
+use tpr\library\Helper;
 use tpr\library\traits\FindDataFromArray;
 
 class Config
@@ -16,8 +17,11 @@ class Config
 
     public $config = [];
 
+    public $cache_file = '';
+
     public function __construct()
     {
+        $this->cache_file  = \tpr\Path::cache() . \DIRECTORY_SEPARATOR . 'config.cache';
         $this->config_path = \tpr\Path::config();
         $this->init();
     }
@@ -27,8 +31,8 @@ class Config
         if (null === App::client()) {
             throw new \RuntimeException('Need init app client first. Like example: App::default()');
         }
-        if (!App::client()->debug()) {
-            $config = $this->cache();
+        if (!App::debugMode()) {
+            $config = Helper::tmp($this->cache_file);
             if (false === $config) {
                 $this->load();
             } else {
@@ -65,7 +69,7 @@ class Config
                 }
             }
         }
-        $this->cache($this->config);
+        Helper::tmp($this->cache_file, $this->config);
 
         return $this->config;
     }
@@ -81,23 +85,5 @@ class Config
         }
 
         return $config;
-    }
-
-    private function cache($data = null)
-    {
-        $config_cache_file = \tpr\Path::cache() . \DIRECTORY_SEPARATOR . '.' . App::client()->name() . \DIRECTORY_SEPARATOR . 'config.cache';
-        if (null === $data) {
-            if (true === App::client()->debug() || !\tpr\Files::exist($config_cache_file)) {
-                return false;
-            }
-
-            return \tpr\Files::readJsonFile($config_cache_file);
-        }
-        if (!App::client()->debug()) {
-            \tpr\Files::save($config_cache_file, json_encode($config_cache_file));
-        }
-        unset($config_cache_file);
-
-        return $data;
     }
 }

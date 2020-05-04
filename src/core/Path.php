@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
-use tpr\App;
-
 class Path
 {
     const DS = \DIRECTORY_SEPARATOR;
@@ -63,7 +61,7 @@ class Path
             }
         }
         if (empty($this->path['cache'])) {
-            $this->path['cache'] = $this->path['runtime'] . App::client()->name() . self::DS;
+            $this->path['cache'] = $this->path['runtime'] . 'cache' . self::DS;
         }
 
         return $this->all();

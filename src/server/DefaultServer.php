@@ -35,6 +35,7 @@ class DefaultServer extends ServerAbstract
 
     public function run()
     {
+        Handler::init();
         $app_namespace = $this->options('namespace');
         Path::check();
         $event = Config::get('event', []);
@@ -84,7 +85,6 @@ class DefaultServer extends ServerAbstract
 
     protected function init()
     {
-        Handler::init();
         Container::bindNX('lang', new Lang());
         Event::trigger('app_ini_begin');
         Event::trigger('app_ini_end');

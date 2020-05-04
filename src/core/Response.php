@@ -44,7 +44,7 @@ class Response
     {
         $this->request          = Container::get('request');
         $this->response_options = \tpr\Config::get('app.response', []);
-        $this->response_type    = \tpr\Config::get('app.default_return_type', 'text');
+        $this->response_type    = \tpr\Config::get('app.default_return_type', 'html');
     }
 
     /**

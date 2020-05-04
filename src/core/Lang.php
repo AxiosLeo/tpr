@@ -5,38 +5,24 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use tpr\App;
-use tpr\Cache;
 use tpr\Event;
+use tpr\Path;
 
 class Lang
 {
-    private const LANG_CACHE_KEY = 'tpr_lang';
-    private $word                = [];
+    private $word = [];
 
-    private $langDefault = '';
+    private $langDefault;
 
-    private $langDir = '';
+    private $langDir;
+
+    private $langFiles = [];
 
     public function __construct()
     {
         $this->langDefault = App::client()->options('lang');
-        $this->langDir     = \tpr\Path::lang();
-    }
-
-    public function load(string $langSet, array $word): void
-    {
-        if (empty($word)) {
-            return;
-        }
-        if (!isset($this->word[$langSet])) {
-            $this->word[$langSet] = [];
-        }
-
-        if (empty($this->word[$langSet])) {
-            $this->word[$langSet] = $word;
-        } else {
-            $this->word[$langSet] = array_merge($this->word[$langSet], $word);
-        }
+        $this->langDir     = Path::lang();
+        $this->load();
     }
 
     public function tran($data, $langSet = null)
@@ -49,24 +35,11 @@ class Lang
         if (null === $langSet) {
             $langSet = $this->langDefault;
         }
-        $this->loadCache();
-        if (!isset($this->word[$langSet])) {
-            if (!file_exists($this->langDir)) {
-                return $data;
-            }
-            $config_file_list = \tpr\Files::searchAllFiles($this->langDir, ['php']);
-
-            if (empty($config_file_list)) {
-                return $data;
-            }
-            $config_file_list = array_flip($config_file_list);
-            if (isset($config_file_list[$langSet])) {
-                $this->word[$langSet] = \Noodlehaus\Config::load($config_file_list[$langSet])->all();
-            }
-            $this->setCache();
-        }
         if (!isset($this->word[$langSet])) {
             return $data;
+        }
+        if ($this->word[$langSet] === []) {
+            $this->word[$langSet] = \Noodlehaus\Config::load($this->langFiles[$langSet])->all();
         }
         if (isset($this->word[$langSet][$data])) {
             return $this->word[$langSet][$data];
@@ -75,23 +48,19 @@ class Lang
         return $data;
     }
 
-    private function loadCache()
+    private function load(): void
     {
-        if (empty($this->word)) {
-            if (true === App::client()->debug() || !Cache::contains(self::LANG_CACHE_KEY)) {
-                return;
-            }
-
-            $this->word = Cache::fetch(self::LANG_CACHE_KEY);
+        if (!file_exists($this->langDir)) {
+            return;
         }
-    }
-
-    private function setCache()
-    {
-        if (!App::client()->debug()) {
-            Cache::save(self::LANG_CACHE_KEY, $this->word, App::client()->options('cache_time'));
+        $fileList = \tpr\Files::searchAllFiles($this->langDir, ['php']);
+        if ($fileList === []) {
+            return;
         }
-
-        return true;
+        $fileList = array_flip($fileList);
+        foreach ($fileList as $langSet) {
+            $this->word[$langSet] = [];
+            $this->langFiles      = $fileList[$langSet];
+        }
     }
 }

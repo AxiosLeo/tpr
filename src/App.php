@@ -26,9 +26,24 @@ class App
 
     private static $client;
 
+    private static $debug = false;
+
     public static function __callStatic($name, $arguments)
     {
         return self::client($name);
+    }
+
+    public static function debugMode($debug = null)
+    {
+        if (null === $debug) {
+            return self::$debug;
+        }
+        if (!\is_bool($debug)) {
+            throw new \InvalidArgumentException('debug param must be bool type');
+        }
+        self::$debug = $debug;
+
+        return self::$debug;
     }
 
     /**
