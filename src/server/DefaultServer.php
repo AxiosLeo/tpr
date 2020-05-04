@@ -22,10 +22,10 @@ use tpr\Path;
 class DefaultServer extends ServerAbstract
 {
     protected $app_options = [
-        'name'       => 'app',
-        'debug'      => false,
-        'namespace'  => 'App',
-        'lang'       => 'zh-cn',
+        'name'      => 'app',
+        'debug'     => false,
+        'namespace' => 'App',
+        'lang'      => 'zh-cn',
     ];
 
     public function __construct()
@@ -49,7 +49,7 @@ class DefaultServer extends ServerAbstract
             throw new \InvalidArgumentException(
                 'namespace mustn\'t end with a namespace separator "\". ' .
                 'now is "' . $app_namespace . '". ' .
-                'should be "' . str_replace('\\', '', $app_namespace) . '".'
+                'should be "' . implode('\\', array_filter(explode('\\', $app_namespace))) . '".'
             );
         }
 
