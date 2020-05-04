@@ -92,14 +92,45 @@ class Path
     }
 
     /**
-     * @param array  $arrayDirItem
-     * @param string $divider
+     * @param array $paths
      *
      * @return string
      */
-    public function dir($arrayDirItem, $divider = \DIRECTORY_SEPARATOR): string
+    public function dir($paths): string
     {
-        return implode($divider, $arrayDirItem) . \DIRECTORY_SEPARATOR;
+        return implode(\DIRECTORY_SEPARATOR, $paths) . \DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @param string ...$paths
+     *
+     * @return string
+     */
+    public function join(...$paths)
+    {
+        if (0 === \count($paths)) {
+            throw new \InvalidArgumentException('At least one parameter needs to be passed in.');
+        }
+        $pathResult = null;
+        foreach ($paths as $i => $path) {
+            if (null === $pathResult) {
+                $pathResult = explode('/', $path);
+
+                continue;
+            }
+            $tmp = explode('/', $path);
+            foreach ($tmp as $str) {
+                if ('..' === $str) {
+                    array_pop($pathResult);
+                } elseif ('.' === $str) {
+                    continue;
+                } else {
+                    array_push($pathResult, $str);
+                }
+            }
+        }
+
+        return implode(\DIRECTORY_SEPARATOR, $pathResult);
     }
 
     /**
