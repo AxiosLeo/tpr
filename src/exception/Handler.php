@@ -8,6 +8,7 @@ use tpr\App;
 use tpr\core\Response;
 use tpr\exception\handler\DefaultHandler;
 use tpr\exception\handler\JsonpHandler;
+use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -30,29 +31,30 @@ class Handler
         'xml'     => XmlResponseHandler::class,
     ];
 
-    private static $handler_type = 'default';
+    private static $handler_type;
 
     public static function init()
     {
         if (null === self::$run) {
             self::$run = new Run();
             self::$run->allowQuit();
-
-            if (!App::debugMode()) {
-                self::$handler_type = 'default';
-            } else {
-                self::$handler_type = \tpr\Config::get('app.default_return_type', 'html');
-            }
-            self::addHandler(self::$handler_type);
-            self::handleOperator()->register();
         }
+        if (\PHP_SAPI == 'cli') {
+            self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
+        } elseif (!App::debugMode()) {
+            self::$handler_type = 'default';
+        } else {
+            self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
+        }
+        self::addHandler(self::$handler_type);
+        self::handleOperator()->register();
     }
 
     /**
-     * @param $exception
-     * @param Response $response
+     * @param \Throwable $exception
+     * @param Response   $response
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function render($exception, $response)
     {
@@ -82,8 +84,7 @@ class Handler
             $handler = new $handler();
         }
 
-        if (\is_object($handler)) {
-            // @var HandlerInterface $handler
+        if (\is_object($handler) && $handler instanceof HandlerInterface) {
             self::$run->appendHandler($handler);
         }
     }
