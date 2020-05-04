@@ -17,9 +17,12 @@ use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
 use tpr\Path;
+use tpr\traits\CacheTrait;
 
 class Dispatch
 {
+    use CacheTrait;
+
     private $app_namespace;
     private $module;
     private $controller;
@@ -126,7 +129,7 @@ class Dispatch
     {
         $route_data = null;
         if (!App::debugMode()) {
-            $route_data = Helper::tmp($this->cache_file);
+            $route_data = $this->cache($this->cache_file);
         }
 
         if (null === $route_data) {
@@ -141,7 +144,7 @@ class Dispatch
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-            Helper::tmp($this->cache_file, $route_data);
+            $this->cache($this->cache_file, $route_data);
         }
 
         return $route_data;

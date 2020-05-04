@@ -6,18 +6,18 @@ namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
-use tpr\library\Helper;
 use tpr\library\traits\FindDataFromArray;
+use tpr\traits\CacheTrait;
 
 class Config
 {
     use FindDataFromArray;
-
-    public $config_path = '';
+    use CacheTrait;
 
     public $config = [];
 
-    public $cache_file = '';
+    private $config_path;
+    private $cache_file;
 
     public function __construct()
     {
@@ -28,11 +28,8 @@ class Config
 
     public function init()
     {
-        if (null === App::client()) {
-            throw new \RuntimeException('Need init app client first. Like example: App::default()');
-        }
         if (!App::debugMode()) {
-            $config = Helper::tmp($this->cache_file);
+            $config = $this->cache($this->cache_file);
             if (false === $config) {
                 $this->load();
             } else {
@@ -43,6 +40,11 @@ class Config
         }
     }
 
+    /**
+     * @param null|string $path
+     *
+     * @return array
+     */
     public function load($path = null)
     {
         if (null === $path) {
@@ -69,11 +71,17 @@ class Config
                 }
             }
         }
-        Helper::tmp($this->cache_file, $this->config);
+        $this->cache($this->cache_file, $this->config);
 
         return $this->config;
     }
 
+    /**
+     * @param null|string $name
+     * @param mixed       $default
+     *
+     * @return null|array|mixed
+     */
     public function get($name = null, $default = null)
     {
         if (null === $name) {
