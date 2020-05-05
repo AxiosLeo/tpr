@@ -37,8 +37,7 @@ class DefaultServer extends ServerAbstract
     {
         Handler::init();
         $app_namespace = $this->options('namespace');
-        Path::check();
-        $event = Config::get('event', []);
+        $event         = Config::get('event', []);
         if (!empty($event)) {
             Event::import($event);
         }

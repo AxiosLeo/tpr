@@ -16,7 +16,14 @@ class PathTest extends TestCase
     public function testJoin()
     {
         $path = new Path();
-        $res  = $path->join(__DIR__, '../../test.json');
-        $this->assertEquals(realpath(__DIR__ . '/../../') . '/test.json', $res);
+        $this->assertEquals(
+            realpath(__DIR__ . '/../../') . '/test.json',
+            $path->join(__DIR__, '../../test.json')
+        );
+
+        $this->assertEquals(
+            '/a/b/c',
+            $path->join('/a/', 'b/c')
+        );
     }
 }

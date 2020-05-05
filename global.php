@@ -4,7 +4,7 @@ const TPR_VERSION = '3.0.0';
 
 const TPR_BASE_NAMESPACE = 'tpr';
 
-const TPR_FRAMEWORK_PATH = __DIR__ . DIRECTORY_SEPARATOR;
+const TPR_FRAMEWORK_PATH = __DIR__ . \DIRECTORY_SEPARATOR;
 
 const CONSOLE_STYLE_DEFAULT   = "\033[0m"; // 默认无属性样式
 const CONSOLE_STYLE_HIGHLIGHT = "\033[1m"; // 高亮

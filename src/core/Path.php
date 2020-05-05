@@ -31,7 +31,23 @@ class Path
         'views'   => 'views',
         'command' => 'command',
         'lang'    => 'lang',
+        'cache'   => 'cache',
     ];
+
+    public function __construct()
+    {
+        if (empty($this->path['root'])) {
+            $this->path['root'] = \dirname(\dirname(\dirname(TPR_FRAMEWORK_PATH))) . self::DS;
+        }
+        foreach ($this->default_path as $key => $value) {
+            if ('' === $this->path[$key]) {
+                $this->path[$key] = $this->path['root'] . $value . self::DS;
+            }
+        }
+        if ('' === $this->path['cache']) {
+            $this->path['cache'] = $this->path['runtime'] . 'cache' . self::DS;
+        }
+    }
 
     public function __call($name, $arguments)
     {
@@ -43,28 +59,6 @@ class Path
         }
 
         return $this->set($name, $arguments[0]);
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return array
-     */
-    public function check(): array
-    {
-        if (empty($this->path['root'])) {
-            $this->path['root'] = \dirname(\dirname(\dirname(TPR_FRAMEWORK_PATH))) . self::DS;
-        }
-        foreach ($this->default_path as $key => $value) {
-            if (empty($this->path[$key])) {
-                $this->path[$key] = $this->path['root'] . $value . self::DS;
-            }
-        }
-        if (empty($this->path['cache'])) {
-            $this->path['cache'] = $this->path['runtime'] . 'cache' . self::DS;
-        }
-
-        return $this->all();
     }
 
     /**
@@ -83,7 +77,7 @@ class Path
      */
     public function format($path, $create = false): string
     {
-        $path = \DIRECTORY_SEPARATOR != substr($path, -1) ? $path . \DIRECTORY_SEPARATOR : $path;
+        $path = self::DS != substr($path, -1) ? $path . self::DS : $path;
         if ($create && !file_exists($path)) {
             @mkdir($path, 0700, true);
         }
@@ -98,7 +92,7 @@ class Path
      */
     public function dir($paths): string
     {
-        return implode(\DIRECTORY_SEPARATOR, $paths) . \DIRECTORY_SEPARATOR;
+        return implode(self::DS, $paths) . self::DS;
     }
 
     /**
@@ -111,18 +105,18 @@ class Path
         if (0 === \count($paths)) {
             throw new \InvalidArgumentException('At least one parameter needs to be passed in.');
         }
-        $pathResult = null;
-        foreach ($paths as $i => $path) {
-            if (null === $pathResult) {
-                $pathResult = explode('/', $path);
-
-                continue;
-            }
-            $tmp = explode('/', $path);
+        $pathResult = explode(self::DS, $paths[0]);
+        unset($paths[0]);
+        $pathResultLen = \count($pathResult);
+        if ('' === $pathResult[$pathResultLen - 1]) {
+            unset($pathResult[$pathResultLen - 1]);
+        }
+        foreach ($paths as $path) {
+            $tmp = explode(self::DS, $path);
             foreach ($tmp as $str) {
                 if ('..' === $str) {
                     array_pop($pathResult);
-                } elseif ('.' === $str) {
+                } elseif ('.' === $str || '' === $str) {
                     continue;
                 } else {
                     array_push($pathResult, $str);
@@ -130,7 +124,7 @@ class Path
             }
         }
 
-        return implode(\DIRECTORY_SEPARATOR, $pathResult);
+        return implode(self::DS, $pathResult);
     }
 
     /**

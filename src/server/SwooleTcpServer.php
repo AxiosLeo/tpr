@@ -60,7 +60,6 @@ class SwooleTcpServer extends ServerAbstract
 
     protected function init()
     {
-        Path::check();
         $config       = $this->options('swoole');
         $this->server = new Server($config['listen'], $config['port'], $config['mode'], $config['sock_type']);
         Container::bind('swoole_server', $this->server);
