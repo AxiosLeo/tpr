@@ -39,9 +39,9 @@ class Html extends ResponseAbstract
     /**
      * @param null $data
      *
-     * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
      *
      * @return string
      */
@@ -51,6 +51,9 @@ class Html extends ResponseAbstract
             return $data;
         }
         $template = $this->options['views_path'];
+        if ('' === $template) {
+            return '';
+        }
         if (null === $template) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
