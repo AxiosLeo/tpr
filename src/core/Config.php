@@ -30,7 +30,7 @@ class Config
     {
         if (!App::debugMode()) {
             $config = $this->cache($this->cache_file);
-            if (false === $config) {
+            if (null === $config) {
                 $this->load();
             } else {
                 $this->config = $config;
