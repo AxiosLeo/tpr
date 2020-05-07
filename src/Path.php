@@ -32,6 +32,8 @@ use tpr\core\Path as CorePath;
  */
 class Path extends Facade
 {
+    public static $subPath = '';
+
     protected static function getContainName()
     {
         return 'path';

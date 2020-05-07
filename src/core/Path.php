@@ -31,7 +31,6 @@ class Path
         'views'   => 'views',
         'command' => 'command',
         'lang'    => 'lang',
-        'cache'   => 'cache',
     ];
 
     public function __construct()
@@ -41,7 +40,11 @@ class Path
         }
         foreach ($this->default_path as $key => $value) {
             if ('' === $this->path[$key]) {
-                $this->path[$key] = $this->path['root'] . $value . self::DS;
+                if ('' !== \tpr\Path::$subPath) {
+                    $this->path[$key] = $this->path['root'] . $value . self::DS . \tpr\Path::$subPath . self::DS;
+                } else {
+                    $this->path[$key] = $this->path['root'] . $value . self::DS;
+                }
             }
         }
         if ('' === $this->path['cache']) {
