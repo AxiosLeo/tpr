@@ -33,6 +33,10 @@ class Path
         'lang'    => 'lang',
     ];
 
+    private $supportedSubPath = [
+        'app', 'config', 'views', 'runtime',
+    ];
+
     public function __construct()
     {
         if (empty($this->path['root'])) {
@@ -40,7 +44,7 @@ class Path
         }
         foreach ($this->default_path as $key => $value) {
             if ('' === $this->path[$key]) {
-                if ('' !== \tpr\Path::$subPath) {
+                if (\in_array($key, $this->supportedSubPath) && '' !== \tpr\Path::$subPath) {
                     $this->path[$key] = $this->path['root'] . $value . self::DS . \tpr\Path::$subPath . self::DS;
                 } else {
                     $this->path[$key] = $this->path['root'] . $value . self::DS;
