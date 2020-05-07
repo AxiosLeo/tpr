@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tpr;
 
+use tpr\core\request\DefaultRequest;
 use tpr\core\request\RequestAbstract;
 use tpr\core\request\RequestInterface;
 use tpr\core\Response;
@@ -11,7 +12,7 @@ use tpr\core\Response;
 abstract class Controller
 {
     /**
-     * @var RequestAbstract|RequestInterface
+     * @var DefaultRequest|RequestAbstract|RequestInterface
      */
     protected $request;
 

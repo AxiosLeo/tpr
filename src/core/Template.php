@@ -13,7 +13,7 @@ class Template
 {
     private $options = [
         'ext'  => 'html',
-        'base' => '',
+        'base' => null,
     ];
 
     private $base_dir;
@@ -27,7 +27,7 @@ class Template
     }
 
     /**
-     * @param null $base_dir
+     * @param null|string $base_dir
      *
      * @return $this
      */
