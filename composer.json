@@ -31,7 +31,8 @@
   "require-dev": {
     "symfony/var-dumper": "*",
     "swoft/swoole-ide-helper": "^4.4",
-    "phpunit/phpunit": "^7"
+    "phpunit/phpunit": "^7",
+    "nette/php-generator": "^3.3"
   },
   "autoload": {
     "psr-4": {

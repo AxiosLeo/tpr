@@ -6,6 +6,7 @@ namespace tpr\server;
 
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application;
+use tpr\command\Make;
 use tpr\Config;
 use tpr\Container;
 use tpr\core\Dispatch;
@@ -126,10 +127,8 @@ class DefaultServer extends ServerAbstract
             'namespace' => '',
         ]);
         $app        = new Application($cli_config['name'], $cli_config['version']);
+        $app->add(new Make());
         $commands   = Files::searchAllFiles(Path::command(), ['php']);
-        if (empty($commands)) {
-            throw new \Exception("Not have any command file in '" . Path::command() . "'");
-        }
         if (empty($cli_config['namespace'])) {
             $cli_config['namespace'] = $this->options('namespace');
         } else {
