@@ -26,13 +26,13 @@
     "vlucas/valitron": "^1.4",
     "symfony/console": "^4.3",
     "ralouphie/mimey": "^2.1",
-    "myclabs/php-enum": "^1.7"
+    "myclabs/php-enum": "^1.7",
+    "nette/php-generator": "^3.3"
   },
   "require-dev": {
     "symfony/var-dumper": "*",
     "swoft/swoole-ide-helper": "^4.4",
-    "phpunit/phpunit": "^7",
-    "nette/php-generator": "^3.3"
+    "phpunit/phpunit": "^7"
   },
   "autoload": {
     "psr-4": {
