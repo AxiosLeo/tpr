@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr;
 
@@ -164,8 +164,8 @@ abstract class Controller
      */
     protected function redirect($destination, $permanent = true)
     {
-        if (strpos($destination, '://') === false) {
-            $protocol    = $this->request->protocol() === 'https' ? 'https' : 'http';
+        if (false === strpos($destination, '://')) {
+            $protocol    = 'https' === $this->request->protocol() ? 'https' : 'http';
             $destination = $protocol . '://' . $this->request->host() . $destination;
         }
 

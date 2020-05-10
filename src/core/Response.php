@@ -40,6 +40,8 @@ class Response
         'html', 'json', 'jsonp', 'text', 'xml',
     ];
 
+    private $headersSet = [];
+
     public function __construct()
     {
         $this->request          = Container::get('request');
@@ -123,17 +125,31 @@ class Response
      */
     public function setHeaders($key, $value = null)
     {
-        $this->headers[$key] = $value;
+        $this->headers[$key]                = $value;
+        $this->headersSet[strtolower($key)] = $key;
 
         return $this;
     }
 
     /**
-     * @return array
+     * @param null|string $key
+     *
+     * @return null|array
      */
-    public function getHeaders()
+    public function getHeaders($key = null)
     {
-        return $this->headers;
+        if (null === $key) {
+            return $this->headers;
+        }
+        if (isset($this->headers[$key])) {
+            return $this->headers[$key];
+        }
+        $lowerKey = strtolower($key);
+        if (isset($this->headersSet[$lowerKey])) {
+            return $this->headers[$this->headersSet[$lowerKey]];
+        }
+
+        return null;
     }
 
     /**
@@ -202,7 +218,10 @@ class Response
         if (null === $this->response_driver) {
             $this->setResponseDriver($this->response_type);
         }
-        $this->setHeaders('Content-Type', $this->response_driver->content_type);
+        if (!isset($this->headersSet['content-type'])) {
+            // use default content-type header if not set
+            $this->setHeaders('Content-Type', $this->response_driver->content_type);
+        }
         $this->response_driver->options($this->response_options);
 
         return $this->response_driver->output($result);
