@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr;
 
@@ -156,5 +156,31 @@ abstract class Controller
         $this->setResponseOption('params', $vars);
 
         return Container::response()->output();
+    }
+
+    /**
+     * @param string $destination
+     * @param bool   $permanent
+     */
+    protected function redirect($destination, $permanent = true)
+    {
+        if (strpos($destination, '://') === false) {
+            $protocol    = $this->request->protocol() === 'https' ? 'https' : 'http';
+            $destination = $protocol . '://' . $this->request->host() . $destination;
+        }
+
+        if (true === $permanent) {
+            $code    = 301;
+            $message = $code . ' Moved Permanently';
+        } else {
+            $code    = 302;
+            $message = $code . ' Found';
+        }
+
+        header('HTTP/1.1 ' . $message, true, $code);
+        header('Status: ' . $message, true, $code);
+
+        header('Location: ' . $destination);
+        exit();
     }
 }
