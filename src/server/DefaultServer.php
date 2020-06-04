@@ -57,6 +57,16 @@ class DefaultServer extends ServerAbstract
         $this->dispatch();
     }
 
+    /**
+     * run single command.
+     *
+     * @param null|string $command
+     */
+    public function exec($command = null)
+    {
+        $this->cliRunner($command);
+    }
+
     public function send(HttpResponseException $httpException)
     {
         Event::trigger('app_response_before');
@@ -119,7 +129,7 @@ class DefaultServer extends ServerAbstract
         $dispatch->run();
     }
 
-    private function cliRunner()
+    private function cliRunner($command_name = null)
     {
         $cli_config = Config::get('cli', [
             'name'      => 'Command Tools',
@@ -128,7 +138,7 @@ class DefaultServer extends ServerAbstract
         ]);
         $app        = new Application($cli_config['name'], $cli_config['version']);
         $app->add(new Make());
-        $commands   = Files::searchAllFiles(Path::command(), ['php']);
+        $commands = Files::searchAllFiles(Path::command(), ['php']);
         if (empty($cli_config['namespace'])) {
             $cli_config['namespace'] = $this->options('namespace');
         } else {
@@ -152,6 +162,9 @@ class DefaultServer extends ServerAbstract
             }
         }
         Event::trigger('app_run_command_before');
+        if ($command_name) {
+            $app->setDefaultCommand($command_name, true);
+        }
         $app->run();
         Event::trigger('app_run_command_after');
     }
