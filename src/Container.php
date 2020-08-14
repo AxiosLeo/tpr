@@ -58,7 +58,7 @@ final class Container implements ArrayAccess
             if (!class_exists($class)) {
                 throw new ClassNotExistException($name);
             }
-            $class = new $class($params);
+            $class = new $class(...$params);
         }
         if (!\is_object($class)) {
             throw new InvalidArgumentException('$class is invalid argument : ' . \gettype($class));
