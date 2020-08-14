@@ -6,6 +6,7 @@ namespace tpr;
 
 use ArrayAccess;
 use InvalidArgumentException;
+use Rakit\Validation\Validator;
 use tpr\core\Config;
 use tpr\core\Dispatch;
 use tpr\core\Lang as CoreLang;
@@ -19,12 +20,13 @@ use tpr\server\ServerAbstract;
 /**
  * Class Container.
  *
- * @method Config          config()   static
- * @method RequestAbstract request()  static
- * @method Response        response() static
- * @method Template        template() static
- * @method ServerAbstract  app()      static
- * @method CoreLang        lang()     static
+ * @method Config          config()    static
+ * @method RequestAbstract request()   static
+ * @method Response        response()  static
+ * @method Template        template()  static
+ * @method ServerAbstract  app()       static
+ * @method CoreLang        lang()      static
+ * @method Validator       validator() static
  */
 final class Container implements ArrayAccess
 {
