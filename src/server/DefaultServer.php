@@ -18,28 +18,20 @@ use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\Files;
+use tpr\models\CommandLineAppModel;
 use tpr\Path;
 
-class DefaultServer extends ServerAbstract
+class DefaultServer extends ServerHandler
 {
-    protected $server_name = 'default';
-
-    protected $app_options = [
-        'name'      => 'app',
-        'debug'     => false,
-        'namespace' => 'App',
-        'lang'      => 'zh-cn',
-    ];
-
     public function run()
     {
         Handler::init();
-        $app_namespace = $this->options('namespace');
+        $app_namespace = $this->app_model->namespace;
         $event         = Config::get('event', []);
         if (!empty($event)) {
             Event::import($event);
         }
-        Event::trigger('app_begin', $this->app_options);
+        Event::trigger('app_begin', $this->app_model);
 
         $length = \strlen($app_namespace);
         if ('\\' === $app_namespace[$length - 1]) {
@@ -92,7 +84,7 @@ class DefaultServer extends ServerAbstract
 
     protected function init()
     {
-        Container::bindNX('lang', new Lang());
+        Container::bindNXWithObj('lang', new Lang());
         Event::trigger('app_ini_begin');
         Event::trigger('app_ini_end');
     }
@@ -100,7 +92,7 @@ class DefaultServer extends ServerAbstract
     private function dispatch()
     {
         $ClassLoader = new ClassLoader();
-        $ClassLoader->addPsr4($this->options('namespace') . '\\', Path::app());
+        $ClassLoader->addPsr4($this->app_model->namespace . '\\', Path::app());
         $ClassLoader->register();
         $mode = \PHP_SAPI == 'cli' ? \PHP_SAPI : 'cgi';
         if ('cgi' == $mode) {
@@ -113,7 +105,7 @@ class DefaultServer extends ServerAbstract
 
     private function cgiRunner()
     {
-        $dispatch = new Dispatch($this->options('namespace'));
+        $dispatch = new Dispatch($this->app_model->namespace);
         Container::import([
             'response'     => Response::class,
             'template'     => Template::class,
@@ -128,25 +120,21 @@ class DefaultServer extends ServerAbstract
 
     private function cliRunner($command_name = null)
     {
-        $cli_config = Config::get('cli', [
-            'name'      => 'Command Tools',
-            'version'   => '0.0.1',
-            'namespace' => '',
-        ]);
-        $app        = new Application($cli_config['name'], $cli_config['version']);
+        $cli_model = new CommandLineAppModel($this->app_model->server_options);
+        $app       = new Application($cli_model->name, $cli_model->version);
         $app->add(new Make());
         $commands = Files::searchAllFiles(Path::command(), ['php']);
-        if (empty($cli_config['namespace'])) {
-            $cli_config['namespace'] = $this->options('namespace');
+        if ('' === $cli_model->namespace) {
+            $cli_model->namespace = $this->app_model->namespace;
         } else {
-            $this->setOption('namespace', $cli_config['namespace']);
+            $this->app_model->namespace = $cli_model->namespace;
         }
         Event::trigger('app_load_command');
         foreach ($commands as $file_path => $filename) {
             require_once $file_path;
             $tmp   = str_replace(['.php', Path::command()], '', $file_path);
             $tmp   = str_replace('/', '\\', $tmp);
-            $class = $cli_config['namespace'] . '\\' . $tmp;
+            $class = $cli_model->namespace . '\\' . $tmp;
             if (class_exists($class)) {
                 $command = new $class();
                 $app->add($command);

@@ -18,7 +18,7 @@ use tpr\exception\HttpResponseException;
 use tpr\Lang;
 use tpr\Path;
 
-class SwooleHttpServer extends ServerAbstract
+class SwooleHttpServer extends ServerHandler
 {
     protected $server_name = 'swoole_http_server';
 
@@ -73,13 +73,13 @@ class SwooleHttpServer extends ServerAbstract
     {
         $config       = $this->options('swoole');
         $this->server = new Server($config['listen'], $config['port'], $config['mode'], $config['sock_type']);
-        Container::bind('swoole_server', $this->server);
+        Container::bindWithObj('swoole_server', $this->server);
         unset($config['listen'], $config['port'], $config['mode'], $config['sock_type']);
         $this->server->set($config);
-        Container::bindNX('lang', new Lang());
+        Container::bindNXWithObj('lang', new Lang());
         Event::trigger('app_ini_begin');
         $dispatch = new Dispatch($this->options('namespace'));
-        Container::bind('cgi_dispatch', $dispatch);
+        Container::bindWithObj('cgi_dispatch', $dispatch);
         Container::bind('template', Template::class);
         Container::bind('response', \tpr\core\Response::class);
         $ClassLoader = new ClassLoader();
@@ -96,7 +96,7 @@ class SwooleHttpServer extends ServerAbstract
         $this->server->on('request', static function (Request $request, Response $response) {
             Event::trigger('swoole_request');
             $request = new SwooleHttpRequest($request);
-            Container::bind('request', $request);
+            Container::bindWithObj('request', $request);
             Event::delete('http_response');
             Event::add('http_response', __CLASS__, 'send', $response);
             Container::get('cgi_dispatch')->run();

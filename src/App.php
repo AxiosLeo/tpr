@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tpr;
 
 use tpr\server\DefaultServer;
-use tpr\server\ServerAbstract;
+use tpr\server\ServerHandler;
 use tpr\server\SwooleHttpServer;
 use tpr\server\SwooleTcpServer;
 
@@ -18,19 +18,19 @@ use tpr\server\SwooleTcpServer;
  */
 class App
 {
-    public static $clients = [
+    public static array $server_list = [
         'default'    => DefaultServer::class,
         'swooleHttp' => SwooleHttpServer::class,
         'swooleTcp'  => SwooleTcpServer::class,
     ];
 
-    private static $client;
+    private static bool $debug = false;
 
-    private static $debug = false;
+    private static ServerHandler $handler;
 
     public static function __callStatic($name, $arguments)
     {
-        return self::client($name);
+        return self::drive($name);
     }
 
     public static function debugMode($debug = null)
@@ -46,44 +46,22 @@ class App
         return self::$debug;
     }
 
-    /**
-     * @param string $name
-     * @param string $class
-     */
-    public static function setClient(string $name, string $class)
+    public static function registerServer(string $name, string $class)
     {
-        self::$clients[$name] = $class;
+        self::$server_list[$name] = $class;
     }
 
-    /**
-     * @param null $name
-     *
-     * @throws \Exception
-     *
-     * @return ServerAbstract
-     */
-    public static function client($name = null)
+    public static function drive(string $name = null): ServerHandler
     {
-        if (null === $name) {
-            return self::$client;
-        }
-
-        if (null === self::$client) {
-            if (isset(self::$clients[$name])) {
-                Container::bind('client', self::$clients[$name]);
-            } else {
-                $tmp = [];
-                $n   = 0;
-                foreach (self::$clients as $key => $client) {
-                    $tmp[$n++] = $key . ' => ' . $client;
-                }
-
-                throw new \Exception("Client not Exist. Supported Clients : \n" . implode("\n", $tmp));
+        if (null !== $name) {
+            if (!isset(self::$server_list[$name])) {
+                throw new \InvalidArgumentException('Invalid server name : ' . $name .
+                    ' (you can use `' . implode('/', array_keys(self::$server_list)) . '` for server name)');
             }
-
-            self::$client = Container::get('client');
+            Container::bind('app', self::$server_list[$name]);
+            self::$handler = Container::app();
         }
 
-        return self::$client;
+        return self::$handler;
     }
 }
