@@ -6,12 +6,12 @@ namespace tpr\core;
 
 use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
-use tpr\library\traits\FindDataFromArray;
 use tpr\traits\CacheTrait;
+use tpr\traits\FindDataFromArrayTrait;
 
 class Config
 {
-    use FindDataFromArray;
+    use FindDataFromArrayTrait;
     use CacheTrait;
 
     public $config = [];

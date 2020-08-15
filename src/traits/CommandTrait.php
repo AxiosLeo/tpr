@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace tpr\library;
+namespace tpr\traits;
 
 use tpr\Console;
 
-trait CommandFunction
+trait CommandTrait
 {
     protected function fixed($str = '', $length = 15, $pad_type = STR_PAD_RIGHT, $filler = ' ')
     {

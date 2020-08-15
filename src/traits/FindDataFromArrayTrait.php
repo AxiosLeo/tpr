@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tpr\library\traits;
+namespace tpr\traits;
 
-trait FindDataFromArray
+trait FindDataFromArrayTrait
 {
     /**
      * @param $keyArray

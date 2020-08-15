@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use InvalidArgumentException;
-use tpr\library\traits\FindDataFromArray;
+use tpr\traits\FindDataFromArrayTrait;
 
 class Env
 {
-    use FindDataFromArray;
+    use FindDataFromArrayTrait;
 
     private $env_array = [];
 
