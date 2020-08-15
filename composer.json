@@ -1,9 +1,11 @@
 {
   "name": "axios/tpr",
-  "description": "design for api development",
+  "description": "The framework for quickly developing cgi&cli applications",
   "keywords": [
     "framework",
-    "Api"
+    "Api",
+    "cgi",
+    "cli"
   ],
   "homepage": "https://github.com/AxiosCros/tpr",
   "license": "Apache-2.0",
@@ -17,7 +19,7 @@
     "issues": "https://github.com/AxiosCros/tpr/issues"
   },
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.2",
     "hassankhan/config": "^2.0",
     "symfony/yaml": "^4.2",
     "nikic/fast-route": "^1.3",

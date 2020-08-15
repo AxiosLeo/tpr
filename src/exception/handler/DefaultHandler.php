@@ -13,7 +13,7 @@ class DefaultHandler extends Handler
      */
     public function handle()
     {
-        echo 'something error; TPR Version :' . TPR_VERSION;
+        echo 'something error; TPR Version :' . TPR_FRAMEWORK_VERSION;
 
         return Handler::DONE;
     }
