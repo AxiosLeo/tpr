@@ -45,10 +45,6 @@
       "global.php"
     ]
   },
-  "include-path": [
-    "src/",
-    "global.php"
-  ],
   "scripts": {
     "test": [
       "phpunit --colors=always"
