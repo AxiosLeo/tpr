@@ -20,12 +20,14 @@ use tpr\Path;
 
 class SwooleHttpServer extends ServerAbstract
 {
+    protected $server_name = 'swoole_http_server';
+
     protected $app_options = [
-        'name'       => 'app',
-        'debug'      => false,
-        'namespace'  => 'App',
-        'lang'       => 'zh-cn',
-        'swoole'     => [
+        'name'      => 'app',
+        'debug'     => false,
+        'namespace' => 'App',
+        'lang'      => 'zh-cn',
+        'swoole'    => [
             'mode'          => SWOOLE_BASE,
             'sock_type'     => SWOOLE_SOCK_TCP,
             'listen'        => '0.0.0.0',
@@ -42,11 +44,6 @@ class SwooleHttpServer extends ServerAbstract
      * @var Server
      */
     private $server;
-
-    public function __construct()
-    {
-        $this->server_name = ServerNameEnum::SWOOLE_HTTP_SERVER();
-    }
 
     public function run()
     {

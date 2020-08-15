@@ -27,7 +27,6 @@
     "twig/twig": "^2.11",
     "symfony/console": "^4.3",
     "ralouphie/mimey": "^2.1",
-    "myclabs/php-enum": "^1.7",
     "nette/php-generator": "^3.3",
     "rakit/validation": "^1.3"
   },

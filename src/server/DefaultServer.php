@@ -22,17 +22,14 @@ use tpr\Path;
 
 class DefaultServer extends ServerAbstract
 {
+    protected $server_name = 'default';
+
     protected $app_options = [
         'name'      => 'app',
         'debug'     => false,
         'namespace' => 'App',
         'lang'      => 'zh-cn',
     ];
-
-    public function __construct()
-    {
-        $this->server_name = ServerNameEnum::DEFAULT_SERVER();
-    }
 
     public function run()
     {
