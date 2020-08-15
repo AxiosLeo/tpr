@@ -16,18 +16,13 @@ class Config
 
     public $config = [];
 
-    private $config_path;
-    private $cache_file;
+    private string $config_path;
+    private string $cache_file;
 
     public function __construct()
     {
         $this->cache_file  = \tpr\Path::cache() . \DIRECTORY_SEPARATOR . 'config.cache';
         $this->config_path = \tpr\Path::config();
-        $this->init();
-    }
-
-    public function init()
-    {
         if (!App::debugMode()) {
             $config = $this->cache($this->cache_file);
             if (null === $config) {
@@ -38,6 +33,13 @@ class Config
         } else {
             $this->load();
         }
+    }
+
+    public function set($name, $value)
+    {
+        $this->config[$name] = $value;
+
+        return $this;
     }
 
     /**

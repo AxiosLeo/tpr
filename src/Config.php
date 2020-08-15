@@ -11,8 +11,9 @@ use tpr\core\Config as CoreConfig;
  *
  * @see     CoreConfig
  *
- * @method mixed get($name = null, $default = null) static
- * @method void  load($path = null)                 static
+ * @method mixed      get($name = null, $default = null) static
+ * @method CoreConfig set($name, $value)                 static
+ * @method void       load($path = null)                 static
  */
 final class Config extends Facade
 {
