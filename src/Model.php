@@ -10,9 +10,9 @@ use tpr\exception\ValidateException;
 
 class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
 {
-    protected $_rules    = [];
-    protected $_messages = [];
-    protected $_alias    = [];
+    protected array $_rules    = [];
+    protected array $_messages = [];
+    protected array $_alias    = [];
 
     public function __construct(array $data = [])
     {
