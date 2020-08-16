@@ -4,43 +4,78 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\Path as CorePath;
+use tpr\models\AppPathModel;
 
 /**
  * Class Path.
  *
- * @see     CorePath
- *
- * @method array  check()                        static
- * @method array  all()                          static
- * @method string root($path = null)             static
- * @method string lang($path = null)             static
- * @method string app($path = null)              static
- * @method string command($path = null)          static
- * @method string config($path = null)           static
- * @method string runtime($path = null)          static
- * @method string vendor($path = null)           static
- * @method string framework($path = null)        static
- * @method string index($path = null)            static
- * @method string views($path = null)            static
- * @method string cache($path = null)            static
- * @method string format($path, $create = false) static
- * @method string dir($paths)                    static
- * @method string join(...$paths)                static
- * @method string get($path_name)                static
- * @method string set($path_name, $path)         static
+ * @method string framework() static
+ * @method string root()      static
+ * @method string app()       static
+ * @method string command()   static
+ * @method string config()    static
+ * @method string runtime()   static
+ * @method string cache()     static
+ * @method string vendor()    static
+ * @method string index()     static
+ * @method string views()     static
+ * @method string lang()      static
  */
-class Path extends Facade
+class Path
 {
-    public static $subPath = '';
+    private static ?AppPathModel $model = null;
 
-    protected static function getContainName()
+    private static array $cache = [];
+
+    public static function __callStatic(string $name, $arguments)
     {
-        return 'path';
+        unset($arguments);
+        if (isset(self::$cache[$name])) {
+            return self::$cache[$name];
+        }
+
+        self::$cache[$name] = self::$model->{$name} ? self::join(self::$model->root, self::$model->{$name}) : self::$model->root;
+
+        return self::$cache[$name];
     }
 
-    protected static function getFacadeClass()
+    public static function configurate(array $config = []): AppPathModel
     {
-        return CorePath::class;
+        if (null === self::$model) {
+            self::$model = new AppPathModel($config);
+        } else {
+            self::$model->unmarshall($config);
+        }
+        self::$cache['root']      = self::$model->root;
+        self::$cache['framework'] = self::$model->framework;
+
+        return self::$model;
+    }
+
+    public static function join(string ...$paths): string
+    {
+        if (0 === \count($paths)) {
+            throw new \InvalidArgumentException('At least one parameter needs to be passed in.');
+        }
+        $base          = array_shift($paths);
+        $pathResult    = explode(\DIRECTORY_SEPARATOR, $base);
+        $pathResultLen = \count($pathResult);
+        if ('' === $pathResult[$pathResultLen - 1]) {
+            unset($pathResult[$pathResultLen - 1]);
+        }
+        foreach ($paths as $path) {
+            $tmp = explode(\DIRECTORY_SEPARATOR, $path);
+            foreach ($tmp as $str) {
+                if ('..' === $str) {
+                    array_pop($pathResult);
+                } elseif ('.' === $str || '' === $str) {
+                    continue;
+                } else {
+                    array_push($pathResult, $str);
+                }
+            }
+        }
+
+        return implode(\DIRECTORY_SEPARATOR, $pathResult);
     }
 }
