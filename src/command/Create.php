@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\command;
 
@@ -33,12 +33,13 @@ class Create extends Console
         parent::execute($input, $output);
         unset($input, $output);
         $app_name = $this->input->getArgument('app_name');
-        $dir      = (string)$this->input->getOption('output');
+        $dir      = (string) $this->input->getOption('output');
         if (empty($dir)) {
             $dir = Path::join(getcwd(), $app_name);
         }
         if (file_exists($dir)) {
-            $this->output->error($app_name . ' already exist in ' . dirname($dir));
+            $this->output->error($app_name . ' already exist in ' . \dirname($dir));
+
             return;
         }
         $this->path = new AppPathModel(['root' => $dir]);
@@ -111,7 +112,9 @@ EOF
 
         // generate composer.json
         $app_path = $this->path->app;
-        Files::save(Path::join($this->path->root, 'composer.json'), <<<EOF
+        Files::save(
+            Path::join($this->path->root, 'composer.json'),
+            <<<EOF
 {
   "require": {
     "axios/tpr": "dev-master"
@@ -119,7 +122,7 @@ EOF
   "autoload": {
     "psr-4": {
       "library\\\\": "library/",
-      "$namespace\\\\": "$app_path/"
+      "{$namespace}\\\\": "{$app_path}/"
     }
   },
   "repositories": {

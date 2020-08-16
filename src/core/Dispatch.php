@@ -23,21 +23,24 @@ class Dispatch
 {
     use CacheTrait;
 
-    private $app_namespace;
-    private $module;
-    private $controller;
-    private $action;
+    private string $app_namespace;
+    private string $module;
+    private string $controller;
+    private string $action;
 
-    private $cache_file;
+    private string $cache_file;
 
-    private static $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
+    private static string $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
 
     public function __construct($app_namespace)
     {
         $this->app_namespace = $app_namespace;
-        $this->cache_file    = Path::cache() . \DIRECTORY_SEPARATOR . 'routes.cache';
+        $this->cache_file    = Path::join(Path::cache(), 'routes.cache');
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function run()
     {
         $dispatcher = new GroupCountBased($this->getRoutes());

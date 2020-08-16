@@ -11,30 +11,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Console extends Command
 {
-    /**
-     * @var InputInterface
-     */
-    protected $input;
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
+    protected InputInterface $input;
 
-    private static $inputHandle;
-    private static $outputHandle;
+    protected SymfonyStyle $output;
 
-    /**
-     * @return InputInterface
-     */
-    public static function input()
+    private static InputInterface $inputHandle;
+
+    private static SymfonyStyle $outputHandle;
+
+    public static function input(): InputInterface
     {
         return self::$inputHandle;
     }
 
-    /**
-     * @return SymfonyStyle
-     */
-    public static function output()
+    public static function output(): SymfonyStyle
     {
         return self::$outputHandle;
     }
