@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace tpr\core\response;
 
+use tpr\core\request\RequestAbstract;
+
 abstract class ResponseAbstract implements ResponseInterface
 {
-    public $content_type;
-    protected $name;
+    public string $content_type;
 
-    protected $request;
+    protected string $name;
 
-    protected $options = [];
+    protected RequestAbstract $request;
+
+    protected array $options = [];
 
     public function __construct($options = [])
     {

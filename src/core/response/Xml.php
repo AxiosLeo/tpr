@@ -6,10 +6,10 @@ namespace tpr\core\response;
 
 class Xml extends ResponseAbstract
 {
-    public $content_type = 'text/xml';
-    protected $name      = 'xml';
+    public string    $content_type  = 'text/xml';
+    protected string  $name         = 'xml';
 
-    protected $options = [
+    protected array $options = [
         // 根节点名
         'root_node' => 'data',
         // 根节点属性
@@ -26,8 +26,6 @@ class Xml extends ResponseAbstract
      * 处理数据.
      *
      * @param mixed $data 要处理的数据
-     *
-     * @return string
      */
     public function output($data = null): string
     {

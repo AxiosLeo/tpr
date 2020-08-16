@@ -7,6 +7,7 @@ namespace tpr\core;
 use Exception;
 use tpr\App;
 use tpr\Container;
+use tpr\core\request\RequestAbstract;
 use tpr\core\response\ResponseAbstract;
 use tpr\core\response\ResponseInterface;
 use tpr\exception\ClassNotExistException;
@@ -14,44 +15,30 @@ use tpr\exception\HttpResponseException;
 
 class Response
 {
-    protected $request;
+    protected RequestAbstract $request;
 
-    /**
-     * @var array
-     */
-    private $headers = [];
+    private array $headers = [];
 
-    /**
-     * @var ResponseAbstract
-     */
-    private $response_driver;
+    private ResponseAbstract $response_driver;
 
-    /**
-     * @var array
-     */
-    private $response_options;
+    private array $response_options;
 
-    /**
-     * @var string
-     */
-    private $response_type;
+    private string $response_type;
 
-    private $allow_type = [
+    private array $allow_type = [
         'html', 'json', 'jsonp', 'text', 'xml',
     ];
 
-    private $headersSet = [];
+    private array $headersSet = [];
 
     public function __construct()
     {
-        $this->request          = Container::get('request');
+        $this->request          = Container::request();
         $this->response_options = \tpr\Config::get('app.response', []);
         $this->response_type    = \tpr\Config::get('app.default_return_type', 'html');
     }
 
     /**
-     * @param string $response_type
-     *
      * @throws Exception
      *
      * @return $this
@@ -67,8 +54,6 @@ class Response
     }
 
     /**
-     * @param array $options
-     *
      * @return $this
      */
     public function setResponseOptions(array $options)
@@ -178,7 +163,7 @@ class Response
         if (!empty($headers)) {
             $this->headers = array_merge($this->headers, $headers);
         }
-        if (App::client()) {
+        if (App::debugMode()) {
             $this->setHeaders('x-mode', 'debug');
         }
 
