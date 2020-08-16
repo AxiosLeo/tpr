@@ -4,34 +4,78 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\Files as CoreFiles;
-
 /**
  * Class Files.
- *
- * @see     CoreFiles
- *
- * @method array  readJsonFile($filename)                                                               static
- * @method array  searchFile($dir, $extArray = [], $exclude = [])                                       static
- * @method array  searchDir($dir, $exclude = [])                                                        static
- * @method array  searchAllFiles($dir, $extInclude = "*", $asc = false, $sorting_type = SORT_FLAG_CASE) static
- * @method void   save($filename, $text, $blank = 0)                                                    static
- * @method void   append($filename, $text, $blank = 0)                                                  static
- * @method void   delete($path)                                                                         static
- * @method bool   move($source, $target)                                                                static
- * @method bool   copy($source, $target)                                                                static
- * @method string read($path, $offset = 0, $maxlen = null)                                              static
- * @method bool   exist($path)                                                                          static
  */
-class Files extends Facade
+class Files
 {
-    protected static function getContainName()
+    /**
+     * search files.
+     *
+     * @return array
+     */
+    public static function search(string $dir, array $extInclude = ['php'], bool $asc = false, int $sorting_type = SORT_FLAG_CASE)
     {
-        return 'files';
+        $list = [];
+        if (is_dir($dir)) {
+            $dirHandle = opendir($dir);
+            while (!\is_bool($dirHandle) && false !== ($file_name = readdir($dirHandle))) {
+                $tmp = str_replace('.', '', $file_name);
+                if ('' != $tmp) {
+                    $subFile = Path::join($dir, $file_name);
+                    $ext     = pathinfo($file_name, PATHINFO_EXTENSION);
+                    if (is_dir($subFile)) {
+                        $list = array_merge($list, self::search($subFile, $extInclude, $asc, $sorting_type));
+                    } elseif (\is_string($extInclude)) {
+                        if ('*' == $extInclude || preg_match($extInclude, $file_name)) {
+                            $list[\count($list)] = $subFile;
+                        }
+                    } elseif (\is_array($extInclude) && \in_array($ext, $extInclude)) {
+                        $list[\count($list)] = $subFile;
+                    }
+                }
+            }
+            closedir($dirHandle);
+        }
+        $asc ? ksort($list, $sorting_type) : krsort($list, $sorting_type);
+
+        return $list;
     }
 
-    protected static function getFacadeClass()
+    public static function save(string $filename, string $text, int $blank = 0): void
     {
-        return CoreFiles::class;
+        if (!file_exists(\dirname($filename))) {
+            @mkdir(\dirname($filename), 0777, true);
+        }
+        $fp = fopen($filename, 'w');
+        if (flock($fp, LOCK_EX)) {
+            while ($blank > 0) {
+                fwrite($fp, "\r\n");
+                $blank = $blank - 1;
+            }
+            fwrite($fp, $text . "\r\n");
+            flock($fp, LOCK_UN);
+        }
+        fclose($fp);
+    }
+
+    public static function remove(string $path): void
+    {
+        if (is_dir($path)) {
+            $handle = opendir($path);
+            while (false !== ($fileName = readdir($handle))) {
+                $subFile = Path::join($path, $fileName);
+                $tmp     = str_replace('.', '', $fileName);
+                if ('' != $tmp && is_dir($subFile)) {
+                    self::remove($subFile);
+                } elseif ('' != $tmp && !is_dir($subFile)) {
+                    @unlink($subFile);
+                }
+            }
+            closedir($handle);
+            @rmdir($path);
+        } else {
+            @unlink($path);
+        }
     }
 }
