@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+declare (strict_types = 1);
+
+namespace tpr\cli;
+
+use tpr\App;
+use Webmozart\PathUtil\Path;
+
+if (file_exists(__DIR__ . '/../../../autoload.php')) {
+    require __DIR__ . '/../../../autoload.php';
+} else {
+    require __DIR__ . '/../vendor/autoload.php';
+}
+
+App::default()->config([
+    'server_options' => [
+        'name'      => 'TPR Command Tools',
+        'version'   => '5.0',
+        'namespace' => "tpr\\command",
+    ],
+    'path'           => [
+        'root'    => Path::join(__DIR__, '../runtime/'),
+        'command' => 'command'
+    ]
+])->run();

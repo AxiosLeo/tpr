@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\exception;
 
@@ -17,12 +17,9 @@ use Whoops\Run;
 
 class Handler
 {
-    /**
-     * @var Run
-     */
-    private static $run;
+    private static ?Run $run = null;
 
-    private static $handle_list = [
+    private static array $handle_list = [
         'default' => DefaultHandler::class,
         'html'    => PrettyPageHandler::class,
         'text'    => PlainTextHandler::class,
@@ -31,9 +28,9 @@ class Handler
         'xml'     => XmlResponseHandler::class,
     ];
 
-    private static $handler_type;
+    private static string $handler_type;
 
-    public static function init()
+    public static function init(): void
     {
         if (null === self::$run) {
             self::$run = new Run();
@@ -56,7 +53,7 @@ class Handler
      *
      * @throws \Throwable
      */
-    public static function render($exception, $response)
+    public static function render($exception, $response): void
     {
         if (App::debugMode() && $response->getResponseType() !== self::$handler_type) {
             self::$handler_type = $response->getResponseType();
@@ -70,7 +67,7 @@ class Handler
         throw $exception;
     }
 
-    public static function addHandler($handler)
+    public static function addHandler($handler): void
     {
         if (\is_string($handler)) {
             if (isset(self::$handle_list[$handler])) {
@@ -92,7 +89,7 @@ class Handler
     /**
      * @return Run
      */
-    public static function handleOperator()
+    public static function handleOperator(): ?Run
     {
         return self::$run;
     }

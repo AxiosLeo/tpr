@@ -11,11 +11,11 @@ class Env
 {
     use FindDataFromArrayTrait;
 
-    private $env_array = [];
+    private array $env_array = [];
 
-    private $env_files = [];
+    private array $env_files = [];
 
-    private $env_map = [];
+    private array $env_map = [];
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class Env
     {
         if (file_exists($path) && !\in_array($path, $this->env_files)) {
             $result          = parse_ini_file($path, true);
-            $this->env_array = $this->env_array === [] ? $result : array_merge($this->env_array, $result);
+            $this->env_array = [] === $this->env_array ? $result : array_merge($this->env_array, $result);
             array_push($this->env_files, $path);
         }
 

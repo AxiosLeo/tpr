@@ -10,17 +10,17 @@ use tpr\Path;
 
 class Lang
 {
-    private $word = [];
+    private array $word = [];
 
-    private $langDefault;
+    private string $langDefault;
 
-    private $langDir;
+    private string $langDir;
 
-    private $langFiles = [];
+    private array $langFiles = [];
 
     public function __construct()
     {
-        $this->langDefault = App::client()->options('lang');
+        $this->langDefault = App::drive()->getConfig()->lang;
         $this->langDir     = Path::lang();
         $this->load();
     }
@@ -38,7 +38,7 @@ class Lang
         if (!isset($this->word[$langSet])) {
             return $data;
         }
-        if ($this->word[$langSet] === []) {
+        if ([] === $this->word[$langSet]) {
             $this->word[$langSet] = \Noodlehaus\Config::load($this->langFiles[$langSet])->all();
         }
         if (isset($this->word[$langSet][$data])) {
@@ -53,8 +53,8 @@ class Lang
         if (!file_exists($this->langDir)) {
             return;
         }
-        $fileList = \tpr\Files::searchAllFiles($this->langDir, ['php']);
-        if ($fileList === []) {
+        $fileList = \tpr\Files::search($this->langDir, ['php']);
+        if ([] === $fileList) {
             return;
         }
         $fileList = array_flip($fileList);

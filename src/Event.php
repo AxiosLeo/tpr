@@ -14,12 +14,10 @@ use tpr\exception\ClassNotExistException;
  */
 class Event
 {
-    private static $events = [];
+    private static array $events = [];
 
     /**
      * 批量添加事件，不支持自定义方法和操作置顶.
-     *
-     * @param array $events
      */
     public static function import(array $events): void
     {
@@ -37,13 +35,10 @@ class Event
     /**
      * 添加事件.
      *
-     * @param string                $name
      * @param string                $class
      * @param Closure|object|string $method
-     * @param array                 $params
-     * @param bool                  $first
      */
-    public static function add(string $name, $class, string $method = 'run', $params = [], $first = false): void
+    public static function add(string $name, $class, string $method = 'run', array $params = [], bool $first = false): void
     {
         if (!isset(self::$events[$name])) {
             self::$events[$name] = [];
@@ -65,8 +60,7 @@ class Event
     /**
      * 事件触发器.
      *
-     * @param string $name
-     * @param array  $data
+     * @param array $data
      */
     public static function trigger(string $name, ...$data): void
     {
@@ -76,9 +70,7 @@ class Event
     /**
      * 监听事件.
      *
-     * @param string       $name
-     * @param mixed        $data
-     * @param null|Closure $callback
+     * @param mixed $data
      */
     public static function listen(string $name, &$data = [], Closure $callback = null): void
     {
@@ -92,9 +84,7 @@ class Event
     /**
      * 仅监听某个事件组中的第一个.
      *
-     * @param string       $name
-     * @param mixed        $data
-     * @param null|Closure $callback
+     * @param mixed $data
      */
     public static function listenFirst(string $name, &$data = [], Closure $callback = null): void
     {
@@ -105,10 +95,6 @@ class Event
 
     /**
      * 获取事件数组.
-     *
-     * @param null|string $name
-     *
-     * @return array
      */
     public static function get(string $name = null): array
     {
@@ -121,11 +107,6 @@ class Event
 
     /**
      * 移除事件中的某个操作.
-     *
-     * @param string $name
-     * @param int    $index
-     *
-     * @return bool
      */
     public static function remove(string $name, int $index): bool
     {
@@ -141,10 +122,6 @@ class Event
 
     /**
      * 删除事件.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
     public static function delete(string $name): bool
     {
@@ -160,9 +137,8 @@ class Event
     /**
      * 执行某个事件.
      *
-     * @param              $event
-     * @param mixed        $data
-     * @param null|Closure $callback
+     * @param array $event
+     * @param mixed $data
      */
     private static function exec($event, &$data, Closure $callback = null): void
     {

@@ -19,7 +19,7 @@ trait CacheTrait
     {
         $tmp_file .= '.php';
         if (null === $tmp_data) {
-            if (true === App::debugMode() || !Files::exist($tmp_file)) {
+            if (true === App::debugMode() || !file_exists($tmp_file)) {
                 return null;
             }
 
@@ -28,7 +28,7 @@ trait CacheTrait
         if (!App::debugMode()) {
             Files::save($tmp_file, "<?php\nreturn " . var_export($tmp_data, true) . ";\n");
         } else {
-            Files::delete($tmp_file);
+            Files::remove($tmp_file);
         }
         unset($tmp_file);
 
