@@ -4,96 +4,66 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
-use Noodlehaus\Config as NoodlehausConfig;
 use tpr\App;
+use tpr\library\ArrayMap;
+use tpr\Path;
 use tpr\traits\CacheTrait;
-use tpr\traits\FindDataFromArrayTrait;
 
 class Config
 {
-    use FindDataFromArrayTrait;
     use CacheTrait;
 
-    public $config = [];
+    public ArrayMap $config;
 
-    private string $config_path;
     private string $cache_file;
 
     public function __construct()
     {
-        $this->cache_file  = \tpr\Path::cache() . \DIRECTORY_SEPARATOR . 'config.cache';
-        $this->config_path = \tpr\Path::config();
-        if (!App::debugMode()) {
+        $this->cache_file = Path::join(Path::cache(), 'config.cache');
+        if (App::debugMode()) {
+            $this->load();
+        } else {
             $config = $this->cache($this->cache_file);
             if (null === $config) {
                 $this->load();
             } else {
-                $this->config = $config;
+                $this->config = new ArrayMap($config);
             }
-        } else {
-            $this->load();
         }
     }
 
-    public function set($name, $value)
+    public function set($name, $value): self
     {
-        $this->config[$name] = $value;
+        $this->config->set($name, $value);
+
+        return $this;
+    }
+
+    public function load(string $path = null): self
+    {
+        $this->config = new ArrayMap();
+        if (null === $path) {
+            $path = Path::config();
+        }
+        $config_file_list = \tpr\Files::search($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
+        foreach ($config_file_list as $filepath) {
+            $ext    = pathinfo($filepath, PATHINFO_EXTENSION);
+            $group  = str_replace([Path::config() . \DIRECTORY_SEPARATOR, '.' . $ext], '', $filepath);
+            $prefix = implode('.', explode(\DIRECTORY_SEPARATOR, $group));
+            $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($filepath)->all(), $this->config->get($prefix, [])));
+        }
+        $this->cache($this->cache_file, $this->config->get());
 
         return $this;
     }
 
     /**
-     * @param null|string $path
-     *
-     * @return array
-     */
-    public function load($path = null)
-    {
-        if (null === $path) {
-            $path = $this->config_path;
-        } else {
-            $path = \tpr\Path::format($path);
-        }
-        $config_file_list = \tpr\Files::searchAllFiles($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
-        foreach ($config_file_list as $file_path => $filename) {
-            $group = str_replace(\tpr\Path::config(), '', $file_path);
-
-            if (false === strpos($group, '/')) {
-                $group = $filename;
-            } else {
-                $group = substr($group, 0, strpos($group, '/'));
-            }
-
-            $config = NoodlehausConfig::load($file_path)->all();
-            if (!empty($config)) {
-                if (isset($this->config[$group]) && !empty($this->config[$group])) {
-                    $this->config[$group] = array_merge($this->config[$group], $config);
-                } else {
-                    $this->config[$group] = $config;
-                }
-            }
-        }
-        $this->cache($this->cache_file, $this->config);
-
-        return $this->config;
-    }
-
-    /**
-     * @param null|string $name
-     * @param mixed       $default
+     * @param mixed $default
      *
      * @return null|array|mixed
      */
-    public function get($name = null, $default = null)
+    public function get(string $name = null, $default = null)
     {
-        if (null === $name) {
-            return $this->config;
-        }
-        $config = $this->find(explode('.', $name), $this->config, $default);
-        if (!empty($default) && \is_array($default)) {
-            $config = array_merge($default, $config);
-        }
-
-        return $config;
+        return $this->config->get($name, $default);
     }
 }
