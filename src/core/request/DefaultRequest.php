@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace tpr\core\request;
 
 use tpr\Event;
-use tpr\library\ArrayTool;
 use tpr\library\File;
 use tpr\library\Helper;
+use tpr\traits\ParamTrait;
 
 /**
  * Class DefaultRequest.
@@ -36,7 +36,8 @@ use tpr\library\Helper;
  */
 class DefaultRequest extends RequestAbstract implements RequestInterface
 {
-    private $server_map = [
+    use ParamTrait;
+    protected array $server_map = [
         'method'     => 'REQUEST_METHOD',
         'env'        => 'SERVER_SOFTWARE',
         'protocol'   => 'SERVER_PROTOCOL',
@@ -53,22 +54,6 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         'query'      => 'QUERY_STRING',
         'remotePort' => 'REMOTE_PORT',
     ];
-
-    public function __call($name, $arguments)
-    {
-        $is = 's' === $name[1] && 'i' === $name[0];
-        if (!$is) {
-            unset($arguments);
-            if (isset($this->server_map[$name])) {
-                return $this->server($this->server_map[$name]);
-            }
-
-            return null;
-        }
-        $method = strtoupper(substr($name, 2));
-
-        return $method === $this->method();
-    }
 
     public function url($is_whole = false)
     {
@@ -110,30 +95,6 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
 
             return $this->setRequestData('content_type', $contentType);
         });
-    }
-
-    /**
-     * @param string $name
-     * @param null   $default
-     *
-     * @return mixed
-     */
-    public function param($name = null, $default = null)
-    {
-        /** @var ArrayTool $params */
-        $params = $this->getRequestData('params', function () {
-            $params = ArrayTool::instance();
-            if ('POST' === $this->method()) {
-                $params->set($this->post());
-            } else {
-                $params->set($this->put());
-            }
-            $params->set($this->get());
-
-            return $this->setRequestData('params', $params);
-        });
-
-        return $params->get($name, $default);
     }
 
     public function input($array, $name = null, $default = null)

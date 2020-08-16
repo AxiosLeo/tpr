@@ -17,9 +17,24 @@ use tpr\library\File;
  */
 abstract class RequestAbstract
 {
-    private $request_data = [];
+    protected array $server_map = [];
+    private array $request_data = [];
 
-    abstract public function __call($name, $arguments);
+    public function __call($name, $arguments)
+    {
+        $is = 's' === $name[1] && 'i' === $name[0];
+        if (!$is) {
+            unset($arguments);
+            if (isset($this->server_map[$name])) {
+                return $this->server($this->server_map[$name]);
+            }
+
+            return null;
+        }
+        $method = strtoupper(substr($name, 2));
+
+        return $method === $this->method();
+    }
 
     abstract public function time($format = null, $micro = false);
 
@@ -32,6 +47,13 @@ abstract class RequestAbstract
         return $this->setRequestData('route_info', $routeInfo);
     }
 
+    /**
+     * @param false $refresh
+     *
+     * @throws \Exception
+     *
+     * @return null|mixed
+     */
     public function token($refresh = false)
     {
         if ($refresh) {
@@ -43,6 +65,8 @@ abstract class RequestAbstract
         });
     }
 
+    abstract public function server($name = null);
+
     /**
      * @throws \Exception
      *
@@ -50,7 +74,7 @@ abstract class RequestAbstract
      */
     protected function refreshToken()
     {
-        $token = md5(App::client()->name() . uniqid(md5($this->time(true)), true));
+        $token = md5(App::drive()->getConfig()->name . uniqid(md5($this->time(true)), true));
 
         return $this->setRequestData('token', $token);
     }

@@ -6,7 +6,7 @@ namespace tpr\core\request;
 
 use Swoole\Http\Request;
 use tpr\Event;
-use tpr\library\ArrayTool;
+use tpr\traits\ParamTrait;
 
 /**
  * Class SwooleHttpRequest.
@@ -25,34 +25,19 @@ use tpr\library\ArrayTool;
  */
 class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 {
-    private $swoole_request;
+    use ParamTrait;
 
-    private $server_map = [
+    protected array $server_map = [
         'method'   => 'request_method',
         'protocol' => 'server_protocol',
         'port'     => 'server_port',
         'pathInfo' => 'path_info',
     ];
+    private Request $swoole_request;
 
     public function __construct(Request $request)
     {
         $this->swoole_request = $request;
-    }
-
-    public function __call($name, $arguments)
-    {
-        $is = 's' === $name[1] && 'i' === $name[0];
-        if (!$is) {
-            unset($arguments);
-            if (isset($this->server_map[$name])) {
-                return $this->server($this->server_map[$name]);
-            }
-
-            return null;
-        }
-        $method = strtoupper(substr($name, 2));
-
-        return $method === $this->method();
     }
 
     public function accept()
@@ -78,24 +63,6 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
     public function contentType()
     {
         return $this->header('content-type');
-    }
-
-    public function param($name = null, $default = null)
-    {
-        /** @var ArrayTool $params */
-        $params = $this->getRequestData('params', function () {
-            $params = ArrayTool::instance();
-            if ('POST' === $this->method()) {
-                $params->set($this->post());
-            } else {
-                $params->set($this->put());
-            }
-            $params->set($this->get());
-
-            return $this->setRequestData('params', $params);
-        });
-
-        return $params->get($name, $default);
     }
 
     public function input($array, $name = null, $default = null)
@@ -152,7 +119,7 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
     public function request($name = null, $default = null)
     {
         return $this->getRequestData('request', function () {
-            return $this->setRequestData('request', $this->swoole_request->request);
+            return $this->setRequestData('request', $this->swoole_request);
         });
     }
 
@@ -200,23 +167,19 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
 
     public function isHttps()
     {
-        $is_https = $this->getRequestData('is_https', function () {
+        return $this->getRequestData('is_https', function () {
             return $this->setRequestData('is_https', 'https' === $this->scheme());
         });
-
-        return $is_https;
     }
 
     public function scheme()
     {
-        $scheme = $this->getRequestData('scheme', function () {
+        return $this->getRequestData('scheme', function () {
             return $this->setRequestData(
                 'scheme',
                 strpos($this->server('server_protocol'), 'HTTP/1.1') ? 'http' : 'https'
             );
         });
-
-        return $scheme;
     }
 
     public function header($name = null, $default = null)
