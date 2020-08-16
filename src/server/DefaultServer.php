@@ -6,7 +6,7 @@ namespace tpr\server;
 
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application;
-use tpr\command\Make;
+use Symfony\Component\Console\Command\Command;
 use tpr\Config;
 use tpr\Container;
 use tpr\core\Dispatch;
@@ -23,6 +23,9 @@ use tpr\Path;
 
 class DefaultServer extends ServerHandler
 {
+    /**
+     * @throws \Throwable
+     */
     public function run()
     {
         Handler::init();
@@ -50,6 +53,8 @@ class DefaultServer extends ServerHandler
      * run single command.
      *
      * @param null|string $command
+     *
+     * @throws \Exception
      */
     public function exec($command = null)
     {
@@ -89,6 +94,9 @@ class DefaultServer extends ServerHandler
         Event::trigger('app_ini_end');
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function dispatch()
     {
         $ClassLoader = new ClassLoader();
@@ -103,6 +111,9 @@ class DefaultServer extends ServerHandler
         Event::trigger('app_end');
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function cgiRunner()
     {
         $dispatch = new Dispatch($this->app->namespace);
@@ -118,34 +129,47 @@ class DefaultServer extends ServerHandler
         $dispatch->run();
     }
 
-    private function cliRunner($command_name = null)
+    /**
+     * @param string $command_name
+     *
+     * @throws \Exception
+     */
+    private function cliRunner(string $command_name = null)
     {
+        /**
+         * @var Command $command
+         */
         $cli_model = new CommandLineAppModel($this->app->server_options);
-        $app       = new Application($cli_model->name, $cli_model->version);
-        $app->add(new Make());
-        $commands = Files::search(Path::command(), ['php']);
         if ('' === $cli_model->namespace) {
             $cli_model->namespace = $this->app->namespace;
         } else {
             $this->app->namespace = $cli_model->namespace;
         }
+        $app = new Application($cli_model->name, $cli_model->version);
+        if (\count($cli_model->commands) > 0) {
+            foreach ($cli_model->commands as $class) {
+                $command = new $class();
+                $app->add($command);
+            }
+        }
         Event::trigger('app_load_command');
-        foreach ($commands as $filepath) {
+        $command_files = Files::search(Path::command(), ['php']);
+        foreach ($command_files as $filepath) {
             require_once $filepath;
             $tmp   = str_replace(['.php', Path::command()], '', $filepath);
             $tmp   = str_replace('/', '\\', $tmp);
             $class = $cli_model->namespace . $tmp;
-            if (class_exists($class)) {
-                $command = new $class();
-                $app->add($command);
-            } else {
+            if (!class_exists($class)) {
                 echo "---------------------------------------------------\n" .
                     CONSOLE_STYLE_BACKGROUND_31 . "Class Not Exist. Please check namespace ! \n" . CONSOLE_STYLE_DEFAULT .
                     CONSOLE_STYLE_BACKGROUND_33 . 'target class => ' . $class . CONSOLE_STYLE_DEFAULT . "\n" .
                     "---------------------------------------------------\n";
                 die();
             }
+            $command = new $class();
+            $app->add($command);
         }
+
         Event::trigger('app_run_command_before');
         if ($command_name) {
             $app->setDefaultCommand($command_name, true);

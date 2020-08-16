@@ -11,4 +11,5 @@ class CommandLineAppModel extends Model
     public string $name      = 'Command Tools';
     public string $version   = '0.0.1';
     public string $namespace = '';
+    public array  $commands  = [];
 }
