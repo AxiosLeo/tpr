@@ -52,7 +52,9 @@ class Config
             $prefix = implode('.', explode(\DIRECTORY_SEPARATOR, $group));
             $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($filepath)->all(), $this->config->get($prefix, [])));
         }
-        $this->cache($this->cache_file, $this->config->get());
+        if (!App::debugMode()) {
+            $this->cache($this->cache_file, $this->config->get());
+        }
 
         return $this;
     }

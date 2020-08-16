@@ -144,7 +144,9 @@ class Dispatch
                 $routeCollector->addRoute($route['method'], $route['rule'], $route['handler']);
             }
             $route_data = $routeCollector->getData();
-            $this->cache($this->cache_file, $route_data);
+            if (!App::debugMode()) {
+                $this->cache($this->cache_file, $route_data);
+            }
         }
 
         return $route_data;
