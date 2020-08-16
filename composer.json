@@ -7,6 +7,9 @@
     "cgi",
     "cli"
   ],
+  "bin": [
+    "bin/tpr-cli"
+  ],
   "homepage": "https://github.com/AxiosCros/tpr",
   "license": "Apache-2.0",
   "authors": [
