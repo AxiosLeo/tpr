@@ -80,7 +80,8 @@ class SwooleHttpRequest extends RequestAbstract implements RequestInterface
     public function get($name = null, $default = null)
     {
         return $this->getRequestData('get', function () {
-            return $this->setRequestData('get', $this->swoole_request->get);
+            $get = null === $this->swoole_request->get ? [] : $this->swoole_request->get;
+            return $this->setRequestData('get', $get);
         });
     }
 
