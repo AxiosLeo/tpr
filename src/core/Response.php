@@ -15,7 +15,7 @@ use tpr\exception\HttpResponseException;
 
 class Response
 {
-    protected RequestAbstract $request;
+    protected ?RequestAbstract $request = null;
 
     private array $headers = [];
 
@@ -33,7 +33,7 @@ class Response
 
     public function __construct()
     {
-        $this->request          = Container::request();
+        $this->request          = Container::get('request');
         $this->response_options = \tpr\Config::get('app.response', []);
         $this->response_type    = \tpr\Config::get('app.default_return_type', 'html');
     }
