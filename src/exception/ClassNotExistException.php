@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\exception;
 
@@ -12,9 +12,8 @@ class ClassNotExistException extends RuntimeException
 
     public function __construct($class_name = '', $message = '')
     {
-        parent::__construct();
-        $this->message = !empty($message) ? $message : 'Class Not Exist : ' . $class_name;
-        $this->class   = $class_name;
+        parent::__construct(!empty($message) ? $message : 'Class Not Exist : ' . $class_name, 404);
+        $this->class = $class_name;
     }
 
     public function getClass()
