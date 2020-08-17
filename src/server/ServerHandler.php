@@ -1,9 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\server;
 
+use tpr\Container;
+use tpr\Lang;
+use tpr\Model;
 use tpr\models\AppModel;
 use tpr\Path;
 
@@ -12,11 +15,15 @@ use tpr\Path;
  */
 abstract class ServerHandler
 {
-    protected AppModel     $app;
+    protected AppModel      $app;
+    protected Model         $server;
+    protected array         $server_options = [];
 
     public function __construct()
     {
         $this->app = new AppModel();
+        Path::configurate();
+        Container::bindNXWithObj('lang', new Lang());
     }
 
     abstract public function run();
@@ -27,6 +34,9 @@ abstract class ServerHandler
 
         if (isset($config['path'])) {
             Path::configurate($config['path']);
+        }
+        if (isset($config['server_options'])) {
+            $this->server->unmarshall($config['server_options']);
         }
 
         return $this;
