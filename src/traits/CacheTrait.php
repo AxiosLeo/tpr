@@ -10,12 +10,9 @@ use tpr\Files;
 trait CacheTrait
 {
     /**
-     * @param string $tmp_file
-     * @param null   $tmp_data
-     *
      * @return null|mixed
      */
-    private function cache($tmp_file, $tmp_data = null)
+    private function cache(string $tmp_file, array $tmp_data = [])
     {
         $tmp_file .= '.php';
         if (null === $tmp_data) {

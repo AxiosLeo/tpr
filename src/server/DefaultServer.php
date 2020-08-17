@@ -116,16 +116,14 @@ class DefaultServer extends ServerHandler
      */
     private function cgiRunner()
     {
+        Container::bind('request', DefaultRequest::class);
         $dispatch = new Dispatch($this->app->namespace);
         Container::import([
             'response'     => Response::class,
             'template'     => Template::class,
             'cgi_dispatch' => $dispatch,
         ]);
-        Container::bind('request', DefaultRequest::class);
-
         Event::add('http_response', $this, 'send');
-
         $dispatch->run();
     }
 

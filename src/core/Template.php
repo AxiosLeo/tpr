@@ -16,9 +16,9 @@ class Template
         'base' => null,
     ];
 
-    private $base_dir;
+    private ?string $base_dir;
 
-    private $template_loader;
+    private Environment $template_loader;
 
     public function __construct()
     {
@@ -26,17 +26,12 @@ class Template
         $this->setBaseDir($this->options['base']);
     }
 
-    /**
-     * @param null|string $base_dir
-     *
-     * @return $this
-     */
-    public function setBaseDir($base_dir = null)
+    public function setBaseDir(string $base_dir = null)
     {
         if (empty($base_dir)) {
             $base_dir = \tpr\Path::views();
         }
-        $this->base_dir = \tpr\Path::format($base_dir);
+        $this->base_dir = $base_dir;
 
         return $this;
     }
@@ -55,17 +50,17 @@ class Template
     }
 
     /**
-     * @param       $dir
-     * @param       $file
-     * @param array $params
+     * @param $dir
+     * @param $file
      *
-     * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
+     * @throws \Twig\Error\LoaderError
+     * @throws \Exception
      *
      * @return string
      */
-    public function render($dir, $file, $params = [])
+    public function render(string $dir, string $file, array $params = [])
     {
         return $this->driver()->render($dir . $file . $this->getExt(), $params);
     }

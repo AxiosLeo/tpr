@@ -11,18 +11,15 @@ use tpr\Path;
 
 class Html extends ResponseAbstract
 {
-    public $content_type    = 'text/html';
-    protected $name         = 'html';
+    public string  $content_type   = 'text/html';
+    protected string $name         = 'html';
 
-    protected $options = [
+    protected array $options = [
         'params'     => [],
         'views_path' => '',
     ];
 
-    /**
-     * @var Template
-     */
-    private $template_driver;
+    private Template $template_driver;
 
     /**
      * @return null|mixed|Template
@@ -30,7 +27,7 @@ class Html extends ResponseAbstract
     public function getTemplateDriver()
     {
         if (null === $this->template_driver) {
-            $this->template_driver = Container::get('template');
+            $this->template_driver = Container::template();
         }
 
         return $this->template_driver;
@@ -39,9 +36,9 @@ class Html extends ResponseAbstract
     /**
      * @param null $data
      *
-     * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return string
      */
@@ -57,7 +54,7 @@ class Html extends ResponseAbstract
         if (null === $template) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
-            $dir      = Path::dir([
+            $dir      = Path::join(...[
                 $dispatch->getModuleName(),
                 $dispatch->getControllerName(),
             ]);
@@ -65,7 +62,7 @@ class Html extends ResponseAbstract
         } elseif (false !== strpos($template, ':')) {
             $tmp  = explode(':', $template);
             $file = array_pop($tmp);
-            $dir  = Path::format(Path::dir($tmp));
+            $dir  = Path::join(...$tmp);
             unset($tmp);
         } else {
             $dir  = \DIRECTORY_SEPARATOR;

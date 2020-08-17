@@ -32,7 +32,7 @@ abstract class Facade
             if (null !== static::getFacadeClass()) {
                 Container::bind($name, static::getFacadeClass());
             } else {
-                throw new ContainerNotExistException('`' . $name . '` Container is not exist');
+                throw new ContainerNotExistException($name);
             }
         }
 

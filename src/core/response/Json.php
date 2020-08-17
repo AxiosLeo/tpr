@@ -9,10 +9,10 @@ use InvalidArgumentException;
 
 class Json extends ResponseAbstract
 {
-    public $content_type = 'application/json';
-    protected $name      = 'json';
+    public string $content_type = 'application/json';
+    protected string $name      = 'json';
 
-    protected $options = [
+    protected array $options = [
         'json_encode_param' => JSON_UNESCAPED_UNICODE,
     ];
 

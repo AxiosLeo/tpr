@@ -9,10 +9,10 @@ use InvalidArgumentException;
 
 class Jsonp extends ResponseAbstract
 {
-    public $content_type = 'application/javascript';
-    protected $name      = 'jsonp';
+    public string $content_type = 'application/javascript';
+    protected string $name      = 'jsonp';
 
-    protected $options = [
+    protected array $options = [
         'json_encode_param' => JSON_UNESCAPED_UNICODE,
         'jsonp_handler'     => 'jsonpReturn',
     ];
