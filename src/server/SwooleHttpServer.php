@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\server;
 
@@ -29,7 +29,7 @@ function getStaticFile(Request $request, Response $response): bool
         'jpg'  => 'image/jpg',
         'jpeg' => 'image/jpg',
         'mp4'  => 'video/mp4',
-        'ico'  => 'image/x-icon'
+        'ico'  => 'image/x-icon',
     ];
     $staticFile = Path::join(Path::index(), $request->server['request_uri']);
     $type       = pathinfo($request->server['request_uri'], PATHINFO_EXTENSION);
@@ -41,11 +41,13 @@ function getStaticFile(Request $request, Response $response): bool
         } else {
             $response->setStatusCode(404);
         }
+
         return true;
     }
     if (is_dir($staticFile) || !file_exists($staticFile)) {
         return false;
     }
+
     return true;
 }
 
@@ -74,13 +76,15 @@ class SwooleHttpServer extends ServerHandler
     public function run()
     {
         Handler::init();
+
         try {
             $this->init();
             $this->driver->start();
         } catch (\Exception $e) {
-            $whoops = new \Whoops\Run;
+            $whoops = new \Whoops\Run();
             $whoops->pushHandler(new \Whoops\Handler\PlainTextHandler());
             $whoops->register();
+
             throw $e;
         }
     }
@@ -113,7 +117,7 @@ class SwooleHttpServer extends ServerHandler
         Container::bindWithObj('cgi_dispatch', $dispatch);
         Container::bind('template', Template::class);
         $ClassLoader = new ClassLoader();
-        $ClassLoader->addPsr4($this->app->namespace . "\\", Path::app());
+        $ClassLoader->addPsr4($this->app->namespace . '\\', Path::app());
         $ClassLoader->register();
         $this->driver->on('connect', static function (Server $server, $id) {
             $data = [
@@ -126,8 +130,9 @@ class SwooleHttpServer extends ServerHandler
         $this->driver->on('request', static function (Request $request, Response $response) {
             $uri = $request->server['request_uri'];
             $ext = pathinfo($uri, PATHINFO_EXTENSION);
+
             try {
-                if ($ext === "") {
+                if ('' === $ext) {
                     $request = new SwooleHttpRequest($request);
                     Container::bindWithObj('request', $request);
                     Container::bind('response', \tpr\core\Response::class);
@@ -140,24 +145,24 @@ class SwooleHttpServer extends ServerHandler
                     Container::get('cgi_dispatch')->run();
                 } else {
                     $staticFile = Path::join(Path::index(), $request->server['request_uri']);
-                    if ($ext === 'php') {
+                    if ('php' === $ext) {
                         $response->setStatusCode(500);
-                        $response->end("");
-                    } else if (file_exists($staticFile)) {
+                        $response->end('');
+                    } elseif (file_exists($staticFile)) {
                         $mimes     = new MimeTypes();
                         $mime_type = $mimes->getMimeType($ext);
                         $response->header('Content-Type', $mime_type);
                         $response->sendfile($staticFile);
                     } else {
                         $response->setStatusCode(404);
-                        $response->end("");
+                        $response->end('');
                     }
                 }
             } catch (\Exception $e) {
-                if ($e->getCode() === 404) {
+                if (404 === $e->getCode()) {
                     dump($e->getMessage());
                     $response->setStatusCode(404);
-                    $response->end("");
+                    $response->end('');
                 } else {
                     dump($e);
                 }

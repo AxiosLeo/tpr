@@ -35,26 +35,25 @@ class Event
     /**
      * 添加事件.
      *
-     * @param string                $class
-     * @param Closure|object|string $method
+     * @param string $class
      */
-    public static function add(string $name, $class, string $method = 'run', array $params = [], bool $first = false): void
+    public static function add(string $name, $class, string $method = 'run', ...$params): void
     {
-        if (!isset(self::$events[$name])) {
-            self::$events[$name] = [];
-        }
+        $event = self::initEvent($name, $class, $method, ...$params);
+        array_push(self::$events[$name], $event);
+    }
 
-        if (\is_string($class) && !class_exists($class)) {
-            throw new ClassNotExistException($class);
-        }
+    public static function addOnTop(string $name, $class, string $method = 'run', ...$params)
+    {
+        $event = self::initEvent($name, $class, $method, ...$params);
+        array_unshift(self::$events[$name], $event);
+    }
 
-        $event = [
-            'class'  => $class,
-            'method' => $method,
-            'params' => $params,
-        ];
-
-        $first ? array_unshift(self::$events[$name], $event) : array_push(self::$events[$name], $event);
+    public static function refresh(string $name, $class, string $method = 'run', ...$params)
+    {
+        $event                  = self::initEvent($name, $class, $method, ...$params);
+        self::$events[$name]    = [];
+        self::$events[$name][0] = $event;
     }
 
     /**
@@ -134,6 +133,23 @@ class Event
         return false;
     }
 
+    private static function initEvent(string $name, $class, string $method = 'run', ...$params)
+    {
+        if (!isset(self::$events[$name])) {
+            self::$events[$name] = [];
+        }
+
+        if (\is_string($class) && !class_exists($class)) {
+            throw new ClassNotExistException($class);
+        }
+
+        return [
+            'class'  => $class,
+            'method' => $method,
+            'params' => $params,
+        ];
+    }
+
     /**
      * 执行某个事件.
      *
@@ -148,10 +164,10 @@ class Event
         if ($class instanceof Closure) {
             $result = \call_user_func_array($class, [&$data]);
         } elseif (\is_object($class)) {
-            $result = \call_user_func_array([$class, $method], [&$data, $extra_param]);
+            $result = \call_user_func_array([$class, $method], [&$data, ...$extra_param]);
         } else {
             $obj    = new $class();
-            $result = \call_user_func_array([$obj, $method], [&$data, $extra_param]);
+            $result = \call_user_func_array([$obj, $method], [&$data, ...$extra_param]);
         }
         if (null !== $callback) {
             \call_user_func_array($callback, [&$data, $result]);
