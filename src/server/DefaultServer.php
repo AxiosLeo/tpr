@@ -119,10 +119,10 @@ class DefaultServer extends ServerHandler
         Container::bind('request', DefaultRequest::class);
         $dispatch = new Dispatch($this->app->namespace);
         Container::import([
-            'response'     => Response::class,
-            'template'     => Template::class,
-            'cgi_dispatch' => $dispatch,
+            'response' => Response::class,
+            'template' => Template::class,
         ]);
+        Container::bindNXWithObj('cgi_dispatch', $dispatch);
         Event::add('http_response', $this, 'send');
         $dispatch->run();
     }

@@ -25,6 +25,6 @@ trait ParamTrait
             return $this->setRequestData('params', $params);
         });
 
-        return $params->get($name, $default);
+        return isset($params[$name]) ? $params[$name] : $default;
     }
 }

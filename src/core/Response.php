@@ -19,7 +19,7 @@ class Response
 
     private array $headers = [];
 
-    private ResponseAbstract $response_driver;
+    private ?ResponseAbstract $response_driver = null;
 
     private array $response_options;
 

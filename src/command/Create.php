@@ -78,7 +78,7 @@ EOF
         // generate views dir
         $tpr_version = TPR_FRAMEWORK_VERSION;
         Files::save(
-            Path::join($this->path->root, 'views/index/controller', 'index.html'),
+            Path::join($this->path->root, 'views/index/index', 'index.html'),
             <<<EOF
 <!DOCTYPE html>
 <html>
@@ -151,7 +151,7 @@ EOF
             );
         }
 
-        $confirm = $this->output->confirm('exec composer install now?');
+        $confirm = $this->output->confirm('composer install now?');
         if ($confirm) {
             $this->shell('cd ' . $dir . ' && composer install');
         }

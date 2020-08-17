@@ -16,9 +16,9 @@ class Template
         'base' => null,
     ];
 
-    private ?string $base_dir;
+    private ?string $base_dir = null;
 
-    private Environment $template_loader;
+    private ?Environment $template_loader = null;
 
     public function __construct()
     {

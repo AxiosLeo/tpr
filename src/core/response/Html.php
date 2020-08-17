@@ -11,7 +11,7 @@ use tpr\Path;
 
 class Html extends ResponseAbstract
 {
-    public string  $content_type   = 'text/html';
+    public string    $content_type = 'text/html';
     protected string $name         = 'html';
 
     protected array $options = [
@@ -19,7 +19,7 @@ class Html extends ResponseAbstract
         'views_path' => '',
     ];
 
-    private Template $template_driver;
+    private ?Template $template_driver = null;
 
     /**
      * @return null|mixed|Template
@@ -36,9 +36,9 @@ class Html extends ResponseAbstract
     /**
      * @param null $data
      *
-     * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
+     * @throws \Twig\Error\LoaderError
      *
      * @return string
      */
@@ -54,10 +54,7 @@ class Html extends ResponseAbstract
         if (null === $template) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
-            $dir      = Path::join(...[
-                $dispatch->getModuleName(),
-                $dispatch->getControllerName(),
-            ]);
+            $dir      = Path::join($dispatch->getModuleName(), $dispatch->getControllerName()) . \DIRECTORY_SEPARATOR;
             $file     = $dispatch->getActionName();
         } elseif (false !== strpos($template, ':')) {
             $tmp  = explode(':', $template);
