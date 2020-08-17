@@ -10,7 +10,6 @@ use Symfony\Component\Console\Command\Command;
 use tpr\Config;
 use tpr\Container;
 use tpr\core\Dispatch;
-use tpr\core\Lang;
 use tpr\core\request\DefaultRequest;
 use tpr\core\Response;
 use tpr\core\Template;
@@ -89,7 +88,6 @@ class DefaultServer extends ServerHandler
 
     protected function init()
     {
-        Container::bindNXWithObj('lang', new Lang());
         Event::trigger('app_ini_begin');
         Event::trigger('app_ini_end');
     }
