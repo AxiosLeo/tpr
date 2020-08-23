@@ -15,9 +15,9 @@ use tpr\Path;
  */
 abstract class ServerHandler
 {
-    protected AppModel      $app;
-    protected Model         $server;
-    protected array         $server_options = [];
+    protected AppModel       $app;
+    protected ?Model         $server         = null;
+    protected array          $server_options = [];
 
     public function __construct()
     {
@@ -35,7 +35,7 @@ abstract class ServerHandler
         if (isset($config['path'])) {
             Path::configurate($config['path']);
         }
-        if (isset($config['server_options'])) {
+        if (null !== $this->server && isset($config['server_options'])) {
             $this->server->unmarshall($config['server_options']);
         }
 

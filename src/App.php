@@ -8,20 +8,23 @@ use tpr\server\DefaultServer;
 use tpr\server\ServerHandler;
 use tpr\server\SwooleHttpServer;
 use tpr\server\SwooleTcpServer;
+use tpr\server\WorkermanHttpServer;
 
 /**
  * Class Client.
  *
- * @method DefaultServer    default()    static
- * @method SwooleHttpServer swooleHttp() static
- * @method SwooleTcpServer  swooleTcp()  static
+ * @method DefaultServer       default()       static
+ * @method SwooleHttpServer    swooleHttp()    static
+ * @method SwooleTcpServer     swooleTcp()     static
+ * @method WorkermanHttpServer workermanHttp() static
  */
 class App
 {
     public static array $server_list = [
-        'default'    => DefaultServer::class,
-        'swooleHttp' => SwooleHttpServer::class,
-        'swooleTcp'  => SwooleTcpServer::class,
+        'default'     => DefaultServer::class,
+        'swooleHttp'  => SwooleHttpServer::class,
+        'swooleTcp'   => SwooleTcpServer::class,
+        'workmanHttp' => WorkermanHttpServer::class,
     ];
 
     private static bool $debug = false;

@@ -19,38 +19,6 @@ use tpr\exception\HttpResponseException;
 use tpr\models\SwooleServerModel;
 use tpr\Path;
 
-function getStaticFile(Request $request, Response $response): bool
-{
-    $static     = [
-        'css'  => 'text/css',
-        'js'   => 'text/javascript',
-        'png'  => 'image/png',
-        'gif'  => 'image/gif',
-        'jpg'  => 'image/jpg',
-        'jpeg' => 'image/jpg',
-        'mp4'  => 'video/mp4',
-        'ico'  => 'image/x-icon',
-    ];
-    $staticFile = Path::join(Path::index(), $request->server['request_uri']);
-    $type       = pathinfo($request->server['request_uri'], PATHINFO_EXTENSION);
-    if (isset($static[$type])) {
-        if (file_exists($staticFile)) {
-            dump($request->server['request_uri'], $staticFile, $type, isset($static[$type]));
-            $response->header('Content-Type', $static[$type]);
-            $response->sendfile($staticFile);
-        } else {
-            $response->setStatusCode(404);
-        }
-
-        return true;
-    }
-    if (is_dir($staticFile) || !file_exists($staticFile)) {
-        return false;
-    }
-
-    return true;
-}
-
 class SwooleHttpServer extends ServerHandler
 {
     protected array $default_server_options = [
@@ -73,6 +41,9 @@ class SwooleHttpServer extends ServerHandler
         parent::__construct();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function run()
     {
         Handler::init();
@@ -106,7 +77,7 @@ class SwooleHttpServer extends ServerHandler
         Event::listen('app_response_after', $httpException->result);
     }
 
-    protected function init()
+    protected function beginSwooleServer()
     {
         $swoole       = $this->server;
         $this->driver = new Server($swoole->listen, $swoole->port, $swoole->mode, $swoole->sock_type);
@@ -126,7 +97,11 @@ class SwooleHttpServer extends ServerHandler
             ];
             Event::listen('swoole_connect', $data);
         });
+    }
 
+    protected function init()
+    {
+        $this->beginSwooleServer();
         $this->driver->on('request', static function (Request $request, Response $response) {
             $uri = $request->server['request_uri'];
             $ext = pathinfo($uri, PATHINFO_EXTENSION);
@@ -171,7 +146,11 @@ class SwooleHttpServer extends ServerHandler
             Container::delete('request');
             Container::delete('response');
         });
+        $this->endSwooleServer();
+    }
 
+    protected function endSwooleServer()
+    {
         $this->driver->on('close', static function ($server, $id) {
             unset($server, $id);
             Event::trigger('swoole_close');
