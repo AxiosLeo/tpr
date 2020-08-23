@@ -34,7 +34,7 @@ class AppPathModel extends Model
     public function __construct(array $data = [])
     {
         if (!isset($data['root'])) {
-            $data['root'] = Path::join($this->framework, '../../../../');
+            $data['root'] = Path::join($this->framework, '../../../');
         }
         parent::__construct($data);
     }
