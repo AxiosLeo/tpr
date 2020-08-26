@@ -25,7 +25,7 @@ tpr-cli create <app-name>
 
 ## Usage demo
 
-- Simple Application Example : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
+- Simple Example Application   : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
 - Example of a CMS application : [github.com/AxiosCros/tpr-cms](https://github.com/AxiosCros/tpr-cms)
 
 ## Document
