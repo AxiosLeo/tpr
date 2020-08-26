@@ -139,6 +139,40 @@ EOF
 EOF
         );
 
+        Files::save(
+            Path::join($this->path->root, 'tpr'),
+            <<<'EOF'
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . \DIRECTORY_SEPARATOR . 'vendor'. \DIRECTORY_SEPARATOR .'autoload.php';
+
+use tpr\Path;
+use tpr\App;
+
+Path::configurate([
+    'root'  => __DIR__ . \DIRECTORY_SEPARATOR,
+    'vendor'=> Path::join(Path::root(), 'vendor')
+]);
+
+App::default()->config([
+    'server_options' => [
+        'commands' => [
+            'make' => \tpr\command\Make::class
+        ]
+    ]
+])->run();
+EOF
+        );
+        $this->shell('chmod 755 ' . Path::join($this->path->root, 'tpr'));
+
+        Files::save(
+            Path::join($this->path->root, 'commands', 'README.md'),
+            <<<'EOF'
+
+EOF
+        );
+
         // generate .php_cs.dist&.gitignore
         $files = [
             '.php_cs.dist',
@@ -157,6 +191,11 @@ EOF
         }
         $this->output->newLine(2);
         $this->output->success('Created on ' . $dir);
+
+        $confirm = $this->output->confirm('start web server right now', true);
+        if ($confirm) {
+            $this->shell('cd ' . $dir . ' && composer start');
+        }
     }
 
     private function inputNamespace($app_name)
