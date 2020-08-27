@@ -25,6 +25,11 @@ class Make extends Console
             ->addOption('namespace');
     }
 
+    /**
+     * @throws Exception
+     *
+     * @return int|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
@@ -41,10 +46,10 @@ class Make extends Console
 
         $custom_type = $this->output->ask('layer Name', '');
         if ($custom_type) {
-            $namespace = App::client()->namespace() . '\\' . $custom_type;
+            $namespace = App::drive()->getConfig()->namespace . '\\' . $custom_type;
             $save_path = Path::command() . $custom_type . '/' . $class_name . '.php';
         } else {
-            $namespace = App::client()->namespace();
+            $namespace = App::drive()->getConfig()->namespace;
             $save_path = Path::command() . '/' . $class_name . '.php';
         }
 
