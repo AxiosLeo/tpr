@@ -8,10 +8,10 @@ use InvalidArgumentException;
 
 class Text extends ResponseAbstract
 {
-    public $content_type = 'text/html';
-    protected $name      = 'text';
+    public string $content_type = 'text/html';
+    protected string $name      = 'text';
 
-    protected $options = [];
+    protected array $options = [];
 
     public function output($data = null)
     {
