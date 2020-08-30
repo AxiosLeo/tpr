@@ -8,19 +8,19 @@ use tpr\Model;
 
 final class MockModel extends Model
 {
-    public $foo;
-    public $test;
-    public $data = [];
+    public string  $foo  = '';
+    public ?int    $test = null;
+    public array   $data = [];
 
-    protected $_rules = [
+    protected array $_rules = [
         'test' => 'required',
     ];
 
-    protected $_alias = [
+    protected array $_alias = [
         'data' => 'MockData',
     ];
 
-    protected $_messages = [
+    protected array $_messages = [
         'required' => 'required :attribute',
     ];
 }

@@ -37,7 +37,8 @@
     "friendsofphp/php-cs-fixer": "^2.16",
     "phpunit/phpunit": "^7",
     "swoft/swoole-ide-helper": "^4.4",
-    "symfony/var-dumper": "*"
+    "symfony/var-dumper": "*",
+    "workerman/workerman": "^4.0"
   },
   "autoload": {
     "psr-4": {

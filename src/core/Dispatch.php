@@ -178,6 +178,6 @@ class Dispatch
         }
         $class = new $class();
 
-        return $class->{$action}($vars);
+        return \call_user_func_array([$class, $action], $vars);
     }
 }
