@@ -6,25 +6,16 @@ namespace tpr;
 
 use tpr\server\DefaultServer;
 use tpr\server\ServerHandler;
-use tpr\server\SwooleHttpServer;
-use tpr\server\SwooleTcpServer;
-use tpr\server\WorkermanHttpServer;
 
 /**
  * Class Client.
  *
- * @method DefaultServer       default()       static
- * @method SwooleHttpServer    swooleHttp()    static
- * @method SwooleTcpServer     swooleTcp()     static
- * @method WorkermanHttpServer workermanHttp() static
+ * @method DefaultServer default() static
  */
 class App
 {
     public static array $server_list = [
-        'default'     => DefaultServer::class,
-        'swooleHttp'  => SwooleHttpServer::class,
-        'swooleTcp'   => SwooleTcpServer::class,
-        'workmanHttp' => WorkermanHttpServer::class,
+        'default' => DefaultServer::class,
     ];
 
     private static bool $debug = false;
