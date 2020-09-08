@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\server;
 
+use tpr\Config;
 use tpr\Container;
 use tpr\Lang;
 use tpr\Model;
@@ -38,6 +39,7 @@ abstract class ServerHandler
         if (null !== $this->server && isset($config['server_options'])) {
             $this->server->unmarshall($config['server_options']);
         }
+        Config::load(Path::config());
 
         return $this;
     }
