@@ -47,7 +47,7 @@ class App
 
     public static function drive(string $name = null): ServerHandler
     {
-        if (null !== $name) {
+        if (null === self::$handler) {
             if (!isset(self::$server_list[$name])) {
                 throw new \InvalidArgumentException('Invalid server name : ' . $name .
                     ' (you can use `' . implode('/', array_keys(self::$server_list)) . '` for server name)');
