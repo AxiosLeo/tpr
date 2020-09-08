@@ -20,7 +20,7 @@ class App
 
     private static bool $debug = false;
 
-    private static ServerHandler $handler;
+    private static ?ServerHandler $handler = null;
 
     public static function __callStatic($name, $arguments)
     {
