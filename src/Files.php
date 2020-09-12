@@ -44,19 +44,12 @@ class Files
 
     public static function save(string $filename, string $text, int $blank = 0): void
     {
-        if (!file_exists(\dirname($filename))) {
-            @mkdir(\dirname($filename), 0777, true);
-        }
-        $fp = fopen($filename, 'w');
-        if (flock($fp, LOCK_EX)) {
-            while ($blank > 0) {
-                fwrite($fp, "\r\n");
-                $blank = $blank - 1;
-            }
-            fwrite($fp, $text . "\r\n");
-            flock($fp, LOCK_UN);
-        }
-        fclose($fp);
+        self::write($filename, $text, 'w', $blank);
+    }
+
+    public static function append($filename, $text, $blank = 0): void
+    {
+        self::write($filename, $text, 'a+', $blank);
     }
 
     public static function remove(string $path): void
@@ -77,5 +70,22 @@ class Files
         } else {
             @unlink($path);
         }
+    }
+
+    private static function write(string $filename, string $text, string $mode, int $blank = 0): void
+    {
+        if (!file_exists(\dirname($filename))) {
+            @mkdir(\dirname($filename), 0755, true);
+        }
+        $fp = fopen($filename, $mode);
+        if (flock($fp, LOCK_EX)) {
+            while ($blank > 0) {
+                fwrite($fp, PHP_EOL);
+                $blank = $blank - 1;
+            }
+            fwrite($fp, $text . PHP_EOL);
+            flock($fp, LOCK_UN);
+        }
+        fclose($fp);
     }
 }
