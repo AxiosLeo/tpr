@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\tests\core;
 
@@ -16,10 +16,20 @@ class ModelTest extends TestCase
     public function testUnmarshall()
     {
         $model = new MockModel();
-        $model->unmarshall(['test' => 1, 'foo' => 'bar', 'data' => [1, 2, 3]]);
+        $model->unmarshall([
+            'test'      => 1,
+            'foo'       => 'bar',
+            'data'      => [1, 2, 3],
+            'sub_model' => [
+                'foo' => 'test',
+                'val' => 100
+            ]
+        ]);
         $this->assertEquals(1, $model->test);
         $this->assertEquals('bar', $model->foo);
         $this->assertEquals([1, 2, 3], $model->data);
+        $this->assertEquals('test', $model->sub_model->foo);
+        $this->assertEquals(100, $model->sub_model->val);
     }
 
     public function testValidate()
@@ -35,10 +45,17 @@ class ModelTest extends TestCase
 
     public function testModelArrayOperation()
     {
-        $model = new MockModel(['test' => 1, 'foo' => 'bar', 'data' => [1, 2, 3]]);
-        $this->assertEquals([
-            'test' => 1, 'foo' => 'bar', 'data' => [1, 2, 3],
-        ], $model->toArray());
+        $meta  = [
+            'test'      => 1,
+            'foo'       => 'bar',
+            'data'      => [1, 2, 3],
+            'sub_model' => [
+                'foo' => 'test',
+                'val' => 100
+            ]
+        ];
+        $model = new MockModel($meta);
+        $this->assertEquals($meta, $model->toArray());
         $this->assertTrue(isset($model['test']));
 
         unset($model['test']);
@@ -46,9 +63,9 @@ class ModelTest extends TestCase
 
         $model['test'] = 123;
         $this->assertEquals(123, $model['test']);
-        $this->assertCount(3, $model);
+        $this->assertCount(4, $model);
 
-        $serialized = 'C:24:"tpr\tests\mock\MockModel":84:{a:3:{s:3:"foo";s:3:"bar";s:4:"test";i:123;s:4:"data";a:3:{i:0;i:1;i:1;i:2;i:2;i:3;}}}';
+        $serialized = 'C:24:"tpr\tests\mock\MockModel":143:{a:4:{s:3:"foo";s:3:"bar";s:4:"test";i:123;s:4:"data";a:3:{i:0;i:1;i:1;i:2;i:2;i:3;}s:9:"sub_model";a:2:{s:3:"foo";s:4:"test";s:3:"val";i:100;}}}';
         $this->assertEquals(
             $serialized,
             serialize($model)
@@ -57,6 +74,6 @@ class ModelTest extends TestCase
         $modelFromSerialize = unserialize($serialized);
         $this->assertTrue($modelFromSerialize instanceof MockModel);
 
-        $this->assertEquals('{"foo":"bar","test":123,"data":[1,2,3]}', $model->toJson());
+        $this->assertEquals('{"foo":"bar","test":123,"data":[1,2,3],"sub_model":{"foo":"test","val":100}}', $model->toJson());
     }
 }

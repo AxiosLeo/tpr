@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\tests\mock;
 
@@ -11,6 +11,8 @@ final class MockModel extends Model
     public string  $foo  = '';
     public ?int    $test = null;
     public array   $data = [];
+
+    public ?SubModel $sub_model = null;
 
     protected array $_rules = [
         'test' => 'required',
@@ -23,4 +25,10 @@ final class MockModel extends Model
     protected array $_messages = [
         'required' => 'required :attribute',
     ];
+
+    public function __construct(array $data = [])
+    {
+        $this->sub_model = new SubModel();
+        parent::__construct($data);
+    }
 }
