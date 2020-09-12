@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr;
 
@@ -29,7 +29,7 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         $properties = $this->properties();
         foreach ($data as $key => $val) {
             if (\in_array($key, $properties)) {
-                if ($this->{$key} instanceof Model) {
+                if ($this->{$key} instanceof self) {
                     $this->{$key}->unmarshall($val);
                 } else {
                     $this->{$key} = $val;
@@ -117,16 +117,18 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
     public function unserialize($serialized): self
     {
         $data  = unserialize($serialized);
-        $class = get_class($this);
+        $class = static::class;
         $model = new $class($data);
+
         return $this->inherit($model, $model->properties());
     }
 
-    public function inherit(Model $from_model, $properties = []): self
+    public function inherit(self $from_model, $properties = []): self
     {
         foreach ($properties as $prop) {
             $this->{$prop} = $from_model->{$prop};
         }
+
         return $this;
     }
 }

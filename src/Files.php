@@ -11,10 +11,8 @@ class Files
 {
     /**
      * search files.
-     *
-     * @return array
      */
-    public static function search(string $dir, array $extInclude = ['php'], bool $asc = false, int $sorting_type = SORT_FLAG_CASE)
+    public static function search(string $dir, array $extInclude = ['php'], bool $asc = false, int $sorting_type = SORT_FLAG_CASE): array
     {
         $list = [];
         if (is_dir($dir)) {

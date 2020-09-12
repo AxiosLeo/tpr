@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr\tests\core;
 
@@ -22,8 +22,8 @@ class ModelTest extends TestCase
             'data'      => [1, 2, 3],
             'sub_model' => [
                 'foo' => 'test',
-                'val' => 100
-            ]
+                'val' => 100,
+            ],
         ]);
         $this->assertEquals(1, $model->test);
         $this->assertEquals('bar', $model->foo);
@@ -51,8 +51,8 @@ class ModelTest extends TestCase
             'data'      => [1, 2, 3],
             'sub_model' => [
                 'foo' => 'test',
-                'val' => 100
-            ]
+                'val' => 100,
+            ],
         ];
         $model = new MockModel($meta);
         $this->assertEquals($meta, $model->toArray());
