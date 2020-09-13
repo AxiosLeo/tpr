@@ -48,15 +48,12 @@ class Handler
     }
 
     /**
-     * @param \Throwable $exception
-     * @param Response   $response
-     *
      * @throws \Throwable
      */
-    public static function render($exception, $response): void
+    public static function render(\Throwable $exception, Response $response): void
     {
-        if (App::debugMode() && $response->getResponseType() !== self::$handler_type) {
-            self::$handler_type = $response->getResponseType();
+        if (App::debugMode() && $response->getType() !== self::$handler_type) {
+            self::$handler_type = $response->getType();
             if (isset(self::$handle_list[self::$handler_type])) {
                 self::handleOperator()->clearHandlers();
                 self::addHandler(self::$handler_type);

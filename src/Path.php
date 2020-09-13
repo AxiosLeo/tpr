@@ -43,10 +43,9 @@ class Path
     public static function configurate(array $config = []): AppPathModel
     {
         if (null === self::$model) {
-            self::$model = new AppPathModel($config);
-        } else {
-            self::$model->unmarshall($config);
+            self::$model = new AppPathModel();
         }
+        self::$model->unmarshall($config);
         self::$cache['root']      = self::$model->root;
         self::$cache['framework'] = self::$model->framework;
 
