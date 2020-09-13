@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\tests\core;
 
 use PHPUnit\Framework\TestCase;
+use tpr\App;
 use tpr\Config;
 use tpr\Container;
 use tpr\core\request\DefaultRequest;
@@ -21,6 +22,7 @@ class RouteTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        App::debugMode(true);
         Config::set('routes', [
             [
                 'path'    => '/',
@@ -31,7 +33,7 @@ class RouteTest extends TestCase
             [
                 'path'    => '/test/{:id}/{:title}/foo/{:bar}',
                 'method'  => 'all',
-                'handler' => 'index/index/index:routeHandler',
+                'handler' => 'index/index/index',
                 'intro'   => 'has param',
             ],
             [
@@ -39,12 +41,6 @@ class RouteTest extends TestCase
                 'method'  => 'post',
                 'handler' => 'index/index/index:routeHandler',
                 'intro'   => 'ignore part of path',
-            ],
-            [
-                'path'    => '/***',
-                'method'  => 'all',
-                'handler' => 'index/index/index:routeHandler',
-                'intro'   => 'global route',
             ],
         ]);
         $this->route = new Route();
@@ -57,9 +53,6 @@ class RouteTest extends TestCase
         Container::bindWithObj('request', $request);
         $res = $this->route->find('/test/123/title/foo/bar');
         $this->assertEquals(Route::HAS_FOUND, $res);
-
-        $route_info = $this->route->getRouteInfo();
-        $this->assertEquals('\\tpr\\tests\\core\\RouteTest', $route_info->handler);
     }
 
     public function testRoute2()
