@@ -6,21 +6,7 @@ namespace tpr\core\response;
 
 class Xml extends ResponseAbstract
 {
-    public string    $content_type  = 'text/xml';
-    protected string  $name         = 'xml';
-
-    protected array $options = [
-        // 根节点名
-        'root_node' => 'data',
-        // 根节点属性
-        'root_attr' => [],
-        //数字索引的子节点名
-        'item_node' => 'item',
-        // 数字索引子节点key转换的属性名
-        'item_key'  => 'id',
-        // 数据编码
-        'encoding'  => 'utf-8',
-    ];
+    public string $content_type = 'text/xml';
 
     /**
      * 处理数据.
@@ -30,36 +16,34 @@ class Xml extends ResponseAbstract
     public function output($data = null): string
     {
         // XML数据转换
-        return $this->xmlEncode($data, $this->options['root_node'], $this->options['item_node'], $this->options['root_attr'], $this->options['item_key'], $this->options['encoding']);
+        return $this->xmlEncode($data);
     }
 
     /**
      * XML编码
      *
-     * @param mixed  $data     数据
+     * @param mixed  $data
      * @param string $root     根节点名
      * @param string $item     数字索引的子节点名
      * @param string $attr     根节点属性
      * @param string $id       数字索引子节点key转换的属性名
      * @param string $encoding 数据编码
-     *
-     * @return string
      */
-    protected function xmlEncode($data, $root, $item, $attr, $id, $encoding)
+    protected function xmlEncode(string $data): string
     {
-        if (\is_array($attr)) {
+        $attr = '';
+        if (!empty($this->options->root_attr)) {
             $array = [];
-            foreach ($attr as $key => $value) {
+            foreach ($this->options->root_attr as $key => $value) {
                 $array[] = "{$key}=\"{$value}\"";
             }
             $attr = implode(' ', $array);
         }
-        $attr = trim($attr);
-        $attr = empty($attr) ? '' : " {$attr}";
-        $xml  = "<?xml version=\"1.0\" encoding=\"{$encoding}\"?>";
-        $xml .= "<{$root}{$attr}>";
-        $xml .= $this->dataToXml($data, $item, $id);
-        $xml .= "</{$root}>";
+        $attr = empty($attr) ? '' : " {trim({$attr})}";
+        $xml  = "<?xml version=\"1.0\" encoding=\"{$this->options->encoding}\"?>";
+        $xml .= "<{$this->options->root_node}{$attr}>";
+        $xml .= $this->dataToXml($data, $this->options->item_node, $this->options->item_key);
+        $xml .= "</{$this->options->root_node}>";
 
         return $xml;
     }
@@ -70,10 +54,8 @@ class Xml extends ResponseAbstract
      * @param mixed  $data 数据
      * @param string $item 数字索引时的节点名称
      * @param string $id   数字索引key转换为的属性名
-     *
-     * @return string
      */
-    protected function dataToXml($data, $item, $id)
+    protected function dataToXml($data, string $item, string $id): string
     {
         $xml = $attr = '';
         foreach ($data as $key => $val) {

@@ -12,46 +12,28 @@ use tpr\Path;
 class Html extends ResponseAbstract
 {
     public string    $content_type = 'text/html';
-    protected string $name         = 'html';
 
-    protected array $options = [
-        'params'     => [],
-        'views_path' => '',
-    ];
+    private Template $template_driver;
 
-    private ?Template $template_driver = null;
-
-    /**
-     * @return null|mixed|Template
-     */
-    public function getTemplateDriver()
+    public function __construct()
     {
-        if (null === $this->template_driver) {
-            $this->template_driver = Container::template();
-        }
-
-        return $this->template_driver;
+        $this->template_driver = Container::template();
     }
 
     /**
      * @param null $data
      *
+     * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
-     * @throws \Twig\Error\LoaderError
-     *
-     * @return string
      */
-    public function output($data = null)
+    public function output($data = null): string
     {
         if (!empty($data)) {
             return $data;
         }
-        $template = $this->options['views_path'];
+        $template = $this->options->views_path;
         if ('' === $template) {
-            return '';
-        }
-        if (null === $template) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
             $dir      = Path::join($dispatch->getModuleName(), $dispatch->getControllerName()) . \DIRECTORY_SEPARATOR;
@@ -67,6 +49,6 @@ class Html extends ResponseAbstract
         }
         unset($template);
 
-        return $this->getTemplateDriver()->render($dir, $file, $this->options['params']);
+        return $this->template_driver->render($dir, $file, $this->options->params);
     }
 }

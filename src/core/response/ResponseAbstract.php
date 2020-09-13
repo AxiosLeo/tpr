@@ -4,41 +4,13 @@ declare(strict_types=1);
 
 namespace tpr\core\response;
 
-use tpr\core\request\RequestAbstract;
+use tpr\models\ResponseModel;
 
-abstract class ResponseAbstract implements ResponseInterface
+abstract class ResponseAbstract
 {
-    public string $content_type;
+    public ?ResponseModel $options = null;
 
-    protected string $name;
+    public string $content_type = '';
 
-    protected RequestAbstract $request;
-
-    protected array $options = [];
-
-    public function __construct($options = [])
-    {
-        $this->options = array_merge($this->options, $options);
-    }
-
-    abstract public function output($data = null);
-
-    public function options($key = null, $value = null): array
-    {
-        if (null === $key && null === $value) {
-            return $this->options;
-        }
-        if (\is_array($key)) {
-            $this->options = array_merge($this->options, $key);
-        } else {
-            $this->options[$key] = $value;
-        }
-
-        return $this->options;
-    }
-
-    public function getResponseTypeName()
-    {
-        return $this->name;
-    }
+    abstract public function output($data = null): string;
 }

@@ -8,70 +8,45 @@ use tpr\core\request\DefaultRequest;
 use tpr\core\request\RequestAbstract;
 use tpr\core\request\RequestInterface;
 use tpr\core\Response;
+use tpr\models\ResponseModel;
 
+/**
+ * Class Controller.
+ *
+ * @method string        getType()
+ * @method Response      setType(string $response_type)
+ * @method ResponseModel options()
+ * @method Response      addDriver(string $response_type, string $driver)
+ * @method array         getHeaders()
+ * @method Response      setHeaders(array $headers, bool $cover = false)
+ * @method string        getHeader(string $key)
+ * @method Response      setHeader(string $key, string $value)
+ * @method Response      assign(string $key, $value)
+ * @method void          response($result = '', $status = 200, $msg = '', array $headers = [])
+ * @method void          success($data = [])
+ * @method void          error($code = 500, $msg = 'error')
+ * @method void          fetch(string $template = '', array $vars = [])
+ */
 abstract class Controller
 {
     /**
-     * @var DefaultRequest|RequestAbstract|RequestInterface
+     * @var null|DefaultRequest|RequestAbstract|RequestInterface
      */
-    protected $request;
+    protected ?RequestAbstract $request = null;
 
-    /**
-     * @var Response
-     */
-    private $response;
-
-    private $vars = [];
-
-    private $response_type;
+    private Response $response;
 
     public function __construct()
     {
-        $this->request  = Container::get('request');
-        $this->response = Container::get('response');
-    }
-
-    protected function setResponseType($response_type = 'json')
-    {
-        $this->response->setResponseType($response_type);
-        $this->response_type = $response_type;
-
-        return $this;
-    }
-
-    protected function setResponseOptions($options)
-    {
-        $this->response->setResponseOptions($options);
-    }
-
-    protected function setResponseOption($key, $value = null)
-    {
-        $this->response->setResponseOption($key, $value);
-
-        return $this;
-    }
-
-    protected function getResponseDriver()
-    {
-        return $this->response->getResponseDriver();
-    }
-
-    protected function addHeader($key, $value = null)
-    {
-        if (null === $value) {
-            header($key);
-        } else {
-            header($key . ':' . $value);
+        if (Container::has('request')) {
+            $this->request = Container::request();
         }
-
-        return $this;
+        $this->response = new Response();
     }
 
-    protected function setHeaders($key, $value = null)
+    public function __call($name, $arguments)
     {
-        $this->response->setHeaders($key, $value);
-
-        return $this;
+        return \call_user_func_array([$this->response, $name], $arguments);
     }
 
     protected function removeHeaders($headers = [])
@@ -82,7 +57,6 @@ abstract class Controller
         if (empty($headers)) {
             $headers = Config::get('app.remove_headers', ['X-Powered-By']);
         }
-
         if (!headers_sent() && !empty($headers)) {
             foreach ($headers as $header) {
                 header_remove($header);
@@ -90,79 +64,7 @@ abstract class Controller
         }
     }
 
-    /**
-     * @param array  $result
-     * @param int    $status
-     * @param string $msg
-     * @param array  $headers
-     *
-     * @return $this
-     */
-    protected function response($result = [], $status = 200, $msg = '', $headers = [])
-    {
-        if (null === $this->response_type) {
-            $this->setResponseType(Config::get('app.default_ajax_return_type', 'json'));
-        }
-        $this->response->response($result, $status, $msg, $headers);
-
-        return $this;
-    }
-
-    /**
-     * @param array $data
-     */
-    protected function success($data = [])
-    {
-        $this->response($data, 200, 'success');
-    }
-
-    /**
-     * @param int    $code
-     * @param string $msg
-     */
-    protected function error($code = 500, $msg = 'error')
-    {
-        $this->response('', $code, $msg);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     *
-     * @return $this
-     */
-    protected function assign($key, $value)
-    {
-        $this->vars[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $template
-     * @param array  $vars
-     *
-     * @return string
-     */
-    protected function fetch($template = null, $vars = [])
-    {
-        if (!empty($this->vars)) {
-            $vars = empty($vars) ? $this->vars : array_merge($vars, $this->vars);
-        }
-        if (null === $this->response_type) {
-            $this->setResponseType(Config::get('app.default_return_type', 'html'));
-        }
-        $this->setResponseOption('views_path', $template);
-        $this->setResponseOption('params', $vars);
-
-        return Container::response()->output();
-    }
-
-    /**
-     * @param string $destination
-     * @param bool   $permanent
-     */
-    protected function redirect($destination, $permanent = true)
+    protected function redirect(string $destination, bool $permanent = true)
     {
         if (false === strpos($destination, '://')) {
             $protocol    = 'https' === $this->request->protocol() ? 'https' : 'http';

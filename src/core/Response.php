@@ -6,36 +6,26 @@ namespace tpr\core;
 
 use Exception;
 use tpr\App;
-use tpr\Container;
-use tpr\core\request\RequestAbstract;
+use tpr\Config;
 use tpr\core\response\ResponseAbstract;
-use tpr\core\response\ResponseInterface;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
+use tpr\models\ResponseModel;
 
 class Response
 {
-    protected ?RequestAbstract $request = null;
+    protected ?ResponseAbstract $driver = null;
 
-    private array $headers = [];
-
-    private ?ResponseAbstract $response_driver = null;
-
-    private array $response_options;
-
-    private string $response_type;
-
-    private array $allow_type = [
-        'html', 'json', 'jsonp', 'text', 'xml',
-    ];
-
-    private array $headersSet = [];
+    private ResponseModel $options;
 
     public function __construct()
     {
-        $this->request          = Container::get('request');
-        $this->response_options = \tpr\Config::get('app.response', []);
-        $this->response_type    = \tpr\Config::get('app.default_return_type', 'html');
+        $this->options = new ResponseModel(Config::get('app.response', []));
+    }
+
+    public function getType(): string
+    {
+        return $this->options->return_type;
     }
 
     /**
@@ -43,133 +33,111 @@ class Response
      *
      * @return $this
      */
-    public function setResponseType(string $response_type)
+    public function setType(string $response_type): self
     {
-        if (!\in_array($response_type, $this->allow_type)) {
+        if (!isset(ResponseModel::$allow_type[$response_type])) {
             throw new Exception('Not Allow Response Type : "' . $response_type . '"');
         }
-        $this->response_type = $response_type;
+        $this->options->return_type = $response_type;
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setResponseOptions(array $options)
+    public function options(): ResponseModel
     {
-        if (!empty($options)) {
-            $this->response_options = array_merge($this->response_options, $options);
+        return $this->options;
+    }
+
+    public function addDriver(string $response_type, string $driver): self
+    {
+        if (class_exists($driver)) {
+            throw new ClassNotExistException($driver);
         }
+        ResponseModel::$allow_type[$response_type] = $driver;
 
         return $this;
     }
 
-    /**
-     * @return mixed|string
-     */
-    public function getResponseType()
+    public function getHeaders(): array
     {
-        return $this->response_type;
+        return $this->options->headers;
     }
 
-    /**
-     * @return ResponseAbstract
-     */
-    public function getResponseDriver()
+    public function setHeaders(array $headers, bool $cover = false): self
     {
-        return $this->response_driver;
-    }
-
-    /**
-     * @param ResponseInterface $driver
-     *
-     * @return $this
-     */
-    public function setResponseDriver($driver)
-    {
-        if (\is_string($driver)) {
-            if (false === strpos($driver, '\\')) {
-                $driver = 'tpr\\core\\response\\' . ucfirst($driver);
+        if ($cover) {
+            $this->options->headers         = $headers;
+            $this->options->header_name_set = [];
+            foreach ($this->options->headers as $key => $val) {
+                $this->options->header_name_set[strtolower($key)] = $key;
             }
-            if (!class_exists($driver)) {
-                throw new ClassNotExistException($driver);
+        } else {
+            foreach ($headers as $key => $val) {
+                $lower_key = strtolower($key);
+                if (isset($this->options->header_name_set[$lower_key])) {
+                    unset($this->options->headers[$this->options->header_name_set[$lower_key]]);
+                }
+                $this->options->header_name_set[$lower_key] = $key;
+                $this->options->headers[$key]               = $val;
             }
-            $driver = new $driver();
         }
-        $this->response_driver = $driver;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param null   $value
-     *
-     * @return $this
-     */
-    public function setHeaders($key, $value = null)
+    public function getHeader(string $key): string
     {
-        $this->headers[$key]                = $value;
-        $this->headersSet[strtolower($key)] = $key;
-
-        return $this;
-    }
-
-    /**
-     * @param null|string $key
-     *
-     * @return null|array
-     */
-    public function getHeaders($key = null)
-    {
-        if (null === $key) {
-            return $this->headers;
-        }
-        if (isset($this->headers[$key])) {
-            return $this->headers[$key];
+        if (isset($this->options->headers[$key])) {
+            return $this->options->headers[$key];
         }
         $lowerKey = strtolower($key);
-        if (isset($this->headersSet[$lowerKey])) {
-            return $this->headers[$this->headersSet[$lowerKey]];
+        if (isset($this->options->header_name_set[$lowerKey])) {
+            return $this->options->headers[$this->options->header_name_set[$lowerKey]];
         }
 
-        return null;
+        return '';
     }
 
-    /**
-     * @param string $key
-     * @param null   $value
-     *
-     * @return $this
-     */
-    public function setResponseOption($key, $value = null)
+    public function setHeader(string $key, string $value)
     {
-        $this->response_options[$key] = $value;
+        $lower_key                                  = strtolower($key);
+        $this->options->headers[$key]               = $value;
+        $this->options->header_name_set[$lower_key] = $key;
 
         return $this;
     }
 
-    /**
-     * @param mixed  $result
-     * @param int    $status
-     * @param string $msg
-     * @param array  $headers
-     *
-     * @throws Exception
-     */
-    public function response($result = '', $status = 200, $msg = '', $headers = [])
+    public function assign(string $key, $value): self
     {
-        if (!empty($headers)) {
-            $this->headers = array_merge($this->headers, $headers);
-        }
-        if (App::debugMode()) {
-            $this->setHeaders('x-mode', 'debug');
-        }
+        $this->options->params[$key] = $value;
 
+        return $this;
+    }
+
+    public function fetch(string $template = '', array $vars = []): string
+    {
+        if (!empty($vars)) {
+            $this->options->params = array_merge($this->options->params, $vars);
+        }
+        $this->options->return_type = 'html';
+        $this->options->views_path  = $template;
+
+        $result = $this->output();
+
+        throw new HttpResponseException($result, 200, '', $this->options->headers);
+    }
+
+    public function response($result = null, int $status = 200, string $msg = '', array $headers = []): void
+    {
+        if (App::debugMode()) {
+            $this->setHeader('x-mode', 'debug');
+        }
+        if (!empty($headers)) {
+            $this->setHeaders($headers);
+        }
         $result = $this->output($result);
 
-        throw new HttpResponseException($result, $status, $msg, $this->headers);
+        throw new HttpResponseException($result, $status, $msg, $this->options->headers);
     }
 
     /**
@@ -177,8 +145,11 @@ class Response
      *
      * @throws Exception
      */
-    public function success($data = [])
+    public function success($data = []): void
     {
+        if ('html' === $this->options->return_type) {
+            $this->options->return_type = Config::get('app.default_ajax_return_type', 'json');
+        }
         $this->response($data, 200, 'success');
     }
 
@@ -188,8 +159,11 @@ class Response
      *
      * @throws Exception
      */
-    public function error($code = 500, $msg = 'error')
+    public function error($code = 500, $msg = 'error'): void
     {
+        if ('html' === $this->options->return_type) {
+            $this->options->return_type = Config::get('app.default_ajax_return_type', 'json');
+        }
         $this->response('', $code, $msg);
     }
 
@@ -198,17 +172,20 @@ class Response
      *
      * @return mixed
      */
-    public function output($result = null)
+    public function output($result = null): string
     {
-        if (null === $this->response_driver) {
-            $this->setResponseDriver($this->response_type);
+        if (null === $this->driver) {
+            $class        = ResponseModel::$allow_type[$this->options->return_type];
+            $this->driver = new $class();
         }
-        if (!isset($this->headersSet['content-type'])) {
+        if (!isset($this->options->header_name_set['content-type'])) {
             // use default content-type header if not set
-            $this->setHeaders('Content-Type', $this->response_driver->content_type);
+            $this->setHeader('Content-Type', $this->driver->content_type);
         }
-        $this->response_driver->options($this->response_options);
+        if (null === $this->driver->options) {
+            $this->driver->options = &$this->options;
+        }
 
-        return $this->response_driver->output($result);
+        return $this->driver->output($result);
     }
 }

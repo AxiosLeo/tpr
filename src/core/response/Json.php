@@ -9,18 +9,12 @@ use InvalidArgumentException;
 
 class Json extends ResponseAbstract
 {
-    public string $content_type = 'application/json';
-    protected string $name      = 'json';
-
-    protected array $options = [
-        'json_encode_param' => JSON_UNESCAPED_UNICODE,
-    ];
+    public string    $content_type = 'application/json';
 
     public function output($data = null): string
     {
         try {
-            // 返回JSON数据格式到客户端 包含状态信息
-            $data = json_encode($data, $this->options['json_encode_param']);
+            $data = json_encode($data, $this->options->json_options);
             if (false === $data) {
                 throw new InvalidArgumentException(json_last_error_msg());
             }
