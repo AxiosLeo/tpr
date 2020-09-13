@@ -51,6 +51,11 @@ class ArrayMap
         return $this;
     }
 
+    public function all(): array
+    {
+        return $this->array;
+    }
+
     /**
      * 获取任意层级子元素.
      *

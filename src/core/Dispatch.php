@@ -22,8 +22,8 @@ class Dispatch
     private string $module;
     private string $controller;
     private string $action;
-
     private string $cache_file;
+    private Route  $route;
 
     private static string $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
 
@@ -31,6 +31,7 @@ class Dispatch
     {
         $this->app_namespace = $app_namespace;
         $this->cache_file    = Path::join(Path::cache(), 'routes.cache');
+        $this->route         = new Route();
     }
 
     /**
@@ -40,10 +41,35 @@ class Dispatch
     {
         $request = Container::request();
         $result  = null;
-        Event::listen('app_cgi_dispatch', $routeInfo);
 
         try {
             $pathInfo = $request->pathInfo();
+            $status   = $this->route->find($pathInfo);
+            $result   = null;
+            switch ($status) {
+                case Route::HAS_FOUND:
+
+                    $route_info       = $this->route->getRouteInfo();
+                    $tmp              = explode('/', $route_info->handler, 3);
+                    $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
+                    $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
+                    $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
+                    $this->dispatch($this->module, $this->controller, $this->action);
+
+                    break;
+                case Route::NOT_SUPPORTED_METHOD:
+
+                    Container::response()->error(405, 'Not Allowed Method');
+
+                    break;
+                case Route::NOT_FOUND:
+
+                    if (\tpr\Config::get('app.force_route', false)) {
+                        Container::response()->error(404, 'Route Not Found');
+                    } else {
+                        $this->defaultRoute($pathInfo);
+                    }
+            }
             $result   = $this->defaultRoute($pathInfo);
             $response = Container::response();
             $response->response($result);

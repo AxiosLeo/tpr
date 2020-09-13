@@ -13,6 +13,7 @@ class DefaultHandler extends Handler
      */
     public function handle()
     {
+        dump($this->getException());
         echo 'something error; TPR Version :' . TPR_FRAMEWORK_VERSION;
 
         return Handler::DONE;
