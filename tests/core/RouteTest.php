@@ -26,7 +26,7 @@ class RouteTest extends TestCase
         Config::set('routes', [
             [
                 'path'    => '/',
-                'method'  => 'get',
+                'method'  => 'get|post',
                 'handler' => '\\tpr\\tests\\core\\RouteTest:routeHandler',
                 'intro'   => 'homepage',
             ],
