@@ -108,7 +108,11 @@ class Route
             $key    = implode('$', $trace);
             $method = isset($route['method']) ? strtolower($route['method']) : 'all';
             $intro  = isset($route['intro']) ? $route['intro'] : '';
-            $array->set($key . '$__route', [
+            $key    = $key . '$__route';
+            if (isset($array[$key])) {
+                throw new \InvalidArgumentException('Duplication route data');
+            }
+            $array->set($key, [
                 'path'    => $route['path'],
                 'method'  => $method,
                 'handler' => $handler,
