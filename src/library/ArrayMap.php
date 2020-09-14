@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\library;
 
-class ArrayMap
+class ArrayMap implements \ArrayAccess
 {
     private array $array;
 
@@ -107,5 +107,27 @@ class ArrayMap
         }
 
         return $this;
+    }
+
+    public function offsetExists($offset)
+    {
+        $res = $this->get($offset, null);
+
+        return null !== $res;
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset)
+    {
+        return $this->delete($offset);
     }
 }
