@@ -105,20 +105,26 @@ class Route
                     throw new \InvalidArgumentException('Invalid route data, cannot use single `*` in route.path. ');
                 }
             }
-            $key    = implode('$', $trace);
-            $method = isset($route['method']) ? strtolower($route['method']) : 'all';
-            $intro  = isset($route['intro']) ? $route['intro'] : '';
-            $key    = $key . '$__route';
-            if (isset($array[$key])) {
-                throw new \InvalidArgumentException('Duplication route data');
-            }
-            $array->set($key, [
+            $key        = implode('$', $trace);
+            $method     = isset($route['method']) ? strtolower($route['method']) : 'all';
+            $intro      = isset($route['intro']) ? $route['intro'] : '';
+            $key        = $key . '$__route';
+            $route_info = [
                 'path'    => $route['path'],
                 'method'  => $method,
                 'handler' => $handler,
                 'intro'   => $intro,
                 'params'  => $params,
-            ]);
+            ];
+            if ('all' === $method) {
+                $array->set($key . '$all', $route_info);
+            } else {
+                $tmp = explode('|', $method);
+                foreach ($tmp as $m) {
+                    $k = $key . '$' . strtolower(trim($m));
+                    $array->set($k, $route_info);
+                }
+            }
         }
         $this->data = $array->all();
         unset($array);
@@ -143,18 +149,20 @@ class Route
 
     private function hasFound(array $route, string $pathinfo, array $params): int
     {
-        if ('all' !== $route['method']) {
-            $method = strtolower(Container::request()->method());
-            if (false === strpos($route['method'], $method)) {
-                return self::NOT_SUPPORTED_METHOD;
-            }
+        $curr_method = strtolower(Container::request()->method());
+        if (isset($route[$curr_method])) {
+            $route_info = $route[$curr_method];
+        } elseif (isset($route['all'])) {
+            $route_info = $route['all'];
+        } else {
+            return self::NOT_SUPPORTED_METHOD;
         }
-        foreach ($route['params'] as $i => $p) {
+        foreach ($route_info['params'] as $i => $p) {
             $_GET[$p] = $params[$i];
         }
-        $route['pathinfo'] = $pathinfo;
-        $route['params']   = $params;
-        $this->route_info  = new RouteInfoModel($route);
+        $route_info['pathinfo'] = $pathinfo;
+        $route_info['params']   = $params;
+        $this->route_info       = new RouteInfoModel($route_info);
 
         return self::HAS_FOUND;
     }

@@ -78,4 +78,13 @@ class RouteTest extends TestCase
         $res = $this->route->find('/has/anythingInHere/text/name');
         $this->assertEquals(Route::HAS_FOUND, $res);
     }
+
+    public function testNotFound()
+    {
+        $request                   = new DefaultRequest();
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        Container::bindWithObj('request', $request);
+        $res = $this->route->find('/has/anythingInHere/text/name/test');
+        $this->assertEquals(Route::NOT_FOUND, $res);
+    }
 }
