@@ -31,7 +31,7 @@ final class AppModel extends Model
     /**
      * @var int global cache time for config&route data
      */
-    public int $cache_time = 30;
+    public int $cache_time = 60;
 
     /**
      * @var string default content-type on cgi mode
