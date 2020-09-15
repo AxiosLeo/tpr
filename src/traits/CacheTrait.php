@@ -12,22 +12,26 @@ trait CacheTrait
     /**
      * @return null|mixed
      */
-    private function cache(string $tmp_file, array $tmp_data = [])
+    private function cache(string $tmp_file, ?array $tmp_data = null)
     {
-        $tmp_file .= '.php';
+        // count cache file name
+        $cache_time = App::drive()->getConfig()->cache_time;
+        $count      = (int) (time() / $cache_time);
+        $cache_file = $tmp_file . \DIRECTORY_SEPARATOR . (string) $count . '.php';
         if (null === $tmp_data) {
-            if (true === App::debugMode() || !file_exists($tmp_file)) {
+            if (true === App::debugMode() || !file_exists($cache_file)) {
                 return null;
             }
 
-            return require $tmp_file;
+            return require_once $cache_file;
         }
+
         if (!App::debugMode()) {
-            Files::save($tmp_file, "<?php\nreturn " . var_export($tmp_data, true) . ";\n");
+            Files::save($cache_file, "<?php\nreturn " . var_export($tmp_data, true) . ";\n");
         } else {
-            Files::remove($tmp_file);
+            Files::remove($cache_file);
         }
-        unset($tmp_file);
+        unset($cache_file);
 
         return $tmp_data;
     }
