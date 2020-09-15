@@ -6,18 +6,23 @@ namespace tpr\core\response;
 
 use tpr\Container;
 use tpr\core\Dispatch;
-use tpr\core\Template;
 use tpr\Path;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class Html extends ResponseAbstract
 {
     public string    $content_type = 'text/html';
 
-    private Template $template_driver;
+    private Environment $template_driver;
 
     public function __construct()
     {
-        $this->template_driver = Container::template();
+        $template_config       = [
+            'cache' => Path::join(Path::cache(), 'views'),
+        ];
+        $this->template_driver = new Environment(new FilesystemLoader(Path::views()), $template_config);
+        $this->template_driver->addGlobal('lang', Container::get('lang'));
     }
 
     /**
@@ -49,6 +54,18 @@ class Html extends ResponseAbstract
         }
         unset($template);
 
-        return $this->template_driver->render($dir, $file, $this->options->params);
+        return $this->render($dir, $file, $this->options->params);
+    }
+
+    /**
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     *
+     * @return string
+     */
+    private function render(string $dir, string $file, array $params = [])
+    {
+        return $this->template_driver->render($dir . $file . '.' . $this->options->template_file_ext, $params);
     }
 }

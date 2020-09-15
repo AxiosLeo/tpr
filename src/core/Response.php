@@ -6,7 +6,6 @@ namespace tpr\core;
 
 use Exception;
 use tpr\App;
-use tpr\Config;
 use tpr\core\response\ResponseAbstract;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
@@ -20,7 +19,7 @@ class Response
 
     public function __construct()
     {
-        $this->options = new ResponseModel(Config::get('response', []));
+        $this->options = new ResponseModel(App::drive()->getConfig()->response_config);
     }
 
     public function getType(): string

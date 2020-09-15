@@ -12,7 +12,6 @@ use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\core\request\DefaultRequest;
 use tpr\core\Response;
-use tpr\core\Template;
 use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
@@ -116,10 +115,7 @@ class DefaultServer extends ServerHandler
     {
         Container::bind('request', DefaultRequest::class);
         $dispatch = new Dispatch($this->app->namespace);
-        Container::import([
-            'response' => Response::class,
-            'template' => Template::class,
-        ]);
+        Container::bind('response', Response::class);
         Container::bindNXWithObj('cgi_dispatch', $dispatch);
         Event::add('http_response', $this, 'send');
         $dispatch->run();

@@ -11,7 +11,6 @@ use tpr\core\Dispatch;
 use tpr\core\Lang as CoreLang;
 use tpr\core\request\RequestAbstract;
 use tpr\core\Response;
-use tpr\core\Template;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
 use tpr\server\ServerHandler;
@@ -22,7 +21,6 @@ use tpr\server\ServerHandler;
  * @method Config          config()    static
  * @method RequestAbstract request()   static
  * @method Response        response()  static
- * @method Template        template()  static
  * @method ServerHandler   app()       static
  * @method CoreLang        lang()      static
  * @method Validator       validator() static
