@@ -26,7 +26,7 @@ class Route
 
     public function __construct()
     {
-        $this->cache_file = Path::join(Path::cache(), 'cache.routes');
+        $this->cache_file = Path::cache() . \DIRECTORY_SEPARATOR . 'cache.routes';
         $this->routes     = \tpr\Config::get('routes', []);
         $this->resolve();
     }

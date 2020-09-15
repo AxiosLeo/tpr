@@ -19,7 +19,7 @@ class Config
 
     public function __construct()
     {
-        $this->cache_file = Path::join(Path::cache(), 'cache.config');
+        $this->cache_file = Path::cache() . \DIRECTORY_SEPARATOR . 'cache.config';
         if (App::debugMode()) {
             $this->load();
         } else {
