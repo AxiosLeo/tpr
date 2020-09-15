@@ -96,19 +96,14 @@ EOF
         );
 
         // generate config files
-        Files::save(
-            Path::join($this->path->root, $this->path->config, 'app.php'),
-            <<<'EOF'
+        $config_content = <<<'EOF'
 <?php
 
 return [
-    'default_return_type'      => 'html',
-    'default_ajax_return_type' => 'json',
-    'route_class_name'         => '{app_namespace}\{module}\controller\{controller}',
 ];
 
-EOF
-        );
+EOF;
+        Files::save(Path::join($this->path->root, $this->path->config, 'routes.php'), $config_content);
 
         // generate composer.json
         $app_path = $this->path->app;
