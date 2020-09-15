@@ -19,7 +19,12 @@ trait CacheTrait
         $count      = (int) (time() / $cache_time);
         $cache_file = $tmp_file . \DIRECTORY_SEPARATOR . (string) $count . '.php';
         if (null === $tmp_data) {
-            if (true === App::debugMode() || !file_exists($cache_file)) {
+            if (true === App::debugMode()) {
+                return null;
+            }
+            if (!file_exists($cache_file)) {
+                Files::remove($tmp_file);
+
                 return null;
             }
 
@@ -27,11 +32,11 @@ trait CacheTrait
         }
 
         if (!App::debugMode()) {
-            Files::save($cache_file, "<?php\nreturn " . var_export($tmp_data, true) . ";\n");
+            Files::save($cache_file, '<?php' . PHP_EOL . 'return ' . var_export($tmp_data, true) . ';' . PHP_EOL);
         } else {
             Files::remove($cache_file);
         }
-        unset($cache_file);
+        unset($cache_file, $cache_time, $count);
 
         return $tmp_data;
     }
