@@ -28,8 +28,9 @@ class ResponseModel extends Model
     public string $return_type     = 'html';
 
     // html
-    public array  $params     = [];
-    public string $views_path;
+    public array  $params            = [];
+    public string $views_path        = '';
+    public string $template_file_ext = 'html';
 
     // json&jsonp
     public int    $json_options  = JSON_UNESCAPED_UNICODE;
