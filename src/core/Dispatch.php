@@ -54,7 +54,7 @@ class Dispatch
                     $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
                     $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
                     $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
-                    $this->dispatch($this->module, $this->controller, $this->action);
+                    $this->dispatch($this->module, $this->controller, $this->action, $route_info['params']);
 
                     break;
                 case Route::NOT_SUPPORTED_METHOD:
@@ -100,7 +100,7 @@ class Dispatch
         return $this->action;
     }
 
-    public function dispatch($module, $controller, $action)
+    public function dispatch($module, $controller, $action, array $params = [])
     {
         $this->module     = $module;
         $this->controller = $controller;
@@ -113,7 +113,7 @@ class Dispatch
             'controller'    => ucfirst($this->controller),
         ]);
 
-        return $this->exec($class, $action);
+        return $this->exec($class, $action, $params);
     }
 
     private function defaultRoute($path_info)
