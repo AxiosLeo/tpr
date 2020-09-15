@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\models;
 
-use tpr\Config;
+use tpr\App;
 use tpr\core\response\Html;
 use tpr\core\response\Json;
 use tpr\core\response\Jsonp;
@@ -44,7 +44,7 @@ class ResponseModel extends Model
 
     public function __construct(array $data = [])
     {
-        $this->return_type = Config::get('app.default_return_type', 'html');
+        $this->return_type = App::drive()->getConfig()->default_content_type_cgi;
         parent::__construct($data);
     }
 }

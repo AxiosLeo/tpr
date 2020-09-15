@@ -37,11 +37,11 @@ class Handler
             self::$run->allowQuit();
         }
         if (\PHP_SAPI == 'cli') {
-            self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
+            self::$handler_type = App::drive()->getConfig()->default_content_type_cli;
         } elseif (!App::debugMode()) {
             self::$handler_type = 'default';
         } else {
-            self::$handler_type = \tpr\Config::get('app.default_return_type', 'text');
+            self::$handler_type = App::drive()->getConfig()->default_content_type_cgi;
         }
         self::addHandler(self::$handler_type);
         self::handleOperator()->register();

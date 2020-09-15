@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use Exception;
+use tpr\App;
 use tpr\Container;
 use tpr\Event;
 use tpr\exception\ClassNotExistException;
@@ -24,8 +25,6 @@ class Dispatch
     private string $action;
     private string $cache_file;
     private Route  $route;
-
-    private static string $defaultRouteClassName = '{app_namespace}\\{module}\\controller\\{controller}';
 
     public function __construct($app_namespace)
     {
@@ -64,7 +63,7 @@ class Dispatch
                     break;
                 case Route::NOT_FOUND:
 
-                    if (\tpr\Config::get('app.force_route', false)) {
+                    if (App::drive()->getConfig()->force_route) {
                         Container::response()->error(404, 'Route Not Found');
                     } else {
                         $this->defaultRoute($pathInfo);
@@ -105,7 +104,7 @@ class Dispatch
         $this->module     = $module;
         $this->controller = $controller;
         $this->action     = $action;
-        $template         = \tpr\Config::get('app.route_class_name', self::$defaultRouteClassName);
+        $template         = App::drive()->getConfig()->dispatch_rule;
 
         $class = Helper::renderString($template, [
             'app_namespace' => $this->app_namespace,

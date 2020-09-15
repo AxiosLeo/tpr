@@ -20,7 +20,7 @@ class Response
 
     public function __construct()
     {
-        $this->options = new ResponseModel(Config::get('app.response', []));
+        $this->options = new ResponseModel(Config::get('response', []));
     }
 
     public function getType(): string
@@ -135,6 +135,9 @@ class Response
         if (!empty($headers)) {
             $this->setHeaders($headers);
         }
+        if ('html' === $this->options->return_type) {
+            $this->options->return_type = App::drive()->getConfig()->default_content_type_ajax;
+        }
         $result = $this->output($result);
 
         throw new HttpResponseException($result, $status, $msg, $this->options->headers);
@@ -147,9 +150,6 @@ class Response
      */
     public function success($data = []): void
     {
-        if ('html' === $this->options->return_type) {
-            $this->options->return_type = Config::get('app.default_ajax_return_type', 'json');
-        }
         $this->response($data, 200, 'success');
     }
 
@@ -161,9 +161,6 @@ class Response
      */
     public function error($code = 500, $msg = 'error'): void
     {
-        if ('html' === $this->options->return_type) {
-            $this->options->return_type = Config::get('app.default_ajax_return_type', 'json');
-        }
         $this->response('', $code, $msg);
     }
 

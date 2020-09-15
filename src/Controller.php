@@ -55,7 +55,7 @@ abstract class Controller
             $headers = [$headers];
         }
         if (empty($headers)) {
-            $headers = Config::get('app.remove_headers', ['X-Powered-By']);
+            $headers = App::drive()->getConfig()->remove_headers;
         }
         if (!headers_sent() && !empty($headers)) {
             foreach ($headers as $header) {
