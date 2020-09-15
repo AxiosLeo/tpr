@@ -69,4 +69,9 @@ final class AppModel extends Model
      * for ServerHandler custom config.
      */
     public array $server_options = [];
+
+    /**
+     * response config, see detail on \tpr\models\ResponseModel.
+     */
+    public array $response_config = [];
 }
