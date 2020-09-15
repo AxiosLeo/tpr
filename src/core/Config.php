@@ -19,7 +19,7 @@ class Config
 
     public function __construct()
     {
-        $this->cache_file = Path::join(Path::cache(), 'config.cache');
+        $this->cache_file = Path::join(Path::cache(), 'cache.config');
         if (App::debugMode()) {
             $this->load();
         } else {
