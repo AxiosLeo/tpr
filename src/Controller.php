@@ -25,7 +25,7 @@ use tpr\models\ResponseModel;
  * @method void          response($result = '', $status = 200, $msg = '', array $headers = [])
  * @method void          success($data = [])
  * @method void          error($code = 500, $msg = 'error')
- * @method void          fetch(string $template = '', array $vars = [])
+ * @method string        fetch(string $template = '', array $vars = [])
  */
 abstract class Controller
 {

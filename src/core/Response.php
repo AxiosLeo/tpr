@@ -121,9 +121,7 @@ class Response
         $this->options->return_type = 'html';
         $this->options->views_path  = $template;
 
-        $result = $this->output();
-
-        throw new HttpResponseException($result, 200, '', $this->options->headers);
+        return $this->output();
     }
 
     public function response($result = null, int $status = 200, string $msg = '', array $headers = []): void
