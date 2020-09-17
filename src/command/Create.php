@@ -61,7 +61,21 @@ require_once __DIR__ . '/../vendor/autoload.php';
 App::debugMode(true);
 
 App::default()
-    ->config(['namespace'=>"{$namespace}"])
+    ->config([
+        'namespace'       => '{$namespace}',  // app base namespace, ### this is required ###
+        'lang'            => 'zh-cn',         // default language set name
+        'cache_time'      => 60,              // global cache time for config&route data
+        'force_route'     => false,           // forces use routing
+        'remove_headers'  => [],              // remove some header before send response
+        'server_options'  => [],              // for ServerHandler custom config.
+        'response_config' => [],              // response config, see detail on \tpr\\models\\ResponseModel.
+        
+        'default_content_type_cgi' => 'html', // default content-type on cgi mode
+        'default_content_type_ajax'=> 'json', // default content-type on api request
+        'default_content_type_cli' => 'text', // default content-type on command line mode
+        
+        'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}',  // controller namespace spelling rule
+    ])
     ->run();
 
 EOF
@@ -98,7 +112,7 @@ EOF
         // generate config files
         $config_content = <<<'EOF'
 <?php
-
+// you can write routes data in here. 
 return [
 ];
 
@@ -164,7 +178,7 @@ EOF
         Files::save(
             Path::join($this->path->root, 'commands', 'README.md'),
             <<<'EOF'
-
+you can write code of commands in here.
 EOF
         );
 
