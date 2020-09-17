@@ -19,7 +19,7 @@ class Env
 
     public function __construct()
     {
-        $this->addEnvFile(\tpr\Path::root() . '.env');
+        $this->addEnvFile(\tpr\Path::root() . \DIRECTORY_SEPARATOR . '.env');
     }
 
     public function addEnvFile($path): self
