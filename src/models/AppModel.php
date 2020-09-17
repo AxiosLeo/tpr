@@ -14,11 +14,6 @@ final class AppModel extends Model
     public string $name = 'app';
 
     /**
-     * debug mode.
-     */
-    public bool $debug = false;
-
-    /**
      * app base namespace.
      */
     public string $namespace = 'App';
