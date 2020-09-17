@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace tpr\server;
 
 use tpr\Config;
-use tpr\Container;
-use tpr\Lang;
 use tpr\Model;
 use tpr\models\AppModel;
 use tpr\Path;
@@ -24,7 +22,6 @@ abstract class ServerHandler
     {
         $this->app = new AppModel();
         Path::configurate();
-        Container::bindNXWithObj('lang', new Lang());
     }
 
     abstract public function run();

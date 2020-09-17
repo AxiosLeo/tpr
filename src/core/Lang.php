@@ -6,61 +6,54 @@ namespace tpr\core;
 
 use tpr\App;
 use tpr\Event;
-use tpr\Path;
 
 class Lang
 {
-    private array $word = [];
+    private array $dist = [];
 
-    private string $langDefault;
-
-    private string $langDir;
-
-    private array $langFiles = [];
+    private string $default_lang_set;
 
     public function __construct()
     {
-        $this->langDefault = App::drive()->getConfig()->lang;
-        $this->langDir     = Path::lang();
-        $this->load();
+        $this->default_lang_set = App::drive()->getConfig()->lang;
     }
 
-    public function tran($data, $langSet = null)
+    public function tran(string $word, ?string $lang_set_name = null): string
     {
-        $tmp = $data;
-        Event::listen('lang_translate', $tmp);
-        if ($tmp !== $data) {
-            return $tmp;
+        Event::listen('lang_translate', $word);
+        if (null === $lang_set_name) {
+            $lang_set_name = $this->default_lang_set;
         }
-        if (null === $langSet) {
-            $langSet = $this->langDefault;
+        if (!isset($this->dist[$lang_set_name])) {
+            $dist = \tpr\Config::get('lang.data.' . $lang_set_name);
+            if (null === $dist) {
+                return $word;
+            }
+            $this->dist[$lang_set_name] = $dist;
         }
-        if (!isset($this->word[$langSet])) {
-            return $data;
-        }
-        if ([] === $this->word[$langSet]) {
-            $this->word[$langSet] = \Noodlehaus\Config::load($this->langFiles[$langSet])->all();
-        }
-        if (isset($this->word[$langSet][$data])) {
-            return $this->word[$langSet][$data];
+        if (isset($this->dist[$lang_set_name][$word])) {
+            return $this->dist[$lang_set_name][$word];
         }
 
-        return $data;
+        return $word;
     }
 
-    private function load(): void
+    /**
+     * @throws \Exception
+     */
+    public function load(string $lang_set_name, string $file, bool $ignore_exception = true): void
     {
-        if (!file_exists($this->langDir)) {
-            return;
-        }
-        $fileList = \tpr\Files::search($this->langDir, ['php']);
-        if ([] === $fileList) {
-            return;
-        }
-        $fileList = array_flip($fileList);
-        foreach ($fileList as $langSet) {
-            $this->word[$langSet] = [];
-            $this->langFiles      = $fileList[$langSet];
+        try {
+            $dist = require_once $file;
+            if (isset($this->dist[$lang_set_name]) && !empty($this->dist[$lang_set_name])) {
+                $this->dist[$lang_set_name] = array_merge($this->dist[$lang_set_name], $dist);
+            } else {
+                $this->dist[$lang_set_name] = $dist;
+            }
+        } catch (\Exception $e) {
+            if (!$ignore_exception) {
+                throw $e;
+            }
         }
     }
 }

@@ -19,7 +19,6 @@ use tpr\models\AppPathModel;
  * @method string vendor()    static
  * @method string index()     static
  * @method string views()     static
- * @method string lang()      static
  */
 class Path
 {

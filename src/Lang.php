@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\Lang as CoreLang;
-
 /**
  * Class Lang.
  *
  * @see  CoreLang
  *
- * @method void   load(string $langSet, array $word) static
- * @method string tran(string $str, $langSet = null) static
+ * @method void   load(string $lang_set_name, string $lang_file) static
+ * @method string tran(string $word, $lang_set_name = null)      static
  */
 class Lang extends Facade
 {
@@ -23,6 +21,6 @@ class Lang extends Facade
 
     protected static function getFacadeClass()
     {
-        return CoreLang::class;
+        return core\Lang::class;
     }
 }
