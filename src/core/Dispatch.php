@@ -69,7 +69,8 @@ class Dispatch
                         $result = $this->defaultRoute($pathInfo);
                     }
             }
-            Container::response()->output($result);
+
+            throw new HttpResponseException($result);
         } catch (HttpResponseException $e) {
             Event::listen('http_response', $e);
         } catch (Exception $e) {
