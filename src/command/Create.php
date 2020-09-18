@@ -47,6 +47,8 @@ class Create extends Console
         $this->genController($namespace);
 
         // generate web entry file
+        $space  = 13 - \strlen($namespace);
+        $indent = str_repeat(' ', $space >= 0 ? $space : 0);
         Files::save(
             Path::join($this->path->root, $this->path->index, 'index.php'),
             <<<EOF
@@ -62,7 +64,7 @@ App::debugMode(true);
 
 App::default()
     ->config([
-        'namespace'       => '{$namespace}',  // app base namespace, ### this is required ###
+        'namespace'       => '{$namespace}',{$indent} // app base namespace, ### this is required ###
         'lang'            => 'zh-cn',         // default language set name
         'cache_time'      => 60,              // global cache time for config&route data
         'force_route'     => false,           // forces use routing
