@@ -56,9 +56,9 @@ final class AppModel extends Model
     public bool $force_route = false;
 
     /**
-     * for dispatch route.
+     * controller namespace spelling rule.
      */
-    public string $dispatch_rule = '{app_namespace}\\{module}\\controller\\{controller}';
+    public string $controller_rule = '{app_namespace}\\{module}\\controller\\{controller}';
 
     /**
      * for ServerHandler custom config.
