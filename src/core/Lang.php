@@ -6,6 +6,8 @@ namespace tpr\core;
 
 use tpr\App;
 use tpr\Event;
+use tpr\Files;
+use tpr\Path;
 
 class Lang
 {
@@ -13,9 +15,12 @@ class Lang
 
     private string $default_lang_set;
 
+    private array $files = [];
+
     public function __construct()
     {
         $this->default_lang_set = App::drive()->getConfig()->lang;
+        $this->init();
     }
 
     public function tran(string $word, ?string $lang_set_name = null): string
@@ -25,11 +30,10 @@ class Lang
             $lang_set_name = $this->default_lang_set;
         }
         if (!isset($this->dist[$lang_set_name])) {
-            $dist = \tpr\Config::get('lang.data.' . $lang_set_name);
-            if (null === $dist) {
+            if (!isset($this->files[$lang_set_name])) {
                 return $word;
             }
-            $this->dist[$lang_set_name] = $dist;
+            $this->dist[$lang_set_name] = require_once $this->files[$lang_set_name];
         }
         if (isset($this->dist[$lang_set_name][$word])) {
             return $this->dist[$lang_set_name][$word];
@@ -41,7 +45,7 @@ class Lang
     /**
      * @throws \Exception
      */
-    public function load(string $lang_set_name, string $file, bool $ignore_exception = true): void
+    public function load(string $lang_set_name, string $file, bool $throw_exception = false): void
     {
         try {
             $dist = require_once $file;
@@ -51,8 +55,19 @@ class Lang
                 $this->dist[$lang_set_name] = $dist;
             }
         } catch (\Exception $e) {
-            if (!$ignore_exception) {
+            if ($throw_exception) {
                 throw $e;
+            }
+        }
+    }
+
+    private function init()
+    {
+        if (file_exists(Path::langs())) {
+            $langs_file = Files::search(Path::langs());
+            foreach ($langs_file as $filepath) {
+                $lang_set               = basename($filepath, '.' . pathinfo($filepath, PATHINFO_EXTENSION));
+                $this->files[$lang_set] = $filepath;
             }
         }
     }

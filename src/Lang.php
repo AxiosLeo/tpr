@@ -9,8 +9,8 @@ namespace tpr;
  *
  * @see  CoreLang
  *
- * @method void   load(string $lang_set_name, string $lang_file) static
- * @method string tran(string $word, $lang_set_name = null)      static
+ * @method void   load(string $lang_set_name, string $file, bool $throw_exception = false) static
+ * @method string tran(string $word, $lang_set_name = null)                                static
  */
 class Lang extends Facade
 {
