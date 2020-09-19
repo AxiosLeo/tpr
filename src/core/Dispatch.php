@@ -8,7 +8,6 @@ use Exception;
 use tpr\App;
 use tpr\Container;
 use tpr\Event;
-use tpr\exception\ClassNotExistException;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
@@ -19,18 +18,38 @@ class Dispatch
 {
     use CacheTrait;
 
-    private string $app_namespace;
-    private string $module;
-    private string $controller;
-    private string $action;
-    private string $cache_file;
-    private Route  $route;
+    private string   $app_namespace;
+    private string   $module;
+    private string   $controller;
+    private string   $action;
+    private string   $cache_file;
+    private Route    $route;
 
     public function __construct($app_namespace)
     {
         $this->app_namespace = $app_namespace;
         $this->cache_file    = Path::join(Path::cache(), 'routes.cache');
         $this->route         = new Route();
+    }
+
+    public function getAppNamespace()
+    {
+        return $this->app_namespace;
+    }
+
+    public function getModuleName()
+    {
+        return $this->module;
+    }
+
+    public function getControllerName()
+    {
+        return $this->controller;
+    }
+
+    public function getActionName()
+    {
+        return $this->action;
     }
 
     /**
@@ -48,7 +67,8 @@ class Dispatch
             switch ($status) {
                 case Route::HAS_FOUND:
 
-                    $route_info       = $this->route->getRouteInfo();
+                    $route_info = $this->route->getRouteInfo();
+                    $request->routeInfo($route_info);
                     $tmp              = explode('/', $route_info->handler, 3);
                     $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
                     $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
@@ -78,46 +98,30 @@ class Dispatch
         }
     }
 
-    public function getAppNamespace()
-    {
-        return $this->app_namespace;
-    }
-
-    public function getModuleName()
-    {
-        return $this->module;
-    }
-
-    public function getControllerName()
-    {
-        return $this->controller;
-    }
-
-    public function getActionName()
-    {
-        return $this->action;
-    }
-
     public function dispatch($module, $controller, $action, array $params = [])
     {
         $this->module     = $module;
         $this->controller = $controller;
         $this->action     = $action;
-        $template         = App::drive()->getConfig()->dispatch_rule;
 
-        $class = Helper::renderString($template, [
+        // exec controller
+        $class = Helper::renderString(App::drive()->getConfig()->controller_rule, [
             'app_namespace' => $this->app_namespace,
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
         ]);
+        if (!class_exists($class) && method_exists($class, $this->action)) {
+            throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $this->action, 404);
+        }
+        $class = new $class();
 
-        return $this->exec($class, $action, $params);
+        return \call_user_func_array([$class, $this->action], $params);
     }
 
     private function defaultRoute($path_info)
     {
         if (null !== $path_info) {
-            $tmp  = explode('/', $path_info);
+            $tmp  = explode('/', $path_info, 3);
             $path = [];
             foreach ($tmp as $item) {
                 $p = $item ? $item : 'index';
@@ -129,15 +133,5 @@ class Dispatch
         $action     = isset($path[2]) ? $path[2] : 'index';
 
         return $this->dispatch($module, $controller, $action);
-    }
-
-    private function exec($class, $action, array $vars = [])
-    {
-        if (!class_exists($class)) {
-            throw new ClassNotExistException('Class Not Exist : ' . $class, $class);
-        }
-        $class = new $class();
-
-        return \call_user_func_array([$class, $action], $vars);
     }
 }

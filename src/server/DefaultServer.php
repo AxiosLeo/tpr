@@ -79,8 +79,6 @@ class DefaultServer extends ServerHandler
             // 提高页面响应
             fastcgi_finish_request();
         }
-
-        // 监听response_end
         Event::listen('app_response_after', $httpException->result);
         unset($httpException->result);
     }
