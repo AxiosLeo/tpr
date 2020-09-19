@@ -7,7 +7,6 @@ namespace tpr\server;
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
-use tpr\Config;
 use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\core\request\DefaultRequest;
@@ -27,22 +26,15 @@ class DefaultServer extends ServerHandler
     public function run()
     {
         Handler::init();
-        $app_namespace = $this->app->namespace;
-        $event         = Config::get('event', []);
-        if (!empty($event)) {
-            Event::import($event);
-        }
         Event::trigger('app_begin', $this->app);
-
-        $length = \strlen($app_namespace);
-        if ('\\' === $app_namespace[$length - 1]) {
+        $length = \strlen($this->app->namespace);
+        if ('\\' === $this->app->namespace[$length - 1]) {
             throw new \InvalidArgumentException(
                 'namespace mustn\'t end with a namespace separator "\". ' .
-                'now is "' . $app_namespace . '". ' .
-                'should be "' . implode('\\', array_filter(explode('\\', $app_namespace))) . '".'
+                'now is "' . $this->app->namespace . '". ' .
+                'should be "' . implode('\\', array_filter(explode('\\', $this->app->namespace))) . '".'
             );
         }
-
         $this->init();
         $this->dispatch();
     }
@@ -115,7 +107,7 @@ class DefaultServer extends ServerHandler
         $dispatch = new Dispatch($this->app->namespace);
         Container::bind('response', Response::class);
         Container::bindNXWithObj('cgi_dispatch', $dispatch);
-        Event::add('http_response', $this, 'send');
+        Event::registerWithObj('http_response', $this, 'send');
         $dispatch->run();
     }
 

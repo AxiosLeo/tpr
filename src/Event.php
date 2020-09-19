@@ -4,173 +4,29 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use Closure;
-use tpr\exception\ClassNotExistException;
-
 /**
  * Class Event.
  *
  * @see CoreEvent
+ *
+ * @method void register(string $event_name, string $class, string $method)           static
+ * @method void registerWithObj(string $event_name, object $class, string $method)    static
+ * @method void on(string $event_name, \Closure $closure)                             static
+ * @method void listen(string $event_name, &$data = null, ?\Closure $callback = null) static
+ * @method void trigger(string $event_name, ...$params)                               static
+ * @method int  size(string $event_name)                                              static
+ * @method void delete(string $event_name)                                            static
+ * @method bool remove(string $event_name, int $index = 0)                            static
  */
-class Event
+class Event extends Facade
 {
-    private static array $events = [];
-
-    /**
-     * 批量添加事件，不支持自定义方法和操作置顶.
-     */
-    public static function import(array $events): void
+    protected static function getContainName()
     {
-        foreach ($events as $event_name => $event) {
-            if (\is_string($event)) {
-                self::add($event_name, $event);
-            } elseif (\is_array($event)) {
-                foreach ($event as $event_item) {
-                    self::add($event_name, $event_item);
-                }
-            }
-        }
+        return 'event';
     }
 
-    /**
-     * 添加事件.
-     *
-     * @param string $class
-     */
-    public static function add(string $name, $class, string $method = 'run', ...$params): void
+    protected static function getFacadeClass()
     {
-        $event = self::initEvent($name, $class, $method, ...$params);
-        array_push(self::$events[$name], $event);
-    }
-
-    public static function addOnTop(string $name, $class, string $method = 'run', ...$params)
-    {
-        $event = self::initEvent($name, $class, $method, ...$params);
-        array_unshift(self::$events[$name], $event);
-    }
-
-    public static function refresh(string $name, $class, string $method = 'run', ...$params)
-    {
-        $event                  = self::initEvent($name, $class, $method, ...$params);
-        self::$events[$name]    = [];
-        self::$events[$name][0] = $event;
-    }
-
-    /**
-     * 事件触发器.
-     *
-     * @param array $data
-     */
-    public static function trigger(string $name, ...$data): void
-    {
-        self::listen($name, $data);
-    }
-
-    /**
-     * 监听事件.
-     *
-     * @param mixed $data
-     */
-    public static function listen(string $name, &$data = [], Closure $callback = null): void
-    {
-        if (isset(self::$events[$name])) {
-            foreach (self::$events[$name] as $event) {
-                self::exec($event, $data, $callback);
-            }
-        }
-    }
-
-    /**
-     * 仅监听某个事件组中的第一个.
-     *
-     * @param mixed $data
-     */
-    public static function listenFirst(string $name, &$data = [], Closure $callback = null): void
-    {
-        if (isset(self::$events[$name], self::$events[$name][0])) {
-            self::exec(self::$events[$name][0], $data, $callback);
-        }
-    }
-
-    /**
-     * 获取事件数组.
-     */
-    public static function get(string $name = null): array
-    {
-        if (null === $name) {
-            return self::$events;
-        }
-
-        return isset(self::$events[$name]) ? self::$events[$name] : [];
-    }
-
-    /**
-     * 移除事件中的某个操作.
-     */
-    public static function remove(string $name, int $index): bool
-    {
-        if (isset(self::$events[$name][$index])) {
-            unset(self::$events[$name][$index]);
-            self::$events[$name] = array_values(self::$events[$name]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 删除事件.
-     */
-    public static function delete(string $name): bool
-    {
-        if (isset(self::$events[$name])) {
-            unset(self::$events[$name]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private static function initEvent(string $name, $class, string $method = 'run', ...$params)
-    {
-        if (!isset(self::$events[$name])) {
-            self::$events[$name] = [];
-        }
-
-        if (\is_string($class) && !class_exists($class)) {
-            throw new ClassNotExistException($class);
-        }
-
-        return [
-            'class'  => $class,
-            'method' => $method,
-            'params' => $params,
-        ];
-    }
-
-    /**
-     * 执行某个事件.
-     *
-     * @param array $event
-     * @param mixed $data
-     */
-    private static function exec($event, &$data, Closure $callback = null): void
-    {
-        $class       = $event['class'];
-        $method      = $event['method'];
-        $extra_param = $event['params'];
-        if ($class instanceof Closure) {
-            $result = \call_user_func_array($class, [&$data]);
-        } elseif (\is_object($class)) {
-            $result = \call_user_func_array([$class, $method], [&$data, ...$extra_param]);
-        } else {
-            $obj    = new $class();
-            $result = \call_user_func_array([$obj, $method], [&$data, ...$extra_param]);
-        }
-        if (null !== $callback) {
-            \call_user_func_array($callback, [&$data, $result]);
-        }
+        return core\Event::class;
     }
 }
