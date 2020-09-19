@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\core\request;
 
 use tpr\Event;
-use tpr\library\File;
 use tpr\library\Helper;
 use tpr\traits\ParamTrait;
 
@@ -282,19 +281,19 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         return isset($headers[$name]) ? $headers[$name] : $default;
     }
 
-    /**
-     * 获取上传文件.
-     *
-     * @param null|string $name
-     *
-     * @return File|File[]
-     */
+//    /**
+//     * 获取上传文件.
+//     *
+//     * @param null|string $name
+//     *
+//     * @return File|File[]
+//     */
     public function file($name = null)
     {
-        $files = $this->getRequestData('files', function () {
-            return $this->setRequestData('files', $this->resolveFiles($_FILES));
-        });
-
-        return $this->getFile($files, $name);
+//        $files = $this->getRequestData('files', function () {
+//            return $this->setRequestData('files', $this->resolveFiles($_FILES));
+//        });
+//
+//        return $this->getFile($files, $name);
     }
 }

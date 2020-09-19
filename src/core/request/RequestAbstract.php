@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\core\request;
 
 use tpr\App;
-use tpr\library\File;
 
 /**
  * Class RequestAbstract.
@@ -104,67 +103,67 @@ abstract class RequestAbstract
         return $value;
     }
 
-    protected function resolveFiles($requestFiles = [])
-    {
-        $files = $requestFiles;
-        if (!empty($files)) {
-            $array = [];
-            foreach ($files as $key => $file) {
-                if (\is_array($file['name'])) {
-                    $item  = [];
-                    $keys  = array_keys($file);
-                    $count = \count($file['name']);
-                    for ($i = 0; $i < $count; ++$i) {
-                        if (empty($file['tmp_name'][$i]) || !is_file($file['tmp_name'][$i])) {
-                            continue;
-                        }
-                        $temp['key'] = $key;
-                        foreach ($keys as $_key) {
-                            $temp[$_key] = $file[$_key][$i];
-                        }
-                        $item[] = (new File($temp['tmp_name']))->setUploadInfo($temp);
-                    }
-                    $array[$key] = $item;
-                } else {
-                    if ($file instanceof File) {
-                        $array[$key] = $file;
-                    } else {
-                        if (empty($file['tmp_name']) || !is_file($file['tmp_name'])) {
-                            continue;
-                        }
-                        $array[$key] = (new File($file['tmp_name']))->setUploadInfo($file);
-                    }
-                }
-            }
-            $files = $array;
-            unset($array);
-        }
-
-        return $files;
-    }
-
-    /**
-     * @param File[] $files
-     * @param string $name
-     *
-     * @return File|File[]
-     */
-    protected function getFile($files, $name)
-    {
-        if (null === $name) {
-            return $files;
-        }
-        if (isset($array[$name])) {
-            return $files[$name];
-        }
-        if (strpos($name, '.')) {
-            list($name, $sub) = explode('.', $name);
-            if (isset($sub, $array[$name][$sub])) {
-                return $files[$name][$sub];
-            }
-        }
-        unset($files);
-
-        return null;
-    }
+//    protected function resolveFiles($requestFiles = [])
+//    {
+//        $files = $requestFiles;
+//        if (!empty($files)) {
+//            $array = [];
+//            foreach ($files as $key => $file) {
+//                if (\is_array($file['name'])) {
+//                    $item  = [];
+//                    $keys  = array_keys($file);
+//                    $count = \count($file['name']);
+//                    for ($i = 0; $i < $count; ++$i) {
+//                        if (empty($file['tmp_name'][$i]) || !is_file($file['tmp_name'][$i])) {
+//                            continue;
+//                        }
+//                        $temp['key'] = $key;
+//                        foreach ($keys as $_key) {
+//                            $temp[$_key] = $file[$_key][$i];
+//                        }
+//                        $item[] = (new File($temp['tmp_name']))->setUploadInfo($temp);
+//                    }
+//                    $array[$key] = $item;
+//                } else {
+//                    if ($file instanceof File) {
+//                        $array[$key] = $file;
+//                    } else {
+//                        if (empty($file['tmp_name']) || !is_file($file['tmp_name'])) {
+//                            continue;
+//                        }
+//                        $array[$key] = (new File($file['tmp_name']))->setUploadInfo($file);
+//                    }
+//                }
+//            }
+//            $files = $array;
+//            unset($array);
+//        }
+//
+//        return $files;
+//    }
+//
+//    /**
+//     * @param File[] $files
+//     * @param string $name
+//     *
+//     * @return File|File[]
+//     */
+//    protected function getFile($files, $name)
+//    {
+//        if (null === $name) {
+//            return $files;
+//        }
+//        if (isset($array[$name])) {
+//            return $files[$name];
+//        }
+//        if (strpos($name, '.')) {
+//            list($name, $sub) = explode('.', $name);
+//            if (isset($sub, $array[$name][$sub])) {
+//                return $files[$name][$sub];
+//            }
+//        }
+//        unset($files);
+//
+//        return null;
+//    }
 }
