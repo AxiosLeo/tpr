@@ -29,6 +29,8 @@ class AppPathModel extends Model
 
     public string $views = 'views';
 
+    public string $langs = 'langs';
+
     public function __construct(array $data = [])
     {
         if (!isset($data['root'])) {
