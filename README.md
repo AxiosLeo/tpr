@@ -7,7 +7,7 @@
 ## Required
 
 - PHP >= 7.2  (TPR 3.*)
-- PHP >= 7.4  (TPR 5.* developing...)
+- PHP >= 7.4  (TPR 5.*)
 
 ## Install
 
@@ -17,18 +17,33 @@ composer require axios/tpr
 
 ## Quickly create app
 
-```bash
-composer global require axios/tpr:dev-master
+### git clone from github repo
 
-# set `~/.composer/vendor/bin` to PATH environment variable
+```bash
+# download from github
+git clone https://github.com/AxiosCros/tpr-app.git
+
+# install libraries
+cd tpr-app/ && composer install
+
+# run cli
+php tpr 
+```
+
+### create project by `tpr-cli` command
+
+```bash
+composer global require axios/tpr
+
+# set `~/.composer/vendor/bin` to your PATH environment variable
 
 tpr-cli create <app-name>
 ```
 
 ## Usage demo
 
-- Simple Example Application   : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
-- Example of a CMS application : [github.com/AxiosCros/tpr-cms](https://github.com/AxiosCros/tpr-cms)
+- Example of Simple Application : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
+- Example of CMS application : [github.com/AxiosCros/tpr-cms](https://github.com/AxiosCros/tpr-cms)
 
 ## Document
 

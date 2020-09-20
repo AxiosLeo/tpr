@@ -128,7 +128,7 @@ EOF;
             <<<EOF
 {
   "require": {
-    "axios/tpr": "dev-master"
+    "axios/tpr": "^5.0"
   },
   "autoload": {
     "psr-4": {
