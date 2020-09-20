@@ -2,6 +2,8 @@
 
 > The framework for quickly developing cgi&cli applications
 
+[![Travis Build Status](https://travis-ci.com/AxiosCros/tpr.svg?branch=master&status=unknown)](https://travis-ci.com/AxiosCros/tpr)
+
 ## Required
 
 - PHP >= 7.2  (TPR 3.*)
