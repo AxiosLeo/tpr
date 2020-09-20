@@ -121,8 +121,9 @@ class Dispatch
     private function defaultRoute($path_info)
     {
         if (null !== $path_info) {
-            $tmp  = explode('/', $path_info, 3);
-            $path = [];
+            $path_info = Path::join('', $path_info);
+            $tmp       = explode('/', $path_info, 3);
+            $path      = [];
             foreach ($tmp as $item) {
                 $p = $item ? $item : 'index';
                 array_push($path, $p);
