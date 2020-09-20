@@ -9,10 +9,7 @@ use tpr\Files;
 
 trait CacheTrait
 {
-    /**
-     * @return null|mixed
-     */
-    private function cache(string $tmp_file, ?array $tmp_data = null)
+    private function cache(string $tmp_file, ?array $tmp_data = null): ?array
     {
         // count cache file name
         $cache_time = App::drive()->getConfig()->cache_time;
