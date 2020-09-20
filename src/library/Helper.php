@@ -15,7 +15,7 @@ final class Helper
         return $template;
     }
 
-    public static function xmlToArray(string $xml)
+    public static function xmlToArray(string $xml): string
     {
         libxml_disable_entity_loader(true);
 
@@ -27,7 +27,7 @@ final class Helper
         );
     }
 
-    public static function nonce(string $salt)
+    public static function nonce(string $salt): string
     {
         return md5($salt . uniqid(md5(microtime(true)), true));
     }

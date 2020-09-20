@@ -6,7 +6,6 @@ namespace tpr\core\request;
 
 use tpr\Event;
 use tpr\library\Helper;
-use tpr\traits\ParamTrait;
 
 /**
  * Class DefaultRequest.
@@ -35,8 +34,6 @@ use tpr\traits\ParamTrait;
  */
 class DefaultRequest extends RequestAbstract implements RequestInterface
 {
-    use ParamTrait;
-
     protected array $server_map = [
         'method'     => 'REQUEST_METHOD',
         'env'        => 'SERVER_SOFTWARE',

@@ -12,12 +12,11 @@ use tpr\App;
  * @method string method()
  * @method string url()
  * @method string pathInfo()
- * @method mixed  param()
  */
 abstract class RequestAbstract
 {
-    protected array $server_map = [];
-    private array $request_data = [];
+    protected array $server_map   = [];
+    private array   $request_data = [];
 
     public function __call($name, $arguments)
     {
@@ -36,6 +35,28 @@ abstract class RequestAbstract
     }
 
     abstract public function time($format = null, $micro = false);
+
+    /**
+     * @param string $name
+     * @param null   $default
+     *
+     * @return mixed
+     */
+    public function param($name = null, $default = null)
+    {
+        $params = $this->getRequestData('params', function () {
+            if ('POST' === $this->method()) {
+                $params = $this->post();
+            } else {
+                $params = $this->put();
+            }
+            $params = array_merge($params, $this->get());
+
+            return $this->setRequestData('params', $params);
+        });
+
+        return isset($params[$name]) ? $params[$name] : $default;
+    }
 
     public function routeInfo($routeInfo = null)
     {
@@ -102,68 +123,4 @@ abstract class RequestAbstract
 
         return $value;
     }
-
-//    protected function resolveFiles($requestFiles = [])
-//    {
-//        $files = $requestFiles;
-//        if (!empty($files)) {
-//            $array = [];
-//            foreach ($files as $key => $file) {
-//                if (\is_array($file['name'])) {
-//                    $item  = [];
-//                    $keys  = array_keys($file);
-//                    $count = \count($file['name']);
-//                    for ($i = 0; $i < $count; ++$i) {
-//                        if (empty($file['tmp_name'][$i]) || !is_file($file['tmp_name'][$i])) {
-//                            continue;
-//                        }
-//                        $temp['key'] = $key;
-//                        foreach ($keys as $_key) {
-//                            $temp[$_key] = $file[$_key][$i];
-//                        }
-//                        $item[] = (new File($temp['tmp_name']))->setUploadInfo($temp);
-//                    }
-//                    $array[$key] = $item;
-//                } else {
-//                    if ($file instanceof File) {
-//                        $array[$key] = $file;
-//                    } else {
-//                        if (empty($file['tmp_name']) || !is_file($file['tmp_name'])) {
-//                            continue;
-//                        }
-//                        $array[$key] = (new File($file['tmp_name']))->setUploadInfo($file);
-//                    }
-//                }
-//            }
-//            $files = $array;
-//            unset($array);
-//        }
-//
-//        return $files;
-//    }
-//
-//    /**
-//     * @param File[] $files
-//     * @param string $name
-//     *
-//     * @return File|File[]
-//     */
-//    protected function getFile($files, $name)
-//    {
-//        if (null === $name) {
-//            return $files;
-//        }
-//        if (isset($array[$name])) {
-//            return $files[$name];
-//        }
-//        if (strpos($name, '.')) {
-//            list($name, $sub) = explode('.', $name);
-//            if (isset($sub, $array[$name][$sub])) {
-//                return $files[$name][$sub];
-//            }
-//        }
-//        unset($files);
-//
-//        return null;
-//    }
 }
