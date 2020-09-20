@@ -10,9 +10,39 @@ namespace tpr;
 class Files
 {
     /**
+     * browse files&finder.
+     *
+     * @return array
+     */
+    public static function browse(string $dir, bool $realpath = false, bool $asc = true, int $sorting_type = SORT_FLAG_CASE)
+    {
+        $list = [];
+        if (is_dir($dir)) {
+            $dirHandle = opendir($dir);
+            while (!\is_bool($dirHandle) && false !== ($file_name = readdir($dirHandle))) {
+                if ('..' === $file_name || '.' === $file_name) {
+                    continue;
+                }
+                if ($realpath) {
+                    $file_name = Path::join($dir, $file_name);
+                } else {
+                    $real = Path::join($dir, $file_name);
+                    if (is_dir($real)) {
+                        $file_name .= \DIRECTORY_SEPARATOR;
+                    }
+                }
+                array_push($list, $file_name);
+            }
+        }
+        $asc ? sort($list, $sorting_type) : rsort($list, $sorting_type);
+
+        return array_values($list);
+    }
+
+    /**
      * search files.
      */
-    public static function search(string $dir, array $extInclude = ['php'], bool $asc = false, int $sorting_type = SORT_FLAG_CASE): array
+    public static function search(string $dir, array $extInclude = ['php'], bool $asc = true, int $sorting_type = SORT_FLAG_CASE): array
     {
         $list = [];
         if (is_dir($dir)) {
@@ -26,18 +56,18 @@ class Files
                         $list = array_merge($list, self::search($subFile, $extInclude, $asc, $sorting_type));
                     } elseif (\is_string($extInclude)) {
                         if ('*' == $extInclude || preg_match($extInclude, $file_name)) {
-                            $list[\count($list)] = $subFile;
+                            array_push($list, $subFile);
                         }
                     } elseif (\is_array($extInclude) && \in_array($ext, $extInclude)) {
-                        $list[\count($list)] = $subFile;
+                        array_push($list, $subFile);
                     }
                 }
             }
             closedir($dirHandle);
         }
-        $asc ? ksort($list, $sorting_type) : krsort($list, $sorting_type);
+        $asc ? sort($list, $sorting_type) : rsort($list, $sorting_type);
 
-        return $list;
+        return array_values($list);
     }
 
     public static function save(string $filename, string $text, int $blank = 0): void
