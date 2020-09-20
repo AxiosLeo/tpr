@@ -36,6 +36,7 @@ use tpr\traits\ParamTrait;
 class DefaultRequest extends RequestAbstract implements RequestInterface
 {
     use ParamTrait;
+
     protected array $server_map = [
         'method'     => 'REQUEST_METHOD',
         'env'        => 'SERVER_SOFTWARE',
@@ -281,19 +282,30 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         return isset($headers[$name]) ? $headers[$name] : $default;
     }
 
-//    /**
-//     * 获取上传文件.
-//     *
-//     * @param null|string $name
-//     *
-//     * @return File|File[]
-//     */
+    /**
+     * get upload file.
+     *
+     * @param null|string $name
+     *
+     * @return null|\SplFileInfo|\SplFileInfo[]
+     */
     public function file($name = null)
     {
-//        $files = $this->getRequestData('files', function () {
-//            return $this->setRequestData('files', $this->resolveFiles($_FILES));
-//        });
-//
-//        return $this->getFile($files, $name);
+        $files = $this->getRequestData('files', function () {
+            $list = [];
+            if (isset($_FILES) && !empty($_FILES)) {
+                foreach ($_FILES as $key => $file) {
+                    $list[$key] = new \SplFileInfo($file['tmp_name']);
+                }
+            }
+
+            return $this->setRequestData('files', $list);
+        });
+
+        if (null === $name) {
+            return $files;
+        }
+
+        return isset($files[$name]) ? $files[$name] : null;
     }
 }
