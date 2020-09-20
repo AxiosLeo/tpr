@@ -15,7 +15,6 @@ use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\Files;
-use tpr\models\CommandLineAppModel;
 use tpr\Path;
 
 class DefaultServer extends ServerHandler
@@ -121,15 +120,16 @@ class DefaultServer extends ServerHandler
         /**
          * @var Command $command
          */
-        $cli_model = new CommandLineAppModel($this->app->server_options);
-        if ('' === $cli_model->namespace) {
-            $cli_model->namespace = $this->app->namespace;
-        } else {
-            $this->app->namespace = $cli_model->namespace;
-        }
-        $app = new Application($cli_model->name, $cli_model->version);
-        if (\count($cli_model->commands) > 0) {
-            foreach ($cli_model->commands as $class) {
+        $command_config = [
+            'name'      => isset($this->app->server_options['name']) ? $this->app->server_options['name'] : 'Command Tools',
+            'version'   => isset($this->app->server_options['version']) ? $this->app->server_options['version'] : '0.0.1',
+            'namespace' => $this->app->namespace,
+            'commands'  => isset($this->app->server_options['commands']) ? $this->app->server_options['commands'] : [],
+        ];
+
+        $app = new Application($command_config['name'], $command_config['version']);
+        if (\count($command_config['commands']) > 0) {
+            foreach ($command_config['commands'] as $class) {
                 $command = new $class();
                 $app->add($command);
             }
@@ -140,7 +140,7 @@ class DefaultServer extends ServerHandler
             require_once $filepath;
             $tmp   = str_replace(['.php', Path::command()], '', $filepath);
             $tmp   = str_replace('/', '\\', $tmp);
-            $class = $cli_model->namespace . $tmp;
+            $class = $command_config['namespace'] . $tmp;
             if (!class_exists($class)) {
                 echo "---------------------------------------------------\n" .
                     CONSOLE_STYLE_BACKGROUND_31 . "Class Not Exist. Please check namespace ! \n" . CONSOLE_STYLE_DEFAULT .
