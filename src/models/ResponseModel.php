@@ -12,7 +12,7 @@ use tpr\core\response\Text;
 use tpr\core\response\Xml;
 use tpr\Model;
 
-class ResponseModel extends Model
+final class ResponseModel extends Model
 {
     public static array $allow_type = [
         'html'  => Html::class,

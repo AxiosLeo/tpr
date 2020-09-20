@@ -7,7 +7,7 @@ namespace tpr\models;
 use tpr\Model;
 use tpr\Path;
 
-class AppPathModel extends Model
+final class AppPathModel extends Model
 {
     public string $framework = TPR_FRAMEWORK_PATH;
 

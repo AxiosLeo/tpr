@@ -6,7 +6,7 @@ namespace tpr\models;
 
 use tpr\Model;
 
-class RouteInfoModel extends Model
+final class RouteInfoModel extends Model
 {
     public string $pathinfo = '';
     public string $method   = '';
