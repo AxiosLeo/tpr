@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\server;
 
 use tpr\Config;
-use tpr\Event;
 use tpr\Model;
 use tpr\models\AppModel;
 use tpr\Path;
@@ -21,13 +20,6 @@ abstract class ServerHandler
 
     public function __construct()
     {
-        // load events
-        $events = Config::get('events', []);
-        foreach ($events as $event) {
-            list($event_name, $class, $method) = explode('::', $event['handler'], 3);
-            Event::register($event_name, $class, $method);
-        }
-
         // init app config model
         $this->app = new AppModel();
 

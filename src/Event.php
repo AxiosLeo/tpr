@@ -11,6 +11,17 @@ class Event
 {
     private static array $events = [];
 
+    private static ?Event $instance = null;
+
+    private function __construct()
+    {
+        $events = Config::get('events', []);
+        foreach ($events as $event) {
+            list($event_name, $class, $method) = explode('::', $event['handler'], 3);
+            self::register($event_name, $class, $method);
+        }
+    }
+
     /**
      * register event by class method.
      */
@@ -39,10 +50,11 @@ class Event
      */
     public static function on(string $event_name, \Closure $closure)
     {
+        self::init();
         if (!isset(self::$events[$event_name])) {
             self::$events[$event_name] = [];
         }
-        array_push(self::$events, $closure);
+        array_push(self::$events[$event_name], $closure);
     }
 
     /**
@@ -101,9 +113,9 @@ class Event
      *
      * @return bool
      */
-    public function remove(string $event_name, int $index = 0)
+    public static function remove(string $event_name, int $index = 0)
     {
-        if (isset($this->events[$event_name][$index])) {
+        if (isset(self::$events[$event_name][$index])) {
             unset(self::$events[$event_name][$index]);
             self::$events[$event_name] = array_values(self::$events[$event_name]);
 
@@ -111,5 +123,19 @@ class Event
         }
 
         return false;
+    }
+
+    /**
+     * initialize only when registering some events.
+     *
+     * @return null|Event
+     */
+    private static function init()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
 }
