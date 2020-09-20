@@ -11,11 +11,8 @@ use tpr\core\Env as CoreEnv;
  *
  * @see CoreEnv
  *
- * @method CoreEnv addEnvFile($path)                 static
- * @method CoreEnv reload()                          static
- * @method mixed   get($key, $default = null)        static
- * @method mixed   getFromSys($key, $default = null) static
- * @method array   all()                             static
+ * @method CoreEnv load($relative_path)              static
+ * @method mixed   get($key = null, $default = null) static
  * @method CoreEnv set($key, $value)                 static
  */
 class Env extends Facade

@@ -4,85 +4,47 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
-use InvalidArgumentException;
-use tpr\traits\FindDataFromArrayTrait;
+use Noodlehaus\Parser\Ini;
+use tpr\library\ArrayMap;
+use tpr\Path;
 
 class Env
 {
-    use FindDataFromArrayTrait;
-
-    private array $env_array = [];
-
-    private array $env_files = [];
-
-    private array $env_map = [];
+    private ArrayMap $env;
 
     public function __construct()
     {
-        $this->addEnvFile(\tpr\Path::root() . \DIRECTORY_SEPARATOR . '.env');
+        $this->env = new ArrayMap();
+        $this->load('.env');
     }
 
-    public function addEnvFile($path): self
+    public function load(string $file): void
     {
-        if (file_exists($path) && !\in_array($path, $this->env_files)) {
-            $result          = parse_ini_file($path, true);
-            $this->env_array = [] === $this->env_array ? $result : array_merge($this->env_array, $result);
-            array_push($this->env_files, $path);
+        $env_path = Path::join(Path::root(), $file);
+        if (file_exists($env_path)) {
+            $env = \Noodlehaus\Config::load($env_path, new Ini())->all();
+            if (\is_array($env)) {
+                $this->env->set($env);
+            }
         }
-
-        return $this;
     }
 
-    public function reload(): self
-    {
-        $this->env_array = [];
-        $this->env_map   = [];
-        foreach ($this->env_files as $env_file) {
-            $this->addEnvFile($env_file);
-        }
-
-        return $this;
-    }
-
-    public function all()
-    {
-        return $this->env_array;
-    }
-
-    public function get($key, $default = null)
-    {
-        $env = $this->getFromEnvMap($key);
-        if (null !== $env) {
-            return $env;
-        }
-        $this->env_map[$key] = $this->find(explode('.', $key), $this->env_array, $default);
-
-        return $this->env_map[$key];
-    }
-
-    public function getFromSys($key, $default = null)
-    {
-        $env = getenv($key);
-
-        return null === $env ? $default : $env;
-    }
-
-    public function set($key, $value): self
-    {
-        $this->env_map[$key] = $value;
-
-        return $this;
-    }
-
-    private function getFromEnvMap($key)
+    public function get($key = null, $default = null)
     {
         if (null === $key) {
-            throw new InvalidArgumentException('Env key cannot be null.');
+            return $this->env->all();
         }
-        if (isset($this->env_map[$key])) {
-            return $this->env_map[$key];
+        $val = $this->env->get($key);
+        if (null !== $val) {
+            return $val;
         }
+        $env_key = implode('_', explode('.', $key));
+        $val     = getenv(strtoupper($env_key));
+        if (false === $val) {
+            return $default;
+        }
+        $this->env->set($key, $val);
 
-        return null;
+        return $val;
     }
 }
