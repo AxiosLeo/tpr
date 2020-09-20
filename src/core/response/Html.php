@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\core\response;
 
+use tpr\App;
 use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\Path;
@@ -19,9 +20,10 @@ class Html extends ResponseAbstract
 
     public function __construct()
     {
-        $template_config       = [
-            'cache' => Path::join(Path::cache(), 'views'),
-        ];
+        $template_config = [];
+        if (!App::debugMode()) {
+            $template_config['cache'] = Path::join(Path::cache(), 'views');
+        }
         $this->template_driver = new Environment(new FilesystemLoader(Path::views()), $template_config);
         $this->template_driver->addGlobal('lang', Container::get('lang'));
     }
@@ -59,9 +61,9 @@ class Html extends ResponseAbstract
     }
 
     /**
-     * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
      *
      * @return string
      */
