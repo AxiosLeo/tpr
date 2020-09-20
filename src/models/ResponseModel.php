@@ -31,6 +31,7 @@ final class ResponseModel extends Model
     public array  $params            = [];
     public string $views_path        = '';
     public string $template_file_ext = 'html';
+    public array  $template_func     = [];  // func_name => callable
 
     // json&jsonp
     public int    $json_options  = JSON_UNESCAPED_UNICODE;

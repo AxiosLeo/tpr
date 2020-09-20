@@ -9,6 +9,7 @@ use tpr\core\Dispatch;
 use tpr\Path;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class Html extends ResponseAbstract
 {
@@ -58,14 +59,20 @@ class Html extends ResponseAbstract
     }
 
     /**
-     * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
+     * @throws \Twig\Error\LoaderError
      *
      * @return string
      */
     private function render(string $dir, string $file, array $params = [])
     {
+        if (!empty($this->options->template_func)) {
+            foreach ($this->options->template_func as $name => $func) {
+                $this->template_driver->addFunction(new TwigFunction($name, $func));
+            }
+        }
+
         return $this->template_driver->render($dir . $file . '.' . $this->options->template_file_ext, $params);
     }
 }

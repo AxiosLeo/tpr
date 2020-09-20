@@ -22,6 +22,11 @@ class Response
         $this->options = new ResponseModel(App::drive()->getConfig()->response_config);
     }
 
+    public function addTemplateFunc(string $name, callable $func): void
+    {
+        $this->options->template_func[$name] = $func;
+    }
+
     public function getType(): string
     {
         return $this->options->return_type;

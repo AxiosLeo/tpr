@@ -22,6 +22,7 @@ use tpr\models\ResponseModel;
  * @method string        getHeader(string $key)
  * @method Response      setHeader(string $key, string $value)
  * @method Response      assign(string $key, $value)
+ * @method void          addTemplateFunc(string $name, callable $func)
  * @method void          response($result = '', $status = 200, $msg = '', array $headers = [])
  * @method void          success($data = [])
  * @method void          error($code = 500, $msg = 'error')
