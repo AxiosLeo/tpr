@@ -15,6 +15,11 @@ use tpr\Path;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Run;
 
+/**
+ * Class Make.
+ *
+ * @description need require `nette/php-generator` composer library
+ */
 class Make extends Console
 {
     protected function configure()
