@@ -7,7 +7,6 @@ namespace tpr\core;
 use Exception;
 use tpr\App;
 use tpr\Container;
-use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
@@ -92,7 +91,7 @@ class Dispatch
 
             throw new HttpResponseException($result);
         } catch (HttpResponseException $e) {
-            Event::listen('http_response', $e);
+            throw $e;
         } catch (Exception $e) {
             Handler::render($e, Container::response());
         }
