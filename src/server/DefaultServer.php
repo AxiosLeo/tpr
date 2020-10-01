@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace tpr\server;
 
-use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use tpr\Config;
 use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\core\request\DefaultRequest;
 use tpr\core\Response;
 use tpr\Event;
-use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\Files;
 use tpr\Path;
@@ -22,92 +21,18 @@ class DefaultServer extends ServerHandler
     /**
      * @throws \Throwable
      */
-    public function run()
-    {
-        Handler::init();
-        Event::trigger('app_begin', $this->app);
-        $length = \strlen($this->app->namespace);
-        if ('\\' === $this->app->namespace[$length - 1]) {
-            throw new \InvalidArgumentException(
-                'namespace mustn\'t end with a namespace separator "\". ' .
-                'now is "' . $this->app->namespace . '". ' .
-                'should be "' . implode('\\', array_filter(explode('\\', $this->app->namespace))) . '".'
-            );
-        }
-        $this->init();
-        $this->dispatch();
-    }
-
-    /**
-     * run single command.
-     *
-     * @param null|string $command
-     *
-     * @throws \Exception
-     */
-    public function exec($command = null)
-    {
-        $this->cliRunner($command);
-    }
-
-    public function send(HttpResponseException $httpException)
-    {
-        Event::trigger('app_response_before');
-        if (!headers_sent() && !empty($httpException->headers)) {
-            // 发送状态码
-            http_response_code($httpException->http_status);
-            // 发送头部信息
-            foreach ($httpException->headers as $name => $val) {
-                if (null === $val) {
-                    header($name);
-                } else {
-                    header($name . ':' . $val);
-                }
-            }
-        }
-        echo $httpException->result;
-        if (\function_exists('fastcgi_finish_request')) {
-            // 提高页面响应
-            fastcgi_finish_request();
-        }
-        Event::listen('app_response_after', $httpException->result);
-        unset($httpException->result);
-    }
-
-    protected function init()
-    {
-        Event::trigger('app_ini_begin');
-        Event::trigger('app_ini_end');
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    private function dispatch()
-    {
-        $ClassLoader = new ClassLoader();
-        $ClassLoader->addPsr4($this->app->namespace . '\\', Path::app());
-        $ClassLoader->register();
-        $mode = \PHP_SAPI == 'cli' ? \PHP_SAPI : 'cgi';
-        if ('cgi' == $mode) {
-            $this->cgiRunner();
-        } elseif ('cli' == $mode) {
-            $this->cliRunner();
-        }
-        Event::trigger('app_end');
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    private function cgiRunner()
+    public function cgi(): void
     {
         Container::bind('request', DefaultRequest::class);
         $dispatch = new Dispatch($this->app->namespace);
         Container::bind('response', Response::class);
         Container::bindNXWithObj('cgi_dispatch', $dispatch);
-        Event::registerWithObj('http_response', $this, 'send');
-        $dispatch->run();
+
+        try {
+            $dispatch->run();
+        } catch (HttpResponseException $e) {
+            $this->send($e);
+        }
     }
 
     /**
@@ -115,7 +40,7 @@ class DefaultServer extends ServerHandler
      *
      * @throws \Exception
      */
-    private function cliRunner(string $command_name = null)
+    public function cli(string $command_name = null): void
     {
         /**
          * @var Command $command
@@ -158,5 +83,48 @@ class DefaultServer extends ServerHandler
         }
         $app->run();
         Event::trigger('app_run_command_after');
+    }
+
+    protected function begin(): void
+    {
+        Event::trigger('app_begin', $this->app);
+        $length = \strlen($this->app->namespace);
+        if ('\\' === $this->app->namespace[$length - 1]) {
+            throw new \InvalidArgumentException(
+                'namespace mustn\'t end with a namespace separator "\". ' .
+                'now is "' . $this->app->namespace . '". ' .
+                'should be "' . implode('\\', array_filter(explode('\\', $this->app->namespace))) . '".'
+            );
+        }
+        Config::load(Path::config());
+    }
+
+    protected function end(): void
+    {
+        Event::trigger('app_end', $this->app);
+    }
+
+    private function send(HttpResponseException $httpException)
+    {
+        Event::trigger('app_response_before');
+        if (!headers_sent() && !empty($httpException->headers)) {
+            // 发送状态码
+            http_response_code($httpException->http_status);
+            // 发送头部信息
+            foreach ($httpException->headers as $name => $val) {
+                if (null === $val) {
+                    header($name);
+                } else {
+                    header($name . ':' . $val);
+                }
+            }
+        }
+        echo $httpException->result;
+        if (\function_exists('fastcgi_finish_request')) {
+            // 提高页面响应
+            fastcgi_finish_request();
+        }
+        Event::listen('app_response_after', $httpException->result);
+        unset($httpException->result);
     }
 }

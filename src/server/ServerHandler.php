@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\server;
 
-use tpr\Config;
+use tpr\exception\Handler;
 use tpr\Model;
 use tpr\models\AppModel;
 use tpr\Path;
@@ -16,7 +16,6 @@ abstract class ServerHandler
 {
     protected AppModel       $app;
     protected ?Model         $server         = null;
-    protected array          $server_options = [];
 
     public function __construct()
     {
@@ -27,27 +26,63 @@ abstract class ServerHandler
         Path::configurate();
     }
 
-    abstract public function run();
+    public function run(string $command = null)
+    {
+        Handler::init();
+        $this->begin();
+        $mode = \PHP_SAPI == 'cli' ? \PHP_SAPI : 'cgi';
+        if ('cgi' == $mode) {
+            $this->cgi();
+        } elseif ('cli' == $mode) {
+            $this->cli($command);
+        }
+        $this->end();
+    }
 
+    /**
+     * @return $this
+     */
     public function config(array $config = []): self
     {
-        $this->app->unmarshall($config);
+        if (!empty($config)) {
+            $this->app->unmarshall($config);
 
-        if (isset($config['path'])) {
-            Path::configurate($config['path']);
+            if (isset($config['path'])) {
+                Path::configurate($config['path']);
+            }
+            if (null !== $this->server && isset($config['server_options'])) {
+                $this->server->unmarshall($config['server_options']);
+            }
         }
-        if (null !== $this->server && isset($config['server_options'])) {
-            $this->server->unmarshall($config['server_options']);
-        }
-        Config::load(Path::config());
 
         return $this;
     }
 
+    /**
+     * @return AppModel
+     */
     public function getConfig()
     {
         return $this->app;
     }
 
-    abstract protected function init();
+    /**
+     * run server on cgi mode.
+     */
+    abstract public function cgi(): void;
+
+    /**
+     * run server on cli mode.
+     */
+    abstract public function cli(string $command_name = null): void;
+
+    /**
+     * begin app.
+     */
+    abstract protected function begin(): void;
+
+    /**
+     * end app.
+     */
+    abstract protected function end(): void;
 }
