@@ -4,55 +4,26 @@ declare(strict_types=1);
 
 namespace tpr\core\request;
 
-use tpr\Event;
-use tpr\library\Helper;
-
-/**
- * Class DefaultRequest.
- *
- * @method string method()
- * @method string env()
- * @method string protocol()
- * @method string host()
- * @method string domain()
- * @method string port()
- * @method string pathInfo()
- * @method string indexFile()
- * @method string userAgent()
- * @method string accept()
- * @method string lang()
- * @method string encoding()
- * @method string query()
- * @method string remotePort()
- * @method bool   isGet()
- * @method bool   isPost()
- * @method bool   isPut()
- * @method bool   isDelete()
- * @method bool   isHead()
- * @method bool   isPatch()
- * @method bool   isOptions()
- */
 class DefaultRequest extends RequestAbstract implements RequestInterface
 {
     protected array $server_map = [
-        'method'     => 'REQUEST_METHOD',
-        'env'        => 'SERVER_SOFTWARE',
-        'protocol'   => 'SERVER_PROTOCOL',
-        'host'       => 'HTTP_HOST',
-        'domain'     => 'SERVER_NAME',
-        'port'       => 'SERVER_PORT',
-        'pathInfo'   => 'PATH_INFO',
-        'indexFile'  => 'SCRIPT_NAME',
-        'indexPath'  => 'SCRIPT_FILENAME',
-        'userAgent'  => 'HTTP_USER_AGENT',
-        'accept'     => 'HTTP_ACCEPT',
-        'lang'       => 'HTTP_ACCEPT_LANGUAGE',
-        'encoding'   => 'HTTP_ACCEPT_ENCODING',
-        'query'      => 'QUERY_STRING',
-        'remotePort' => 'REMOTE_PORT',
+        'method'    => 'REQUEST_METHOD',
+        'env'       => 'SERVER_SOFTWARE',
+        'scheme'    => 'SERVER_PROTOCOL',
+        'host'      => 'HTTP_HOST',
+        'domain'    => 'SERVER_NAME',
+        'port'      => 'SERVER_PORT',
+        'pathInfo'  => 'PATH_INFO',
+        'indexFile' => 'SCRIPT_NAME',
+        'indexPath' => 'SCRIPT_FILENAME',
+        'userAgent' => 'HTTP_USER_AGENT',
+        'accept'    => 'HTTP_ACCEPT',
+        'lang'      => 'HTTP_ACCEPT_LANGUAGE',
+        'encoding'  => 'HTTP_ACCEPT_ENCODING',
+        'query'     => 'QUERY_STRING',
     ];
 
-    public function url($is_whole = false)
+    public function url($is_whole = false): string
     {
         $url = $this->getRequestData('url', function () {
             if (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
@@ -68,10 +39,10 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
             return $this->setRequestData('url', $url);
         });
 
-        return $is_whole ? $this->scheme() . '://' . $this->domain() . $this->indexFile() . $url : $url;
+        return $is_whole ? $this->scheme() . '://' . $this->host() . $this->indexFile() . $url : $url;
     }
 
-    public function contentType()
+    public function contentType(): string
     {
         return $this->getRequestData('content_type', function () {
             $mimes       = new \Mimey\MimeTypes();
@@ -94,18 +65,6 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         });
     }
 
-    public function input($array, $name = null, $default = null)
-    {
-        if (null === $name) {
-            return $array;
-        }
-        $value = isset($array[$name]) ? $array[$name] : $default;
-        $data  = ['name' => $name, 'value' => $value];
-        Event::listen('filter_request_data', $data);
-
-        return $data['value'];
-    }
-
     public function get($name = null, $default = null)
     {
         $get = $this->getRequestData('get', function () {
@@ -118,15 +77,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     public function post($name = null, $default = null)
     {
         $post = $this->getRequestData('post', function () {
-            $type = $this->contentType();
-            if ('json' === $type) {
-                $post = (array) json_decode($this->contentType(), true);
-            } elseif ('xml' === $type) {
-                $post = Helper::xmlToArray($this->content());
-            } else {
-                $post = $_POST;
-            }
-            unset($mimes, $type);
+            $post = array_merge($_POST, $this->parseContent());
 
             return $this->setRequestData('post', $post);
         });
@@ -137,13 +88,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     public function put($name = null, $default = null)
     {
         $put = $this->getRequestData('put', function () {
-            if ('json' === $this->contentType()) {
-                $put = (array) json_decode($this->content(), true);
-            } else {
-                parse_str($this->content(), $put);
-            }
-
-            return $this->setRequestData('put', $put);
+            return $this->setRequestData('put', $this->parseContent());
         });
 
         return $this->input($put, $name, $default);
@@ -175,10 +120,15 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         return $default;
     }
 
-    public function content()
+    public function content(): string
     {
         return $this->getRequestData('content', function () {
-            return $this->setRequestData('content', file_get_contents('php://input'));
+            $content = file_get_contents('php://input');
+            if (false === $content) {
+                $content = '';
+            }
+
+            return $this->setRequestData('content', $content);
         });
     }
 
@@ -198,6 +148,10 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
             return $server;
         }
 
+        if (isset($this->server_map[$name])) {
+            $name = $this->server_map[$name];
+        }
+
         if (isset($server[$name])) {
             $value = $server[$name];
             unset($server, $name);
@@ -205,19 +159,10 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
             return $value;
         }
 
-        return null;
+        return '';
     }
 
-    public function routeInfo($routeInfo = null)
-    {
-        if (null === $routeInfo) {
-            return $this->getRequestData('route_info');
-        }
-
-        return $this->setRequestData('route_info', $routeInfo);
-    }
-
-    public function isHttps()
+    public function isHttps(): bool
     {
         return $this->getRequestData('is_https', function () {
             $server   = $this->server();
@@ -236,11 +181,9 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         });
     }
 
-    public function scheme()
+    public function scheme(): string
     {
-        return $this->getRequestData('scheme', function () {
-            return $this->setRequestData('scheme', $this->isHttps() ? 'https' : 'http');
-        });
+        return $this->server('scheme');
     }
 
     public function header($name = null, $default = null)
@@ -272,9 +215,7 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
             return $headers;
         }
 
-        if (\is_string($name)) {
-            $name = str_replace('_', '-', strtolower($name));
-        }
+        $name = strtolower($name);
 
         return isset($headers[$name]) ? $headers[$name] : $default;
     }
@@ -304,5 +245,95 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         }
 
         return isset($files[$name]) ? $files[$name] : null;
+    }
+
+    public function query(): string
+    {
+        return $this->server($this->server_map['query']);
+    }
+
+    public function env(): string
+    {
+        return $this->server($this->server_map['env']);
+    }
+
+    public function host(): string
+    {
+        return $this->server($this->server_map['host']);
+    }
+
+    public function port(): int
+    {
+        return (int) $this->server($this->server_map['port']);
+    }
+
+    public function indexFile(): string
+    {
+        return $this->server($this->server_map['indexFile']);
+    }
+
+    public function userAgent(): string
+    {
+        return $this->server('userAgent');
+    }
+
+    public function accept(): string
+    {
+        return $this->server('accept');
+    }
+
+    public function lang(): string
+    {
+        return $this->server('lang');
+    }
+
+    public function encoding(): string
+    {
+        return $this->server('encoding');
+    }
+
+    public function isGet(): bool
+    {
+        return 0 === strcasecmp('get', $this->method());
+    }
+
+    public function isPost(): bool
+    {
+        return 0 === strcasecmp('post', $this->method());
+    }
+
+    public function isPut(): bool
+    {
+        return 0 === strcasecmp('put', $this->method());
+    }
+
+    public function isDelete(): bool
+    {
+        return 0 === strcasecmp('delete', $this->method());
+    }
+
+    public function isHead(): bool
+    {
+        return 0 === strcasecmp('head', $this->method());
+    }
+
+    public function isPatch(): bool
+    {
+        return 0 === strcasecmp('patch', $this->method());
+    }
+
+    public function isOptions(): bool
+    {
+        return 0 === strcasecmp('options', $this->method());
+    }
+
+    public function method(): string
+    {
+        return $this->server('method');
+    }
+
+    public function pathInfo(): string
+    {
+        return (string) $this->server('pathInfo');
     }
 }

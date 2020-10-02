@@ -5,36 +5,26 @@ declare(strict_types=1);
 namespace tpr\core\request;
 
 use tpr\App;
+use tpr\Event;
+use tpr\library\Helper;
+use tpr\models\RouteInfoModel;
 
-/**
- * Class RequestAbstract.
- *
- * @method string method()
- * @method string url()
- * @method string pathInfo()
- */
 abstract class RequestAbstract
 {
     protected array $server_map   = [];
     private array   $request_data = [];
 
-    public function __call($name, $arguments)
-    {
-        $is = 's' === $name[1] && 'i' === $name[0];
-        if (!$is) {
-            unset($arguments);
-            if (isset($this->server_map[$name])) {
-                return $this->server($this->server_map[$name]);
-            }
-
-            return null;
-        }
-        $method = strtoupper(substr($name, 2));
-
-        return $method === $this->method();
-    }
-
     abstract public function time($format = null, $micro = false);
+
+    abstract public function method(): string;
+
+    abstract public function isPost(): bool;
+
+    abstract public function post($name = null, $default = null);
+
+    abstract public function put($name = null, $default = null);
+
+    abstract public function get($name = null, $default = null);
 
     /**
      * @param string $name
@@ -45,12 +35,8 @@ abstract class RequestAbstract
     public function param($name = null, $default = null)
     {
         $params = $this->getRequestData('params', function () {
-            if ('POST' === $this->method()) {
-                $params = $this->post();
-            } else {
-                $params = $this->put();
-            }
-            $params = array_merge($params, $this->get());
+            $params = [];
+            $params = array_merge($params, $this->put(), $this->post(), $this->get());
 
             return $this->setRequestData('params', $params);
         });
@@ -58,7 +44,7 @@ abstract class RequestAbstract
         return isset($params[$name]) ? $params[$name] : $default;
     }
 
-    public function routeInfo($routeInfo = null)
+    public function routeInfo(?RouteInfoModel $routeInfo = null)
     {
         if (null === $routeInfo) {
             return $this->getRequestData('route_info');
@@ -74,29 +60,41 @@ abstract class RequestAbstract
      *
      * @return null|mixed
      */
-    public function token($refresh = false)
+    public function uuid($refresh = false): string
     {
         if ($refresh) {
-            return $this->refreshToken();
+            return $this->refresh();
         }
 
         return $this->getRequestData('token', function () {
-            return $this->refreshToken();
+            return $this->refresh();
         });
     }
 
-    abstract public function server($name = null);
-
-    /**
-     * @throws \Exception
-     *
-     * @return mixed
-     */
-    protected function refreshToken()
+    protected function input($array, $name = null, $default = null)
     {
-        $token = md5(App::drive()->getConfig()->name . uniqid(md5($this->time(true)), true));
+        if (null === $name) {
+            return $array;
+        }
+        $value = isset($array[$name]) ? $array[$name] : $default;
+        $data  = ['name' => $name, 'value' => $value];
+        Event::listen('filter_request_data', $data);
 
-        return $this->setRequestData('token', $token);
+        return $data['value'];
+    }
+
+    protected function parseContent()
+    {
+        $type = $this->contentType();
+        if ('json' === $type) {
+            $data = (array) json_decode($this->content(), true);
+        } elseif ('xml' === $type) {
+            $data = Helper::xmlToArray($this->content());
+        } else {
+            parse_str($this->content(), $data);
+        }
+
+        return $data;
     }
 
     /**
@@ -122,5 +120,17 @@ abstract class RequestAbstract
         $this->request_data[$name] = $value;
 
         return $value;
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    private function refresh()
+    {
+        $token = md5(App::drive()->getConfig()->name . uniqid(md5($this->time(true)), true));
+
+        return $this->setRequestData('token', $token);
     }
 }
