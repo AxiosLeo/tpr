@@ -109,15 +109,8 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
         $request = $this->getRequestData('request', function () {
             return $this->setRequestData('request', $_REQUEST);
         });
-        if (null === $name) {
-            return $request;
-        }
 
-        if (isset($request[$name])) {
-            return $request[$name];
-        }
-
-        return $default;
+        return $this->input($request, $name, $default);
     }
 
     public function content(): string
@@ -290,41 +283,6 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     public function encoding(): string
     {
         return $this->server('encoding');
-    }
-
-    public function isGet(): bool
-    {
-        return 0 === strcasecmp('get', $this->method());
-    }
-
-    public function isPost(): bool
-    {
-        return 0 === strcasecmp('post', $this->method());
-    }
-
-    public function isPut(): bool
-    {
-        return 0 === strcasecmp('put', $this->method());
-    }
-
-    public function isDelete(): bool
-    {
-        return 0 === strcasecmp('delete', $this->method());
-    }
-
-    public function isHead(): bool
-    {
-        return 0 === strcasecmp('head', $this->method());
-    }
-
-    public function isPatch(): bool
-    {
-        return 0 === strcasecmp('patch', $this->method());
-    }
-
-    public function isOptions(): bool
-    {
-        return 0 === strcasecmp('options', $this->method());
     }
 
     public function method(): string

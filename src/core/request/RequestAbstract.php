@@ -18,8 +18,6 @@ abstract class RequestAbstract
 
     abstract public function method(): string;
 
-    abstract public function isPost(): bool;
-
     abstract public function post($name = null, $default = null);
 
     abstract public function put($name = null, $default = null);
@@ -69,6 +67,41 @@ abstract class RequestAbstract
         return $this->getRequestData('token', function () {
             return $this->refresh();
         });
+    }
+
+    public function isGet(): bool
+    {
+        return 0 === strcasecmp('get', $this->method());
+    }
+
+    public function isPost(): bool
+    {
+        return 0 === strcasecmp('post', $this->method());
+    }
+
+    public function isPut(): bool
+    {
+        return 0 === strcasecmp('put', $this->method());
+    }
+
+    public function isDelete(): bool
+    {
+        return 0 === strcasecmp('delete', $this->method());
+    }
+
+    public function isHead(): bool
+    {
+        return 0 === strcasecmp('head', $this->method());
+    }
+
+    public function isPatch(): bool
+    {
+        return 0 === strcasecmp('patch', $this->method());
+    }
+
+    public function isOptions(): bool
+    {
+        return 0 === strcasecmp('options', $this->method());
     }
 
     protected function input($array, $name = null, $default = null)
