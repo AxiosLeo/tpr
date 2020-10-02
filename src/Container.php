@@ -9,7 +9,7 @@ use Rakit\Validation\Validator;
 use tpr\core\Config;
 use tpr\core\Dispatch;
 use tpr\core\Lang as CoreLang;
-use tpr\core\request\RequestAbstract;
+use tpr\core\request\RequestInterface;
 use tpr\core\Response;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
@@ -18,12 +18,12 @@ use tpr\server\ServerHandler;
 /**
  * Class Container.
  *
- * @method Config          config()    static
- * @method RequestAbstract request()   static
- * @method Response        response()  static
- * @method ServerHandler   app()       static
- * @method CoreLang        lang()      static
- * @method Validator       validator() static
+ * @method Config           config()    static
+ * @method RequestInterface request()   static
+ * @method Response         response()  static
+ * @method ServerHandler    app()       static
+ * @method CoreLang         lang()      static
+ * @method Validator        validator() static
  */
 final class Container implements ArrayAccess
 {
