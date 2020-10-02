@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace tpr;
 
-use tpr\core\request\DefaultRequest;
-use tpr\core\request\RequestAbstract;
 use tpr\core\request\RequestInterface;
 use tpr\core\Response;
 use tpr\models\ResponseModel;
@@ -30,10 +28,7 @@ use tpr\models\ResponseModel;
  */
 abstract class Controller
 {
-    /**
-     * @var null|DefaultRequest|RequestAbstract|RequestInterface
-     */
-    protected ?RequestAbstract $request = null;
+    protected ?RequestInterface $request = null;
 
     private Response $response;
 
@@ -42,7 +37,8 @@ abstract class Controller
         if (Container::has('request')) {
             $this->request = Container::request();
         }
-        $this->response = new Response();
+        Container::bindWithObj('response', new Response());
+        $this->response = Container::response();
     }
 
     public function __call($name, $arguments)
@@ -68,7 +64,7 @@ abstract class Controller
     protected function redirect(string $destination, bool $permanent = true)
     {
         if (false === strpos($destination, '://')) {
-            $protocol    = 'https' === $this->request->protocol() ? 'https' : 'http';
+            $protocol    = 'https' === $this->request->scheme() ? 'https' : 'http';
             $destination = $protocol . '://' . $this->request->host() . $destination;
         }
 
