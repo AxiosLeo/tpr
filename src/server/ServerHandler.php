@@ -15,7 +15,7 @@ use tpr\Path;
 abstract class ServerHandler
 {
     protected AppModel       $app;
-    protected ?Model         $server         = null;
+    protected ?Model         $server = null;
 
     public function __construct()
     {
@@ -69,12 +69,12 @@ abstract class ServerHandler
     /**
      * run server on cgi mode.
      */
-    abstract public function cgi(): void;
+    abstract protected function cgi(): void;
 
     /**
      * run server on cli mode.
      */
-    abstract public function cli(string $command_name = null): void;
+    abstract protected function cli(string $command_name = null): void;
 
     /**
      * begin app.

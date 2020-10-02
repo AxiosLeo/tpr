@@ -12,6 +12,7 @@ use tpr\core\Dispatch;
 use tpr\core\request\DefaultRequest;
 use tpr\core\Response;
 use tpr\Event;
+use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
 use tpr\Files;
 use tpr\Path;
@@ -21,7 +22,7 @@ class DefaultServer extends ServerHandler
     /**
      * @throws \Throwable
      */
-    public function cgi(): void
+    protected function cgi(): void
     {
         Container::bind('request', DefaultRequest::class);
         $dispatch = new Dispatch($this->app->namespace);
@@ -32,6 +33,8 @@ class DefaultServer extends ServerHandler
             $dispatch->run();
         } catch (HttpResponseException $e) {
             $this->send($e);
+        } catch (\Throwable $e) {
+            Handler::render($e, Container::response());
         }
     }
 
@@ -40,7 +43,7 @@ class DefaultServer extends ServerHandler
      *
      * @throws \Exception
      */
-    public function cli(string $command_name = null): void
+    protected function cli(string $command_name = null): void
     {
         /**
          * @var Command $command
@@ -88,6 +91,7 @@ class DefaultServer extends ServerHandler
     protected function begin(): void
     {
         Event::trigger('app_begin', $this->app);
+        Handler::init();
         $length = \strlen($this->app->namespace);
         if ('\\' === $this->app->namespace[$length - 1]) {
             throw new \InvalidArgumentException(
