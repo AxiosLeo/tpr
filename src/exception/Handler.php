@@ -28,7 +28,7 @@ class Handler
         'xml'     => XmlResponseHandler::class,
     ];
 
-    private static string $handler_type;
+    private static string $handler_type = '';
 
     public static function init(): void
     {
@@ -52,6 +52,13 @@ class Handler
      */
     public static function render(\Throwable $exception, Response $response): void
     {
+        self::selectOperator($response);
+
+        throw $exception;
+    }
+
+    public static function selectOperator($response)
+    {
         if (App::debugMode() && $response->getType() !== self::$handler_type) {
             self::$handler_type = $response->getType();
             if (isset(self::$handle_list[self::$handler_type])) {
@@ -60,8 +67,6 @@ class Handler
                 self::handleOperator()->register();
             }
         }
-
-        throw $exception;
     }
 
     public static function addHandler($handler): void
