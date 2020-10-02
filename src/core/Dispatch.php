@@ -105,7 +105,7 @@ class Dispatch
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
         ]);
-        if (!class_exists($class) && method_exists($class, $this->action)) {
+        if (!class_exists($class) || !method_exists($class, $this->action)) {
             throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $this->action, 404);
         }
         $class = new $class();
