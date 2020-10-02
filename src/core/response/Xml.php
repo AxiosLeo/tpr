@@ -8,28 +8,16 @@ class Xml extends ResponseAbstract
 {
     public string $content_type = 'text/xml';
 
-    /**
-     * 处理数据.
-     *
-     * @param mixed $data 要处理的数据
-     */
-    public function output($data = null): string
+    public function output($result = null): string
     {
-        // XML数据转换
-        return $this->xmlEncode($data);
+        if (null === $result) {
+            $result = [];
+        }
+
+        return $this->xmlEncode($result);
     }
 
-    /**
-     * XML编码
-     *
-     * @param mixed  $data
-     * @param string $root     根节点名
-     * @param string $item     数字索引的子节点名
-     * @param string $attr     根节点属性
-     * @param string $id       数字索引子节点key转换的属性名
-     * @param string $encoding 数据编码
-     */
-    protected function xmlEncode(string $data): string
+    protected function xmlEncode(array $data): string
     {
         $attr = '';
         if (!empty($this->options->root_attr)) {
@@ -49,13 +37,13 @@ class Xml extends ResponseAbstract
     }
 
     /**
-     * 数据XML编码
+     * convert array to xml string.
      *
-     * @param mixed  $data 数据
-     * @param string $item 数字索引时的节点名称
-     * @param string $id   数字索引key转换为的属性名
+     * @param array  $data array data
+     * @param string $item <item></item>
+     * @param string $id   <item id=""></item>
      */
-    protected function dataToXml($data, string $item, string $id): string
+    protected function dataToXml(array $data, string $item, string $id): string
     {
         $xml = $attr = '';
         foreach ($data as $key => $val) {
