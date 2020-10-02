@@ -39,8 +39,8 @@ class Event
      */
     public static function registerWithObj(string $event_name, object $class, string $method): void
     {
-        $closure = function (&$data) use ($class, $method) {
-            return \call_user_func_array([$class, $method], [&$data]);
+        $closure = function (...$params) use ($class, $method) {
+            return \call_user_func_array([$class, $method], $params);
         };
         self::on($event_name, $closure);
     }
