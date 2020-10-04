@@ -9,12 +9,9 @@ use tpr\Container;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
 use tpr\Path;
-use tpr\traits\CacheTrait;
 
 class Dispatch
 {
-    use CacheTrait;
-
     private string   $app_namespace;
     private string   $module;
     private string   $controller;

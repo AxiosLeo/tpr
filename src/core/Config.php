@@ -15,15 +15,13 @@ class Config
 
     public ArrayMap $config;
 
-    private string $cache_file;
-
     public function __construct()
     {
-        $this->cache_file = Path::cache() . \DIRECTORY_SEPARATOR . 'cache.config';
+        self::$cache_key = 'cache.config';
         if (App::debugMode()) {
             $this->load();
         } else {
-            $config = $this->cache($this->cache_file);
+            $config = $this->cache();
             if (null === $config) {
                 $this->load();
             } else {
@@ -53,7 +51,7 @@ class Config
             $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($filepath)->all(), $this->config->get($prefix, [])));
         }
         if (!App::debugMode()) {
-            $this->cache($this->cache_file, $this->config->get());
+            $this->cache($this->config->get());
         }
 
         return $this;

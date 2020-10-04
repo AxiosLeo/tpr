@@ -8,7 +8,6 @@ use tpr\App;
 use tpr\Container;
 use tpr\library\ArrayMap;
 use tpr\models\RouteInfoModel;
-use tpr\Path;
 use tpr\traits\CacheTrait;
 
 class Route
@@ -22,12 +21,11 @@ class Route
     private array           $routes;
     private array           $data;
     private ?RouteInfoModel $route_info = null;
-    private string          $cache_file;
 
     public function __construct()
     {
-        $this->cache_file = Path::cache() . \DIRECTORY_SEPARATOR . 'cache.routes';
-        $this->routes     = \tpr\Config::get('routes', []);
+        self::$cache_key = 'cache.routes';
+        $this->routes    = \tpr\Config::get('routes', []);
         $this->resolve();
     }
 
@@ -77,7 +75,7 @@ class Route
     private function resolve()
     {
         if (!App::debugMode()) {
-            $cache = $this->cache($this->cache_file);
+            $cache = $this->cache();
             if (null !== $cache) {
                 $this->data = $cache;
 
@@ -129,7 +127,7 @@ class Route
         $this->data = $array->all();
         unset($array);
         if (!App::debugMode()) {
-            $this->cache($this->cache_file, $this->data);
+            $this->cache($this->data);
         }
     }
 
