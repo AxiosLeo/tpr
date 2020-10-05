@@ -18,7 +18,7 @@ App::debugMode(true);
 App::default()->config([
     'server_options' => [
         'name'      => 'TPR Command Tools',
-        'version'   => '5.0',
+        'version'   => TPR_FRAMEWORK_VERSION,
         'namespace' => "tpr\\command",
         'commands'  => [
             'create' => Create::class
