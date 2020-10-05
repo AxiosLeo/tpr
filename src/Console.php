@@ -8,9 +8,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use tpr\traits\CommandTrait;
 
 class Console extends Command
 {
+    use CommandTrait;
+
     protected InputInterface $input;
 
     protected SymfonyStyle $output;
