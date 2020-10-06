@@ -9,6 +9,7 @@ use tpr\App;
 use tpr\core\response\ResponseAbstract;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\HttpResponseException;
+use tpr\exception\NotAllowResponseType;
 use tpr\models\ResponseModel;
 
 class Response
@@ -40,7 +41,7 @@ class Response
     public function setType(string $response_type): self
     {
         if (!isset(ResponseModel::$allow_type[$response_type])) {
-            throw new Exception('Not Allow Response Type : "' . $response_type . '"');
+            throw new NotAllowResponseType($response_type, ResponseModel::$allow_type);
         }
         $this->options->return_type = $response_type;
 
