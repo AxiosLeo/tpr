@@ -13,7 +13,7 @@ use tpr\core\request\RequestInterface;
 use tpr\core\Response;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
-use tpr\server\ServerHandler;
+use tpr\server\ServerInterface;
 
 /**
  * Class Container.
@@ -21,7 +21,7 @@ use tpr\server\ServerHandler;
  * @method Config           config()    static
  * @method RequestInterface request()   static
  * @method Response         response()  static
- * @method ServerHandler    app()       static
+ * @method ServerInterface  app()       static
  * @method CoreLang         lang()      static
  * @method Validator        validator() static
  */

@@ -17,7 +17,7 @@ use tpr\exception\HttpResponseException;
 use tpr\Files;
 use tpr\Path;
 
-class DefaultServer extends ServerHandler
+class DefaultServer extends ServerHandler implements ServerInterface
 {
     /**
      * @throws \Throwable

@@ -12,7 +12,7 @@ use tpr\Path;
 /**
  * Class ClientAbstract.
  */
-abstract class ServerHandler
+abstract class ServerHandler implements ServerInterface
 {
     protected AppModel       $app;
     protected ?Model         $server = null;
@@ -26,7 +26,7 @@ abstract class ServerHandler
         Path::configurate();
     }
 
-    public function run(string $command = null)
+    public function run(string $command = null): void
     {
         Handler::init();
         $this->begin();
@@ -58,10 +58,7 @@ abstract class ServerHandler
         return $this;
     }
 
-    /**
-     * @return AppModel
-     */
-    public function getConfig()
+    public function getConfig(): AppModel
     {
         return $this->app;
     }

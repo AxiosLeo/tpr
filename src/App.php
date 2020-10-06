@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tpr;
 
 use tpr\server\DefaultServer;
-use tpr\server\ServerHandler;
+use tpr\server\ServerInterface;
 
 /**
  * Class Client.
@@ -20,7 +20,7 @@ class App
 
     private static bool $debug = false;
 
-    private static ?ServerHandler $handler = null;
+    private static ?ServerInterface $handler = null;
 
     public static function __callStatic($name, $arguments)
     {
@@ -45,7 +45,7 @@ class App
         self::$server_list[$name] = $class;
     }
 
-    public static function drive(string $name = null): ServerHandler
+    public static function drive(string $name = null): ServerInterface
     {
         if (null === self::$handler) {
             if (!isset(self::$server_list[$name])) {
