@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use Noodlehaus\Parser\Ini;
+use tpr\exception\FileNotFoundException;
 use tpr\library\ArrayMap;
 use tpr\Path;
 
@@ -26,6 +27,8 @@ class Env
             if (\is_array($env)) {
                 $this->env->set($env);
             }
+        } else {
+            throw new FileNotFoundException($file);
         }
     }
 
