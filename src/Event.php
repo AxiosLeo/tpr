@@ -48,9 +48,12 @@ class Event
     /**
      * register event by \Closure.
      */
-    public static function on(string $event_name, \Closure $closure)
+    public static function on(string $event_name, \Closure $closure): void
     {
-        self::init();
+        if (null === self::$instance) {
+            // initialize events from config.events only when registering some events.
+            self::$instance = new self();
+        }
         if (!isset(self::$events[$event_name])) {
             self::$events[$event_name] = [];
         }
@@ -110,10 +113,8 @@ class Event
 
     /**
      * remove event by index.
-     *
-     * @return bool
      */
-    public static function remove(string $event_name, int $index = 0)
+    public static function remove(string $event_name, int $index = 0): bool
     {
         if (isset(self::$events[$event_name][$index])) {
             unset(self::$events[$event_name][$index]);
@@ -123,19 +124,5 @@ class Event
         }
 
         return false;
-    }
-
-    /**
-     * initialize only when registering some events.
-     *
-     * @return null|Event
-     */
-    private static function init()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 }
