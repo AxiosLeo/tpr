@@ -45,16 +45,21 @@ class Config
         }
         $config_file_list = \tpr\Files::search($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
         foreach ($config_file_list as $filepath) {
-            $ext    = pathinfo($filepath, PATHINFO_EXTENSION);
-            $group  = str_replace([Path::config() . \DIRECTORY_SEPARATOR, '.' . $ext], '', $filepath);
-            $prefix = implode('.', explode(\DIRECTORY_SEPARATOR, $group));
-            $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($filepath)->all(), $this->config->get($prefix, [])));
+            $this->loadFile($filepath);
         }
         if (!App::debugMode()) {
             $this->cache($this->config->get());
         }
 
         return $this;
+    }
+
+    public function loadFile($file_path)
+    {
+        $ext    = pathinfo($file_path, PATHINFO_EXTENSION);
+        $group  = str_replace([Path::config() . \DIRECTORY_SEPARATOR, '.' . $ext], '', $file_path);
+        $prefix = implode('.', explode(\DIRECTORY_SEPARATOR, $group));
+        $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($file_path)->all(), $this->config->get($prefix, [])));
     }
 
     /**

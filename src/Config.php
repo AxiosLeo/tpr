@@ -10,6 +10,7 @@ namespace tpr;
  * @method mixed       get($name = null, $default = null) static
  * @method core\Config set($name, $value)                 static
  * @method void        load($path = null)                 static
+ * @method void        loadFile($file_path)               static
  */
 final class Config extends Facade
 {
