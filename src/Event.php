@@ -125,4 +125,9 @@ class Event
 
         return false;
     }
+
+    public static function get(string $event_name): array
+    {
+        return isset(self::$events[$event_name]) ? self::$events[$event_name] : [];
+    }
 }
