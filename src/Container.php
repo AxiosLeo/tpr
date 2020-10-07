@@ -46,33 +46,33 @@ final class Container implements ArrayAccess
         return self::get('cgi_dispatch');
     }
 
-    public static function bind(string $name, string $class, ...$params): void
+    public static function bind(string $name, string $class_name, ...$params): void
     {
-        if (!class_exists($class)) {
+        if (!class_exists($class_name)) {
             throw new ClassNotExistException($name);
         }
-        $class               = new $class(...$params);
-        self::$object[$name] = $class;
+        $object = new $class_name(...$params);
+        self::bindWithObj($name, $object);
     }
 
-    public static function bindWithObj(string $name, object $class): void
+    public static function bindWithObj(string $name, object $object): void
     {
-        self::$object[$name] = $class;
+        self::$object[$name] = $object;
     }
 
-    public static function bindNX(string $name, string $class, array $params = []): void
+    public static function bindNX(string $name, string $class_name, array $params = []): void
     {
         if (!self::has($name)) {
             // Bind when not exist.
-            self::bind($name, $class, $params);
+            self::bind($name, $class_name, $params);
         }
     }
 
-    public static function bindNXWithObj(string $name, object $class): void
+    public static function bindNXWithObj(string $name, object $object): void
     {
         if (!self::has($name)) {
             // Bind when not exist.
-            self::bindWithObj($name, $class);
+            self::bindWithObj($name, $object);
         }
     }
 
@@ -116,7 +116,11 @@ final class Container implements ArrayAccess
 
     public function offsetSet($key, $value): void
     {
-        self::bind($key, $value);
+        if (\is_string($value)) {
+            self::bind($key, $value);
+        } else {
+            self::bindWithObj($key, $value);
+        }
     }
 
     public function offsetUnset($key): void
