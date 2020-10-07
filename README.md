@@ -46,6 +46,8 @@ tpr-cli create <app-name>
 
 ## [Document for development](https://github.com/AxiosCros/tpr/wiki)
 
+## [Change Log](CHANGELOG.md)
+
 ## License
 
 The TPR framework is open-sourced software licensed under the [Apache license Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
