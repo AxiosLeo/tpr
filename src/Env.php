@@ -13,7 +13,6 @@ use tpr\core\Env as CoreEnv;
  *
  * @method CoreEnv load($relative_path)              static
  * @method mixed   get($key = null, $default = null) static
- * @method CoreEnv set($key, $value)                 static
  */
 class Env extends Facade
 {
