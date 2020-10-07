@@ -130,6 +130,9 @@ EOF;
   "require": {
     "axios/tpr": "^5.0"
   },
+  "require-dev": {
+    "nette/php-generator": "^3.4"
+  },
   "autoload": {
     "psr-4": {
       "library\\\\": "library/",
