@@ -9,12 +9,12 @@ use tpr\Model;
 final class AppModel extends Model
 {
     /**
-     * app name.
+     * the name of application.
      */
     public string $name = 'app';
 
     /**
-     * app base namespace.
+     * the base namespace of application.
      */
     public string $namespace = 'App';
 
@@ -39,7 +39,7 @@ final class AppModel extends Model
     public string $default_content_type_ajax = 'json';
 
     /**
-     * @var string default content-type on cli mode
+     * @var string default output format of data on cli mode
      */
     public string $default_content_type_cli = 'text';
 
@@ -61,12 +61,12 @@ final class AppModel extends Model
     public string $controller_rule = '{app_namespace}\\{module}\\controller\\{controller}';
 
     /**
-     * for ServerHandler custom config.
+     * the configuration of custom server handler.
      */
     public array $server_options = [];
 
     /**
-     * response config, see detail on \tpr\models\ResponseModel.
+     * the global configuration of response, see detail in \tpr\models\ResponseModel.
      */
     public array $response_config = [];
 }
