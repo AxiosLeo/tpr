@@ -15,7 +15,7 @@
 composer require axios/tpr
 ```
 
-## Quickly create app
+## Quickly initialize application
 
 ### git clone from github repo
 
@@ -39,7 +39,7 @@ composer global require axios/tpr
 tpr-cli create <app-name>
 ```
 
-## Usage demo
+## Demo project
 
 - Example of Simple Application : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
 - Example of CMS application : [github.com/AxiosCros/tpr-cms](https://github.com/AxiosCros/tpr-cms)
