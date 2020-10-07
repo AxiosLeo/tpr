@@ -9,7 +9,6 @@ use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\Path;
 use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 class Html extends ResponseAbstract
@@ -20,12 +19,10 @@ class Html extends ResponseAbstract
 
     public function __construct()
     {
-        $template_config = [];
+        $this->template_driver = Container::template();
         if (!App::debugMode()) {
-            $template_config['cache'] = Path::join(Path::cache(), 'views');
+            $this->template_driver->setCache(Path::join(Path::cache(), 'views'));
         }
-        $this->template_driver = new Environment(new FilesystemLoader(Path::views()), $template_config);
-        $this->template_driver->addGlobal('lang', Container::get('lang'));
     }
 
     /**
@@ -61,9 +58,9 @@ class Html extends ResponseAbstract
     }
 
     /**
-     * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return string
      */

@@ -14,6 +14,7 @@ use tpr\core\Response;
 use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
 use tpr\server\ServerInterface;
+use Twig\Environment;
 
 /**
  * Class Container.
@@ -24,6 +25,7 @@ use tpr\server\ServerInterface;
  * @method ServerInterface  app()       static
  * @method CoreLang         lang()      static
  * @method Validator        validator() static
+ * @method Environment      template()  static
  */
 final class Container implements ArrayAccess
 {
