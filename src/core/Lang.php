@@ -20,7 +20,13 @@ class Lang
     public function __construct()
     {
         $this->default_lang_set = App::drive()->getConfig()->lang;
-        $this->init();
+        if (file_exists(Path::langs())) {
+            $langs_file = Files::search(Path::langs());
+            foreach ($langs_file as $filepath) {
+                $lang_set               = basename($filepath, '.' . pathinfo($filepath, PATHINFO_EXTENSION));
+                $this->files[$lang_set] = $filepath;
+            }
+        }
     }
 
     public function tran(string $word, ?string $lang_set_name = null): string
@@ -57,17 +63,6 @@ class Lang
         } catch (\Exception $e) {
             if ($throw_exception) {
                 throw $e;
-            }
-        }
-    }
-
-    private function init()
-    {
-        if (file_exists(Path::langs())) {
-            $langs_file = Files::search(Path::langs());
-            foreach ($langs_file as $filepath) {
-                $lang_set               = basename($filepath, '.' . pathinfo($filepath, PATHINFO_EXTENSION));
-                $this->files[$lang_set] = $filepath;
             }
         }
     }
