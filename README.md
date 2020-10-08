@@ -1,6 +1,6 @@
 # TPR
 
-> The framework for quickly developing cgi&cli applications
+> The framework for quickly developing CGI&CLI applications
 
 [![Travis Build Status](https://travis-ci.com/AxiosCros/tpr.svg?branch=master&status=unknown)](https://travis-ci.com/AxiosCros/tpr)
 
