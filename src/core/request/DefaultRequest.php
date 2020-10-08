@@ -46,22 +46,22 @@ class DefaultRequest extends RequestAbstract implements RequestInterface
     {
         return $this->getRequestData('content_type', function () {
             $mimes       = new \Mimey\MimeTypes();
-            $contentType = $this->server('CONTENT_TYPE');
-            if ($contentType) {
-                if (strpos($contentType, ';')) {
-                    $tmp  = explode(';', $contentType);
+            $content_type = $this->server('CONTENT_TYPE');
+            if ($content_type) {
+                if (strpos($content_type, ';')) {
+                    $tmp  = explode(';', $content_type);
                     $type = $tmp[0];
                     unset($tmp);
                 } else {
-                    $type = $contentType;
+                    $type = $content_type;
                 }
 
-                $contentType = $mimes->getExtension(trim($type));
+                $content_type = $mimes->getExtension(trim($type));
                 unset($type);
             }
             unset($mimes);
 
-            return $this->setRequestData('content_type', $contentType);
+            return $this->setRequestData('content_type', null === $content_type ? '' : $content_type);
         });
     }
 
