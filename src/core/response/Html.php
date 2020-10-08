@@ -7,15 +7,13 @@ namespace tpr\core\response;
 use tpr\App;
 use tpr\Container;
 use tpr\core\Dispatch;
+use tpr\exception\FileNotFoundException;
 use tpr\Path;
-use Twig\Environment;
 use Twig\TwigFunction;
 
 class Html extends ResponseAbstract
 {
     public string    $content_type = 'text/html';
-
-    private Environment $template_driver;
 
     public function __construct()
     {
@@ -58,20 +56,23 @@ class Html extends ResponseAbstract
     }
 
     /**
-     * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
+     * @throws \Twig\Error\LoaderError
      *
      * @return string
      */
     private function render(string $dir, string $file, array $params = [])
     {
-        if (!empty($this->options->template_func)) {
-            foreach ($this->options->template_func as $name => $func) {
-                $this->template_driver->addFunction(new TwigFunction($name, $func));
-            }
+        $template_file = $dir . $file . '.' . $this->options->template_file_ext;
+        if (!file_exists($template_file)) {
+            throw new FileNotFoundException($template_file);
+        }
+        $driver = Container::template();
+        foreach ($this->options->template_func as $name => $func) {
+            $driver->addFunction(new TwigFunction($name, $func));
         }
 
-        return $this->template_driver->render($dir . $file . '.' . $this->options->template_file_ext, $params);
+        return $driver->render($dir . $file . '.' . $this->options->template_file_ext, $params);
     }
 }

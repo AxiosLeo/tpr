@@ -41,8 +41,12 @@ abstract class Controller
         }
         Container::bindWithObj('response', new Response());
         $this->response = Container::response();
-        if (!Container::has('template')) {
-            Container::bindWithObj('template', new Environment(new FilesystemLoader(Path::views()), []));
+        if (!Container::has('template') && file_exists(Path::views())) {
+            $twig = new Environment(new FilesystemLoader(Path::views()), []);
+            if (!App::debugMode()) {
+                $twig->setCache(Path::join(Path::cache(), 'views'));
+            }
+            Container::bindWithObj('template', $twig);
         }
     }
 
