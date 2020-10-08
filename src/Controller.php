@@ -7,8 +7,6 @@ namespace tpr;
 use tpr\core\request\RequestInterface;
 use tpr\core\Response;
 use tpr\models\ResponseModel;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Class Controller.
@@ -41,9 +39,6 @@ abstract class Controller
         }
         Container::bindWithObj('response', new Response());
         $this->response = Container::response();
-        if (!Container::has('template')) {
-            Container::bindWithObj('template', new Environment(new FilesystemLoader(Path::views()), []));
-        }
     }
 
     public function __call($name, $arguments)

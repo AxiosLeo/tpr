@@ -4,26 +4,14 @@ declare(strict_types=1);
 
 namespace tpr\core\response;
 
-use tpr\App;
 use tpr\Container;
 use tpr\core\Dispatch;
 use tpr\Path;
-use Twig\Environment;
 use Twig\TwigFunction;
 
 class Html extends ResponseAbstract
 {
-    public string    $content_type = 'text/html';
-
-    private Environment $template_driver;
-
-    public function __construct()
-    {
-        $this->template_driver = Container::template();
-        if (!App::debugMode()) {
-            $this->template_driver->setCache(Path::join(Path::cache(), 'views'));
-        }
-    }
+    public string $content_type = 'text/html';
 
     /**
      * @param null $data
@@ -58,20 +46,20 @@ class Html extends ResponseAbstract
     }
 
     /**
+     * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      *
      * @return string
      */
     private function render(string $dir, string $file, array $params = [])
     {
-        if (!empty($this->options->template_func)) {
-            foreach ($this->options->template_func as $name => $func) {
-                $this->template_driver->addFunction(new TwigFunction($name, $func));
-            }
+        $driver        = Container::template();
+        foreach ($this->options->template_func as $name => $func) {
+            $driver->addFunction(new TwigFunction($name, $func));
         }
+        $template_file = $dir . $file . '.' . $this->options->template_file_ext;
 
-        return $this->template_driver->render($dir . $file . '.' . $this->options->template_file_ext, $params);
+        return $driver->render($template_file, $params);
     }
 }

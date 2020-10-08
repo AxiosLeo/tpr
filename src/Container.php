@@ -15,6 +15,7 @@ use tpr\exception\ClassNotExistException;
 use tpr\exception\ContainerNotExistException;
 use tpr\server\ServerInterface;
 use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class Container.
@@ -25,7 +26,6 @@ use Twig\Environment;
  * @method ServerInterface  app()       static
  * @method CoreLang         lang()      static
  * @method Validator        validator() static
- * @method Environment      template()  static
  */
 final class Container implements ArrayAccess
 {
@@ -46,6 +46,21 @@ final class Container implements ArrayAccess
     public static function dispatch(): ?object
     {
         return self::get('cgi_dispatch');
+    }
+
+    public static function template(): Environment
+    {
+        if (!self::has('template')) {
+            $twig = new Environment(new FilesystemLoader(Path::views()), []);
+            if (!App::debugMode()) {
+                $twig->setCache(Path::join(Path::cache(), 'views'));
+            }
+            self::bindWithObj('template', $twig);
+        } else {
+            $twig = self::get('template');
+        }
+
+        return $twig;
     }
 
     public static function bind(string $name, string $class_name, ...$params): void
