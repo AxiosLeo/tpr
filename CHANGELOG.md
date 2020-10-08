@@ -1,5 +1,10 @@
 # Change Log
 
+## 5.0.3 2020-10-08
+
+- Fix `DefaultRequest` error when the `contentType()` method return null.
+- Fix `Twig` template engine error when the path of views is not exist.
+
 ## 5.0.2 2020-10-07
 
 - Add `get` method for `Event`.
