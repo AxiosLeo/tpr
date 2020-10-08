@@ -24,5 +24,15 @@ class PathTest extends TestCase
             '/a/b/c',
             Path::join('/a/', 'b/c')
         );
+
+        $this->assertEquals(
+            '/a/b',
+            Path::join('/a/', './', 'b/c', '../')
+        );
+
+        $this->assertEquals(
+            'a/b/c/d.php',
+            Path::join('a/', './', 'b/c', 'd.php')
+        );
     }
 }
