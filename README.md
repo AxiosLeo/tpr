@@ -1,6 +1,7 @@
 # TPR
 
-> The framework for quickly developing CGI&CLI applications
+> TPR is a PHP framework for quickly developing CGI&CLI applications. 
+> see the details of framework from [documentation](https://github.com/AxiosCros/tpr/wiki).
 
 [![Travis Build Status](https://travis-ci.com/AxiosCros/tpr.svg?branch=master&status=unknown)](https://travis-ci.com/AxiosCros/tpr)
 [![Latest Stable Version](https://poser.pugx.org/axios/tpr/v)](//packagist.org/packages/axios/tpr)
@@ -46,8 +47,6 @@ tpr-cli create <app-name>
 
 - Example of Simple Application : [github.com/AxiosCros/tpr-app](https://github.com/AxiosCros/tpr-app)
 - Example of CMS application : [github.com/AxiosCros/tpr-cms](https://github.com/AxiosCros/tpr-cms)
-
-## [Document for development(TPR 5.0)](https://github.com/AxiosCros/tpr/wiki)
 
 ## [Change Log](CHANGELOG.md)
 
