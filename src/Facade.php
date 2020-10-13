@@ -29,8 +29,12 @@ abstract class Facade
     {
         $name = static::getContainName();
         if (!Container::has($name)) {
-            if (null !== static::getFacadeClass()) {
-                Container::bind($name, static::getFacadeClass());
+            $instance = static::getFacadeClass();
+            if (null !== $instance) {
+                if (\is_string($instance)) {
+                    $instance = new $instance();
+                }
+                Container::bindWithObj($name, $instance);
             } else {
                 throw new ContainerNotExistException($name);
             }
