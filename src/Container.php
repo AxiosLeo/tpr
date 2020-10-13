@@ -26,6 +26,7 @@ use Twig\Loader\FilesystemLoader;
  * @method ServerInterface  app()       static
  * @method CoreLang         lang()      static
  * @method Validator        validator() static
+ * @method \tpr\core\Event  event()     static
  */
 final class Container implements ArrayAccess
 {

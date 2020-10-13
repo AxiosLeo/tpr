@@ -33,12 +33,12 @@ class Event extends Facade
         return self::instance();
     }
 
-    private static function instance()
+    private static function instance(): core\Event
     {
         if (!Container::has('event')) {
             Container::bind('event', core\Event::class);
         }
 
-        return Container::get('event');
+        return Container::event();
     }
 }
