@@ -76,9 +76,9 @@ class Event
             return;
         }
         foreach ($this->model->events[$event_name] as $event) {
-            $result = \call_user_func_array($event, [&$data]);
+            $data = \call_user_func_array($event, [$data]);
             if (null !== $callback) {
-                \call_user_func_array($callback, [&$data, $result]);
+                \call_user_func_array($callback, [$data]);
             }
         }
     }
