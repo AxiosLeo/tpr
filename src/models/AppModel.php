@@ -56,7 +56,7 @@ final class AppModel extends Model
     public bool $force_route = false;
 
     /**
-     * controller namespace spelling rule.
+     * the spelling rule of controller namespace.
      */
     public string $controller_rule = '{app_namespace}\\{module}\\controller\\{controller}';
 
