@@ -6,6 +6,7 @@ namespace tpr\core;
 
 use tpr\App;
 use tpr\Container;
+use tpr\Event;
 use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
 use tpr\Path;
@@ -95,6 +96,8 @@ class Dispatch
         $this->module     = $module;
         $this->controller = $controller;
         $this->action     = $action;
+
+        Event::trigger('app_cgi_dispatch', $module, $controller, $action);
 
         // exec controller
         $class = Helper::renderString(App::drive()->getConfig()->controller_rule, [
