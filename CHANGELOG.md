@@ -1,9 +1,13 @@
 # Change Log
 
+## 5.0.4 2020-10-13
+
+- Add `app_cgi_dispatch` event.
+
 ## 5.0.3 2020-10-08
 
-- Fix `DefaultRequest` error when the `contentType()` method return null.
-- Fix `Twig` template engine error when the path of views is not exist.
+- Fix the `DefaultRequest` error when the `contentType()` method return null.
+- Fix the `Twig` template engine error when the path of views is not exist.
 
 ## 5.0.2 2020-10-07
 
