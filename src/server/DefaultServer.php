@@ -90,7 +90,6 @@ class DefaultServer extends ServerHandler implements ServerInterface
 
     protected function begin(): void
     {
-        Event::trigger('app_begin', $this->app);
         Handler::init();
         $length = \strlen($this->app->namespace);
         if ('\\' === $this->app->namespace[$length - 1]) {
@@ -101,6 +100,7 @@ class DefaultServer extends ServerHandler implements ServerInterface
             );
         }
         Config::load(Path::config());
+        Event::trigger('app_begin', $this->app);
     }
 
     protected function end(): void
