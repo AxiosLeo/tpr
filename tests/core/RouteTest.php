@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\tests\core;
 
 use PHPUnit\Framework\TestCase;
-use tpr\App;
 use tpr\Config;
 use tpr\Container;
 use tpr\core\request\DefaultRequest;
@@ -22,7 +21,6 @@ class RouteTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        App::debugMode(true);
         Config::set('routes', [
             [
                 'path'    => '/',

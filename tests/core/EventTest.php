@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\tests\core;
 
 use PHPUnit\Framework\TestCase;
-use tpr\App;
 use tpr\Event;
 
 /**
@@ -14,12 +13,6 @@ use tpr\Event;
  */
 class EventTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        App::default();
-    }
-
     public function testEvent()
     {
         // register with class name

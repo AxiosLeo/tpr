@@ -17,8 +17,6 @@ class DispatchTest extends TestCase
 {
     public function setUp(): void
     {
-        App::debugMode(true);
-        App::default();
         App::drive()->getConfig()->controller_rule = '\\tpr\\tests\\core\\DispatchTest';
         parent::setUp();
     }
