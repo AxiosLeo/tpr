@@ -51,7 +51,7 @@
   },
   "scripts": {
     "test": [
-      "phpunit --colors=always"
+      "./vendor/bin/phpunit --colors=always"
     ],
     "fix": [
       "./vendor/bin/php-cs-fixer fix ./"
