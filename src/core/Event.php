@@ -28,12 +28,11 @@ final class Event
      */
     public function register(string $event_name, string $class, string $method): void
     {
-        if (class_exists($class) && method_exists($class, $method)) {
-            $obj = new $class();
-            $this->registerWithObj($event_name, $obj, $method);
+        if (!class_exists($class) || !method_exists($class, $method)) {
+            throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $method, 404);
         }
-
-        throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $method, 404);
+        $obj = new $class();
+        $this->registerWithObj($event_name, $obj, $method);
     }
 
     /**
