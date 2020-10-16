@@ -10,7 +10,7 @@ use tpr\library\ArrayMap;
 use tpr\models\RouteInfoModel;
 use tpr\traits\CacheTrait;
 
-class Route
+final class Route
 {
     use CacheTrait;
 

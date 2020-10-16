@@ -14,7 +14,7 @@ use tpr\models\AppPathModel;
 use tpr\Path;
 use tpr\traits\CommandTrait;
 
-class Create extends Console
+final class Create extends Console
 {
     use CommandTrait;
 
@@ -97,7 +97,7 @@ EOF
             Path::join($this->path->root, 'views/index/index', 'index.html'),
             <<<EOF
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Welcome</title>
 </head>

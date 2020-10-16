@@ -11,7 +11,7 @@ use tpr\exception\HttpResponseException;
 use tpr\library\Helper;
 use tpr\Path;
 
-class Dispatch
+final class Dispatch
 {
     private string   $app_namespace;
     private string   $module;

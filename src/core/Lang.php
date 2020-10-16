@@ -9,7 +9,7 @@ use tpr\Event;
 use tpr\Files;
 use tpr\Path;
 
-class Lang
+final class Lang
 {
     private array $dist = [];
 

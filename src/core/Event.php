@@ -6,7 +6,7 @@ namespace tpr\core;
 
 use tpr\Config;
 
-class Event
+final class Event
 {
     private array $events = [];
 

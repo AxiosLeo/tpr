@@ -9,7 +9,7 @@ use tpr\library\ArrayMap;
 use tpr\Path;
 use tpr\traits\CacheTrait;
 
-class Config
+final class Config
 {
     use CacheTrait;
 

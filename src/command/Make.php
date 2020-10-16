@@ -20,7 +20,7 @@ use Whoops\Run;
  *
  * @description need require `nette/php-generator` composer library
  */
-class Make extends Console
+final class Make extends Console
 {
     protected function configure()
     {

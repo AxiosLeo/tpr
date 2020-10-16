@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\core\request;
 
-class DefaultRequest extends RequestAbstract implements RequestInterface
+final class DefaultRequest extends RequestAbstract implements RequestInterface
 {
     protected array $server_map = [
         'method'    => 'REQUEST_METHOD',
