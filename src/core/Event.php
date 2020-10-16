@@ -26,19 +26,20 @@ class Event
      * @param $class
      * @param $method
      */
-    public function register($event_name, $class, $method)
+    public function register(string $event_name, string $class, string $method): void
     {
-        if (!class_exists($class) && method_exists($class, $method)) {
-            throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $method, 404);
+        if (class_exists($class) && method_exists($class, $method)) {
+            $obj = new $class();
+            $this->registerWithObj($event_name, $obj, $method);
         }
-        $obj = new $class();
-        $this->registerWithObj($event_name, $obj, $method);
+
+        throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $method, 404);
     }
 
     /**
      * register event by object.
      */
-    public function registerWithObj(string $event_name, object $object, string $method)
+    public function registerWithObj(string $event_name, object $object, string $method): void
     {
         $closure = function (...$params) use ($object, $method) {
             return \call_user_func_array([$object, $method], $params);
@@ -49,7 +50,7 @@ class Event
     /**
      * register event by \Closure.
      */
-    public function on(string $event_name, \Closure $closure)
+    public function on(string $event_name, \Closure $closure): void
     {
         if (!isset($this->events[$event_name])) {
             $this->events[$event_name] = [];
