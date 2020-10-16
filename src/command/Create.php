@@ -79,7 +79,6 @@ App::default()
         'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}',  // controller namespace spelling rule
     ])
     ->run();
-
 EOF
         );
 
@@ -206,9 +205,25 @@ EOF
         $this->output->newLine(2);
         $this->output->success('Created on ' . $dir);
 
+        $web_server = $this->output->choice('select web server', [
+            'php built-in web server',
+            'workerman http web server',
+        ], 'php built-in web server');
+
+        if ('workerman http web server' === $web_server) {
+            $this->shell('cd ' . $dir . ' && composer require axios/tpr-workerman');
+            $this->genWorkermanIndex($namespace, $indent);
+        }
+
         $confirm = $this->output->confirm('start web server right now', true);
         if ($confirm) {
-            $this->shell('cd ' . $dir . ' && composer start');
+            if ('php built-in web server' === $web_server) {
+                $this->shell('cd ' . $dir . ' && php -S localhost:8088 -t public/');
+            } else {
+                $this->shell('cd ' . $dir . ' && php public/workerman.php start');
+            }
+        } else {
+            $this->output->success('Initialize application successful.');
         }
     }
 
@@ -222,6 +237,32 @@ EOF
         }
 
         return $namespace;
+    }
+
+    private function genWorkermanIndex($namespace, $indent)
+    {
+        $gen_path         = Path::join($this->path->root, 'public', 'workerman.php');
+        $workerman_driver = '\\tpr\\server\\WorkermanServer::class';
+        $content          = <<<EOF
+<?php
+
+namespace {$namespace}\\index;
+
+use tpr\\App;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+App::registerServer('workerman', {$workerman_driver});
+
+App::drive('workerman')->config([
+    'namespace'       => '{$namespace}',{$indent} // app base namespace, ### this is required ###
+    'server_options'  => [
+        'port'     => 8088,
+    ]
+])->run();
+
+EOF;
+        Files::save($gen_path, $content);
     }
 
     private function genController($namespace)
