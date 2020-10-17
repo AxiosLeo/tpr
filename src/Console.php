@@ -14,13 +14,24 @@ class Console extends Command
 {
     use CommandTrait;
 
-    protected InputInterface $input;
+    protected ?InputInterface $input = null;
 
-    protected SymfonyStyle $output;
+    protected ?SymfonyStyle $output = null;
 
-    private static InputInterface $inputHandle;
+    private static ?InputInterface $inputHandle = null;
 
-    private static SymfonyStyle $outputHandle;
+    private static ?SymfonyStyle $outputHandle = null;
+
+    public function __construct(string $name = null)
+    {
+        parent::__construct($name);
+        if (null !== self::$inputHandle) {
+            $this->input = self::$inputHandle;
+        }
+        if (null !== self::$outputHandle) {
+            $this->output = self::$outputHandle;
+        }
+    }
 
     public static function input(): InputInterface
     {
