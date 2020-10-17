@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace tpr\cli;
 
@@ -21,7 +21,7 @@ App::default()->config([
         'version'   => TPR_FRAMEWORK_VERSION,
         'namespace' => "tpr\\command",
         'commands'  => [
-            'create' => Create::class
+            'create' => Create::class,
         ]
     ],
 ])->run();
