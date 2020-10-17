@@ -202,6 +202,7 @@ App::debugMode(true);
 
 App::default()
     ->config([
+        // doc : https://github.com/AxiosCros/tpr/wiki/Application
         'namespace'       => '{$this->namespace}',
         'lang'            => 'zh-cn',         // default language set name
         'cache_time'      => 60,              // global cache time for config&route data
@@ -240,6 +241,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 App::registerServer('workerman', {$workerman_driver});
 
 App::drive('workerman')->config([
+    // doc : https://github.com/AxiosCros/tpr-workerman
     'namespace'       => '{$this->namespace}',
     'server_options'  => [
         'port'     => 8088,
