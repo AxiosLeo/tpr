@@ -1,5 +1,9 @@
 # Change Log
 
+## 5.0.6 2020-10-25
+
+- Optmized `set` method of  `ArratMap`.
+
 ## 5.0.5 2020-10-18
 
 - Optimized `init` command.
