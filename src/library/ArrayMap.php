@@ -36,6 +36,17 @@ class ArrayMap implements \ArrayAccess
                 if (null === $key) {
                     return $value;
                 }
+                if (0 === \count($keyArr)) {
+                    // is last
+                    if (null === $value) {
+                        unset($array[$key]);
+
+                        return $array;
+                    }
+                    $array[$key] = $value;
+
+                    return $array;
+                }
                 if (!isset($array[$key])) {
                     $array[$key] = [];
                 }
