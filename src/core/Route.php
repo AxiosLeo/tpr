@@ -22,10 +22,10 @@ final class Route
     private array           $data;
     private ?RouteInfoModel $route_info = null;
 
-    public function __construct()
+    public function __construct(?array $routes = null)
     {
         self::$cache_key = 'cache.routes';
-        $this->routes    = \tpr\Config::get('routes', []);
+        $this->routes    = null === $routes ? \tpr\Config::get('routes', []) : $routes;
         $this->resolve();
     }
 
@@ -45,10 +45,13 @@ final class Route
         $total   = \count($trace);
         $default = null;
         $params  = [];
+        $curr    = null;
         while (true) {
-            $curr = $trace[$step];
-            if (isset($data[$curr])) {
-                $data = $data[$curr];
+            if (isset($trace[$step])) {
+                $curr = $trace[$step];
+                if (isset($data[$curr])) {
+                    $data = $data[$curr];
+                }
             } elseif (isset($data['*'])) {
                 $data = $data['*'];
                 array_push($params, $curr);
@@ -59,6 +62,8 @@ final class Route
                 $data    = $data['***'];
             } elseif (null === $default) {
                 return self::NOT_FOUND;
+            } elseif (isset($data['__route'])) {
+                return $this->hasFound($data['__route'], $pathinfo, $params);
             }
             ++$step;
             if ($step === $total) {
