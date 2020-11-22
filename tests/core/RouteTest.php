@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\tests\core;
 
 use PHPUnit\Framework\TestCase;
-use tpr\Config;
 use tpr\Container;
 use tpr\core\request\DefaultRequest;
 use tpr\core\Route;
@@ -18,30 +17,45 @@ class RouteTest extends TestCase
 {
     private ?Route $route = null;
 
+    private array $routes = [
+        [
+            'path'    => '/',
+            'method'  => 'get|post',
+            'handler' => '\\tpr\\tests\\core\\RouteTest:routeHandler',
+            'intro'   => 'homepage',
+        ],
+        [
+            'path'    => '/test/{:id}/{:title}/foo/{:bar}',
+            'method'  => 'all',
+            'handler' => 'index/index/index',
+            'intro'   => 'has param',
+        ],
+        [
+            'path'    => '/has/**/text/{:name}',
+            'method'  => 'post',
+            'handler' => 'index/index/index:routeHandler',
+            'intro'   => 'ignore part of path',
+        ],
+    ];
+
     public function setUp(): void
     {
         parent::setUp();
-        Config::set('routes', [
+        Container::bind('request', DefaultRequest::class);
+        $this->route = new Route($this->routes);
+    }
+
+    public function testOnlyGlobalRoute()
+    {
+        $route = new Route([
             [
-                'path'    => '/',
-                'method'  => 'get|post',
-                'handler' => '\\tpr\\tests\\core\\RouteTest:routeHandler',
-                'intro'   => 'homepage',
-            ],
-            [
-                'path'    => '/test/{:id}/{:title}/foo/{:bar}',
+                'path'    => '/***', // *** : ignore string
                 'method'  => 'all',
                 'handler' => 'index/index/index',
-                'intro'   => 'has param',
-            ],
-            [
-                'path'    => '/has/**/text/{:name}',
-                'method'  => 'post',
-                'handler' => 'index/index/index:routeHandler',
-                'intro'   => 'ignore part of path',
+                'intro'   => 'the default route rule when none of the above rules are matched',
             ],
         ]);
-        $this->route = new Route();
+        $this->assertEquals(Route::HAS_FOUND, $route->find('/'));
     }
 
     public function testRoute()
