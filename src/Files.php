@@ -68,6 +68,34 @@ class Files
         return array_values($list);
     }
 
+    /**
+     * @param string $source copy from path
+     * @param string $target copy to path
+     * @param bool   $force  force copy if file exist on $force=true
+     */
+    public static function copy(string $source, string $target, bool $force = false, ?array $extInclude = null): void
+    {
+        if (is_dir($source)) {
+            if (!is_dir($target)) {
+                throw new \RuntimeException('Folder path cannot be copied to file path.');
+            }
+            $copy_files = self::search($source, $extInclude);
+            $last_index = \strlen($source) - 1;
+            $base_len   = '/' !== $source[$last_index] && '\\' !== $source[$last_index] ? $last_index + 2 : $last_index + 1;
+            foreach ($copy_files as $file) {
+                $copy_path = substr($file, $base_len);
+                $dir_path  = \dirname(Path::join(Path::index(), $copy_path));
+                if (!file_exists($dir_path)) {
+                    @mkdir($dir_path, 0755, true);
+                }
+                $target_path = Path::join(Path::index(), $copy_path);
+                if ($force || !file_exists($target_path)) {
+                    copy($file, $target_path);
+                }
+            }
+        }
+    }
+
     public static function save(string $filename, string $text, int $blank = 0): void
     {
         self::write($filename, $text, 'w', $blank);
