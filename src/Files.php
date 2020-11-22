@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace tpr;
 
@@ -54,9 +54,9 @@ class Files
                     $ext     = pathinfo($file_name, PATHINFO_EXTENSION);
                     if (is_dir($subFile)) {
                         $list = array_merge($list, self::search($subFile, $extInclude, $asc, $sorting_type));
-                    } else if (\is_array($extInclude) && \in_array($ext, $extInclude)) {
+                    } elseif (\is_array($extInclude) && \in_array($ext, $extInclude)) {
                         array_push($list, $subFile);
-                    } else if ($extInclude === null) {
+                    } elseif (null === $extInclude) {
                         array_push($list, $subFile);
                     }
                 }
