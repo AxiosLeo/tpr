@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr;
 
@@ -42,7 +42,7 @@ class Files
     /**
      * search files.
      */
-    public static function search(string $dir, array $extInclude = ['php'], bool $asc = true, int $sorting_type = SORT_FLAG_CASE): array
+    public static function search(string $dir, ?array $extInclude = null, bool $asc = true, int $sorting_type = SORT_FLAG_CASE): array
     {
         $list = [];
         if (is_dir($dir)) {
@@ -54,11 +54,9 @@ class Files
                     $ext     = pathinfo($file_name, PATHINFO_EXTENSION);
                     if (is_dir($subFile)) {
                         $list = array_merge($list, self::search($subFile, $extInclude, $asc, $sorting_type));
-                    } elseif (\is_string($extInclude)) {
-                        if ('*' == $extInclude || preg_match($extInclude, $file_name)) {
-                            array_push($list, $subFile);
-                        }
-                    } elseif (\is_array($extInclude) && \in_array($ext, $extInclude)) {
+                    } else if (\is_array($extInclude) && \in_array($ext, $extInclude)) {
+                        array_push($list, $subFile);
+                    } else if ($extInclude === null) {
                         array_push($list, $subFile);
                     }
                 }

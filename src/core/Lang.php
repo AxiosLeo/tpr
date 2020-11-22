@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace tpr\core;
 
@@ -21,7 +21,7 @@ final class Lang
     {
         $this->default_lang_set = App::drive()->getConfig()->lang;
         if (file_exists(Path::langs())) {
-            $langs_file = Files::search(Path::langs());
+            $langs_file = Files::search(Path::langs(), ['php']);
             foreach ($langs_file as $filepath) {
                 $lang_set               = basename($filepath, '.' . pathinfo($filepath, PATHINFO_EXTENSION));
                 $this->files[$lang_set] = $filepath;
