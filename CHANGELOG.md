@@ -1,8 +1,14 @@
 # Change Log
 
+## 5.0.7 2020-11-22
+
+- Optimized `find` method of `Route`.
+- `Route` support set routes data on construct method.
+- Add `copy` method for `Files`.
+
 ## 5.0.6 2020-10-25
 
-- Optmized `set` method of  `ArratMap`.
+- Optimized `set` method of  `ArratMap`.
 
 ## 5.0.5 2020-10-18
 
