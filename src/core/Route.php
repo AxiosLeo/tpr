@@ -47,11 +47,9 @@ final class Route
         $params  = [];
         $curr    = null;
         while (true) {
-            if (isset($trace[$step])) {
-                $curr = $trace[$step];
-                if (isset($data[$curr])) {
-                    $data = $data[$curr];
-                }
+            $curr = isset($trace[$step]) ? $trace[$step] : null;
+            if (isset($data[$curr])) {
+                $data = $data[$curr];
             } elseif (isset($data['*'])) {
                 $data = $data['*'];
                 array_push($params, $curr);
