@@ -25,20 +25,20 @@ class Html extends ResponseAbstract
         if (!empty($data)) {
             return $data;
         }
-        $template = $this->options->views_path;
-        if ('' === $template) {
+        $tmpl_path = $this->options->views_path;
+        if ('' === $tmpl_path) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
             $dir      = Path::join($dispatch->getModuleName(), $dispatch->getControllerName()) . \DIRECTORY_SEPARATOR;
             $file     = $dispatch->getActionName();
-        } elseif (false !== strpos($template, ':')) {
-            $tmp  = explode(':', $template);
+        } elseif (false !== strpos($tmpl_path, ':')) {
+            $tmp  = explode(':', $tmpl_path);
             $file = array_pop($tmp);
             $dir  = Path::join(...$tmp);
             unset($tmp);
         } else {
             $dir  = \DIRECTORY_SEPARATOR;
-            $file = $template;
+            $file = $tmpl_path;
         }
         unset($template);
 
@@ -46,15 +46,15 @@ class Html extends ResponseAbstract
     }
 
     /**
-     * @throws \Twig\Error\SyntaxError
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return string
      */
     private function render(string $dir, string $file, array $params = [])
     {
-        $driver        = Container::template();
+        $driver = Container::template();
         foreach ($this->options->template_func as $name => $func) {
             $driver->addFunction(new TwigFunction($name, $func));
         }
