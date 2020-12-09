@@ -273,7 +273,7 @@ App::default()->config([
     'namespace'      => '{$namespace}',
     'server_options' => [
         'commands' => [
-            'make' => \tpr\\command\\Make::class
+            'make' => \\tpr\\command\\Make::class
         ]
     ]
 ])->run();
