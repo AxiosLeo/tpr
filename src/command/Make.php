@@ -25,7 +25,7 @@ final class Make extends Console
     protected function configure()
     {
         $this->setName('make')
-            ->setDescription('generate code of command')
+            ->setDescription('Generate code of command')
             ->addArgument('CommandName')
             ->addOption('namespace');
     }
