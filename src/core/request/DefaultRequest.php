@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace tpr\core\request;
 
+use tpr\library\MimeTypes;
+
 final class DefaultRequest extends RequestAbstract implements RequestInterface
 {
     protected array $server_map = [
@@ -45,7 +47,6 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
     public function contentType(): string
     {
         return $this->getRequestData('content_type', function () {
-            $mimes       = new \Mimey\MimeTypes();
             $content_type = $this->server('CONTENT_TYPE');
             if ($content_type) {
                 if (strpos($content_type, ';')) {
@@ -55,11 +56,10 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
                 } else {
                     $type = $content_type;
                 }
-
-                $content_type = $mimes->getExtension(trim($type));
-                unset($type);
+                $mime         = new MimeTypes();
+                $content_type = $mime->getExtension(trim($type));
+                unset($type, $mime);
             }
-            unset($mimes);
 
             return $this->setRequestData('content_type', null === $content_type ? '' : $content_type);
         });
