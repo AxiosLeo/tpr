@@ -1,5 +1,10 @@
 # Change Log
 
+## 5.0.8 2020-12-12
+
+- Deprecated `ralouphie/mimey`
+- Fix `find` method of `Route`
+
 ## 5.0.7 2020-11-22
 
 - Optimized `find` method of `Route`.
