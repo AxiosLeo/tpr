@@ -13,7 +13,7 @@
 ## Required
 
 - PHP >= 7.2  (TPR 3.*)
-- PHP >= 7.4  (TPR 5.*)
+- PHP >= 7.4  (TPR 5.*) ```Support PHP8 on TPR 5.0.8 version```
 
 ## Install
 
