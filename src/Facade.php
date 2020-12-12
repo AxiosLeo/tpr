@@ -18,13 +18,16 @@ abstract class Facade
         return self::dispatch($func, $arguments);
     }
 
-    /**
-     * @return string
-     */
     abstract protected static function getContainName();
 
     abstract protected static function getFacadeClass();
 
+    /**
+     * @param $func
+     * @param $arguments
+     *
+     * @return mixed
+     */
     private static function dispatch($func, $arguments)
     {
         $name = static::getContainName();

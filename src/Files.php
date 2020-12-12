@@ -31,7 +31,7 @@ class Files
                         $file_name .= \DIRECTORY_SEPARATOR;
                     }
                 }
-                array_push($list, $file_name);
+                $list[] = $file_name;
             }
         }
         $asc ? sort($list, $sorting_type) : rsort($list, $sorting_type);
@@ -55,9 +55,9 @@ class Files
                     if (is_dir($subFile)) {
                         $list = array_merge($list, self::search($subFile, $extInclude, $asc, $sorting_type));
                     } elseif (\is_array($extInclude) && \in_array($ext, $extInclude)) {
-                        array_push($list, $subFile);
+                        $list[] = $subFile;
                     } elseif (null === $extInclude) {
-                        array_push($list, $subFile);
+                        $list[] = $subFile;
                     }
                 }
             }
