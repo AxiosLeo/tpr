@@ -8,7 +8,7 @@ use tpr\Console;
 
 trait CommandTrait
 {
-    protected function fixed($str = '', $length = 15, $pad_type = STR_PAD_RIGHT, $filler = ' ')
+    protected function fixed(string $str = '', int $length = 15, int $pad_type = STR_PAD_RIGHT, string $filler = ' '): string
     {
         return str_pad($str, $length, $filler, $pad_type);
     }
@@ -57,67 +57,67 @@ trait CommandTrait
         return $action;
     }
 
-    protected function highlight($text)
+    protected function highlight($text): string
     {
         return CONSOLE_STYLE_HIGHLIGHT . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function underline($text)
+    protected function underline($text): string
     {
         return CONSOLE_STYLE_UNDERLINE . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function winkle($text)
+    protected function winkle($text): string
     {
         return CONSOLE_STYLE_WINKLE . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function invert($text)
+    protected function invert($text): string
     {
         return CONSOLE_STYLE_INVERT . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function blank($text)
+    protected function blank($text): string
     {
         return CONSOLE_STYLE_BLANK . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function black($text)
+    protected function black($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_30 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function red($text)
+    protected function red($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_31 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function green($text)
+    protected function green($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_32 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function yellow($text)
+    protected function yellow($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_33 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function blue($text)
+    protected function blue($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_34 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function purple($text)
+    protected function purple($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_35 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function darkGreen($text)
+    protected function darkGreen($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_36 . $text . CONSOLE_STYLE_DEFAULT;
     }
 
-    protected function white($text)
+    protected function white($text): string
     {
         return CONSOLE_STYLE_BACKGROUND_37 . $text . CONSOLE_STYLE_DEFAULT;
     }

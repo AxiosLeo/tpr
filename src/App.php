@@ -22,12 +22,12 @@ class App
 
     private static ?ServerInterface $handler = null;
 
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments): ServerInterface
     {
         return self::drive($name);
     }
 
-    public static function debugMode($debug = null)
+    public static function debugMode($debug = null): bool
     {
         if (null === $debug) {
             return self::$debug;
