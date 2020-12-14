@@ -15,23 +15,25 @@ class PathTest extends TestCase
 {
     public function testJoin()
     {
+        $is_win = PHP_SHLIB_SUFFIX === 'dll';
+
         $this->assertEquals(
-            realpath(__DIR__ . '/../../') . '/test.json',
+            realpath(__DIR__ . '/../../') . \DIRECTORY_SEPARATOR . 'test.json',
             Path::join(__DIR__, '../../test.json')
         );
 
         $this->assertEquals(
-            '/a/b/c',
+            $is_win ? '\a\b\c' : '/a/b/c',
             Path::join('/a/', 'b/c')
         );
 
         $this->assertEquals(
-            '/a/b',
+            $is_win ? '\a\b' : '/a/b',
             Path::join('/a/', './', 'b/c', '../')
         );
 
         $this->assertEquals(
-            'a/b/c/d.php',
+            $is_win ? 'a\b\c\d.php' : 'a/b/c/d.php',
             Path::join('a/', './', 'b/c', 'd.php')
         );
     }
