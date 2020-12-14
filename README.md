@@ -1,6 +1,6 @@
 # TPR
 
-[![Travis Build Status](https://travis-ci.com/AxiosCros/tpr.svg?branch=master&status=unknown)](https://travis-ci.com/AxiosCros/tpr)
+[![CI Build Status](https://github.com/AxiosCros/tpr/workflows/CI/badge.svg)](https://travis-ci.com/AxiosCros/tpr)
 [![Latest Stable Version](https://poser.pugx.org/axios/tpr/v)](//packagist.org/packages/axios/tpr)
 [![Total Downloads](https://poser.pugx.org/axios/tpr/downloads)](//packagist.org/packages/axios/tpr)
 [![License](https://poser.pugx.org/axios/tpr/license)](//packagist.org/packages/axios/tpr)

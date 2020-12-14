@@ -1,6 +1,6 @@
 # https://github.com/marketplace/actions/setup-php-action
 
-name: PHP Composer
+name: CI
 
 on:
   push:
