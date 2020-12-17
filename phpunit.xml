@@ -2,19 +2,14 @@
 <phpunit backupGlobals="false" backupStaticAttributes="false" bootstrap="tests/bootstrap.php" colors="true"
          convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true"
          executionOrder="depends,defects" processIsolation="false" stopOnFailure="false">
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-        <report>
-            <clover outputFile="cache/coverage.clover"/>
-            <html outputDirectory="cache/coverage" lowUpperBound="35" highLowerBound="70"/>
-        </report>
-    </coverage>
+    <logging>
+        <log type="coverage-html" target="cache/coverage" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="cache/coverage.clover"/>
+    </logging>
+
     <testsuites>
         <testsuite name="default">
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
-    <logging/>
 </phpunit>
