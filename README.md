@@ -2,9 +2,6 @@
 
 [![CI Build Status](https://github.com/AxiosCros/tpr/workflows/CI/badge.svg)](https://github.com/AxiosCros/tpr/actions?query=workflow%3ACI)
 [![Latest Stable Version](https://poser.pugx.org/axios/tpr/v)](//packagist.org/packages/axios/tpr)
-[![Total Downloads](https://poser.pugx.org/axios/tpr/downloads)](//packagist.org/packages/axios/tpr)
-[![License](https://poser.pugx.org/axios/tpr/license)](//packagist.org/packages/axios/tpr)
-
 
 > TPR is a PHP framework for quickly developing CGI&CLI applications. 
 >
@@ -12,8 +9,7 @@
 
 ## Required
 
-- PHP >= 7.2  (TPR 3.*)
-- PHP >= 7.4  (TPR 5.*) ```Support PHP8 on TPR 5.0.8 version```
+- PHP 7.4 or PHP 8
 
 ## Install
 
@@ -52,4 +48,4 @@ tpr-cli create <app-name>
 
 ## License
 
-The TPR framework is open-sourced software licensed under the [Apache license Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+The TPR framework is open-sourced software licensed under the [MIT](LICENSE).
