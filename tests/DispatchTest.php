@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tpr\tests\core;
+namespace tpr\tests;
 
 use PHPUnit\Framework\TestCase;
 use tpr\App;
@@ -17,7 +17,7 @@ class DispatchTest extends TestCase
 {
     public function setUp(): void
     {
-        App::drive()->getConfig()->controller_rule = '\\tpr\\tests\\core\\DispatchTest';
+        App::drive()->getConfig()->controller_rule = '\\tpr\\tests\\DispatchTest';
         parent::setUp();
     }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tpr\tests\core;
+namespace tpr\tests;
 
 use PHPUnit\Framework\TestCase;
 use tpr\library\ArrayMap;
