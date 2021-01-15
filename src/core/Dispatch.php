@@ -13,11 +13,12 @@ use tpr\Path;
 
 final class Dispatch
 {
-    private string $app_namespace;
-    private string $module;
-    private string $controller;
-    private string $action;
-    private Route  $route;
+    private static array $mapping = [];
+    private string       $app_namespace;
+    private string       $module;
+    private string       $controller;
+    private string       $action;
+    private Route        $route;
 
     public function __construct($app_namespace)
     {
@@ -55,30 +56,31 @@ final class Dispatch
 
         try {
             $pathInfo = $request->pathInfo();
-            $status   = $this->route->find($pathInfo);
-            $result   = null;
+            if (isset(self::$mapping[$pathInfo])) {
+                $route_info = self::$mapping[$pathInfo];
+                $result     = $this->resolveRouteInfo($request, $route_info);
+            } else {
+                $status = $this->route->find($pathInfo);
+                $result = null;
+                switch ($status) {
+                    case Route::HAS_FOUND:
+                        $route_info = $this->route->getRouteInfo();
+                        $result     = $this->resolveRouteInfo($request, $route_info);
 
-            switch ($status) {
-                case Route::HAS_FOUND:
-                    $route_info = $this->route->getRouteInfo();
-                    $request->routeInfo($route_info);
-                    $tmp              = explode('/', $route_info->handler, 3);
-                    $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
-                    $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
-                    $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
-                    $result           = $this->dispatch($this->module, $this->controller, $this->action, $route_info['params']);
+                        self::$mapping[$pathInfo] = $route_info;
 
-                    break;
-                case Route::NOT_SUPPORTED_METHOD:
-                    Container::response()->error(405, 'Not Allowed Method');
+                        break;
+                    case Route::NOT_SUPPORTED_METHOD:
+                        Container::response()->error(405, 'Not Allowed Method');
 
-                    break;
-                case Route::NOT_FOUND:
-                    if (App::drive()->getConfig()->force_route) {
-                        Container::response()->error(404, 'Route Not Found');
-                    } else {
-                        $result = $this->defaultRoute($pathInfo);
-                    }
+                        break;
+                    case Route::NOT_FOUND:
+                        if (App::drive()->getConfig()->force_route) {
+                            Container::response()->error(404, 'Route Not Found');
+                        } else {
+                            $result = $this->resolve($pathInfo);
+                        }
+                }
             }
 
             throw new HttpResponseException($result);
@@ -109,7 +111,18 @@ final class Dispatch
         return \call_user_func_array([$class, $this->action], $params);
     }
 
-    private function defaultRoute($path_info)
+    private function resolveRouteInfo($request, $route_info)
+    {
+        $request->routeInfo($route_info);
+        $tmp              = explode('/', $route_info->handler, 3);
+        $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
+        $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
+        $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
+
+        return $this->dispatch($this->module, $this->controller, $this->action, $route_info['params']);
+    }
+
+    private function resolve($path_info)
     {
         if (null !== $path_info) {
             $path_info = Path::join('', $path_info);
