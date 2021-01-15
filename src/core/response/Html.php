@@ -49,10 +49,8 @@ class Html extends ResponseAbstract
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
-     *
-     * @return string
      */
-    private function render(string $dir, string $file, array $params = [])
+    private function render(string $dir, string $file, array $params = []): string
     {
         $driver = Container::template();
         foreach ($this->options->template_func as $name => $func) {

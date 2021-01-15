@@ -54,7 +54,7 @@ final class Event
         if (!isset($this->events[$event_name])) {
             $this->events[$event_name] = [];
         }
-        array_push($this->events[$event_name], $closure);
+        $this->events[$event_name][] = $closure;
     }
 
     /**

@@ -51,8 +51,8 @@ final class Route
             if (isset($data[$curr])) {
                 $data = $data[$curr];
             } elseif (isset($data['*'])) {
-                $data = $data['*'];
-                array_push($params, $curr);
+                $data     = $data['*'];
+                $params[] = $curr;
             } elseif (isset($data['**'])) {
                 $data = $data['**'];
             } elseif (isset($data['***'])) {
@@ -99,9 +99,9 @@ final class Route
             foreach ($trace as &$t) {
                 $len = \strlen($t);
                 if (0 === strpos($t, '{:')) {
-                    $param = substr($t, 2, $len - 3);
-                    array_push($params, $param);
-                    $t = '*';
+                    $param    = substr($t, 2, $len - 3);
+                    $params[] = $param;
+                    $t        = '*';
                 } elseif ('*' === $t) {
                     throw new \InvalidArgumentException('Invalid route data, cannot use single `*` in route.path. ');
                 }

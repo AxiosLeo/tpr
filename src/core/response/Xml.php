@@ -8,13 +8,13 @@ class Xml extends ResponseAbstract
 {
     public string $content_type = 'text/xml';
 
-    public function output($result = null): string
+    public function output($data = null): string
     {
-        if (null === $result) {
-            $result = [];
+        if (null === $data) {
+            $data = [];
         }
 
-        return $this->xmlEncode($result);
+        return $this->xmlEncode($data);
     }
 
     protected function xmlEncode(array $data): string

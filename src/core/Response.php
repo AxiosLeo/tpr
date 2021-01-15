@@ -103,7 +103,7 @@ class Response
         return '';
     }
 
-    public function setHeader(string $key, string $value)
+    public function setHeader(string $key, string $value): self
     {
         $lower_key                                  = strtolower($key);
         $this->options->headers[$key]               = $value;

@@ -13,36 +13,34 @@ use tpr\Path;
 
 final class Dispatch
 {
-    private string   $app_namespace;
-    private string   $module;
-    private string   $controller;
-    private string   $action;
-    private string   $cache_file;
-    private Route    $route;
+    private string $app_namespace;
+    private string $module;
+    private string $controller;
+    private string $action;
+    private Route  $route;
 
     public function __construct($app_namespace)
     {
         $this->app_namespace = $app_namespace;
-        $this->cache_file    = Path::join(Path::cache(), 'routes.cache');
         $this->route         = new Route();
     }
 
-    public function getAppNamespace()
+    public function getAppNamespace(): string
     {
         return $this->app_namespace;
     }
 
-    public function getModuleName()
+    public function getModuleName(): string
     {
         return $this->module;
     }
 
-    public function getControllerName()
+    public function getControllerName(): string
     {
         return $this->controller;
     }
 
-    public function getActionName()
+    public function getActionName(): string
     {
         return $this->action;
     }
@@ -50,7 +48,7 @@ final class Dispatch
     /**
      * @throws \Throwable
      */
-    public function run()
+    public function run(): void
     {
         $request = Container::request();
         $result  = null;
@@ -59,9 +57,9 @@ final class Dispatch
             $pathInfo = $request->pathInfo();
             $status   = $this->route->find($pathInfo);
             $result   = null;
+
             switch ($status) {
                 case Route::HAS_FOUND:
-
                     $route_info = $this->route->getRouteInfo();
                     $request->routeInfo($route_info);
                     $tmp              = explode('/', $route_info->handler, 3);
@@ -72,12 +70,10 @@ final class Dispatch
 
                     break;
                 case Route::NOT_SUPPORTED_METHOD:
-
                     Container::response()->error(405, 'Not Allowed Method');
 
                     break;
                 case Route::NOT_FOUND:
-
                     if (App::drive()->getConfig()->force_route) {
                         Container::response()->error(404, 'Route Not Found');
                     } else {
@@ -120,8 +116,8 @@ final class Dispatch
             $tmp       = explode('/', $path_info, 3);
             $path      = [];
             foreach ($tmp as $item) {
-                $p = $item ? $item : 'index';
-                array_push($path, $p);
+                $p      = $item ?: 'index';
+                $path[] = $p;
             }
         }
         $module     = isset($path[0]) ? $path[0] : 'index';

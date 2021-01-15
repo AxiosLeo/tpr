@@ -15,7 +15,7 @@ use tpr\core\Dispatch;
  */
 class DispatchTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         App::drive()->getConfig()->controller_rule = '\\tpr\\tests\\DispatchTest';
         parent::setUp();
@@ -29,7 +29,7 @@ class DispatchTest extends TestCase
         $this->assertEquals('exec result', $res);
     }
 
-    public function doExec()
+    public function doExec(): string
     {
         return 'exec result';
     }
