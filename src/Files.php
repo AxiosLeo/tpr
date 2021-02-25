@@ -6,6 +6,7 @@ namespace tpr;
 
 /**
  * Class Files.
+ * @deprecated will deprecated on 5.1 version
  */
 class Files
 {
