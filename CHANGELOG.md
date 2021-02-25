@@ -1,5 +1,10 @@
 # Change Log
 
+## 5.0.9 2021-02-26
+
+- Fix copy method of Files.
+- Add @deprecated tag for Files class.
+
 ## 5.0.8 2020-12-12
 
 - Deprecated `ralouphie/mimey`
