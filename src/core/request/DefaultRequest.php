@@ -8,23 +8,6 @@ use tpr\library\MimeTypes;
 
 final class DefaultRequest extends RequestAbstract implements RequestInterface
 {
-    protected array $server_map = [
-        'method'    => 'REQUEST_METHOD',
-        'env'       => 'SERVER_SOFTWARE',
-        'scheme'    => 'SERVER_PROTOCOL',
-        'host'      => 'HTTP_HOST',
-        'domain'    => 'SERVER_NAME',
-        'port'      => 'SERVER_PORT',
-        'pathInfo'  => 'PATH_INFO',
-        'indexFile' => 'SCRIPT_NAME',
-        'indexPath' => 'SCRIPT_FILENAME',
-        'userAgent' => 'HTTP_USER_AGENT',
-        'accept'    => 'HTTP_ACCEPT',
-        'lang'      => 'HTTP_ACCEPT_LANGUAGE',
-        'encoding'  => 'HTTP_ACCEPT_ENCODING',
-        'query'     => 'QUERY_STRING',
-    ];
-
     public function url($is_whole = false): string
     {
         $url = $this->getRequestData('url', function () {
@@ -132,24 +115,22 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
         return null === $format ? $time : date($format, $time);
     }
 
-    public function server($name = null)
+    public function servers(): array
     {
-        $server = $this->getRequestData('server', function () {
+        return $this->getRequestData('server', function () {
             return $this->setRequestData('server', $_SERVER);
         });
-        if (null === $name) {
-            return $server;
-        }
+    }
 
-        if (isset($this->server_map[$name])) {
-            $name = $this->server_map[$name];
-        }
+    public function server($name = null): string
+    {
+        $server = $this->servers();
 
         if (isset($server[$name])) {
             $value = $server[$name];
             unset($server, $name);
 
-            return $value;
+            return (string) $value;
         }
 
         return '';
@@ -158,7 +139,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
     public function isHttps(): bool
     {
         return $this->getRequestData('is_https', function () {
-            $server   = $this->server();
+            $server   = $this->servers();
             $is_https = false;
             if (isset($server['HTTPS']) && ('1' == $server['HTTPS'] || 'on' == strtolower($server['HTTPS']))) {
                 $is_https = true;
@@ -176,7 +157,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
     public function scheme(): string
     {
-        return $this->server('scheme');
+        return $this->server('SERVER_PROTOCOL');
     }
 
     public function header($name = null, $default = null)
@@ -186,7 +167,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
             if (\function_exists('apache_request_headers')) {
                 $headers = apache_request_headers();
             } else {
-                $server = $this->server();
+                $server = $this->servers();
                 foreach ($server as $key => $val) {
                     if (0 === strpos($key, 'HTTP_')) {
                         $key           = str_replace('_', '-', strtolower(substr($key, 5)));
@@ -242,56 +223,56 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
     public function query(): string
     {
-        return $this->server($this->server_map['query']);
+        return $this->server('QUERY_STRING');
     }
 
     public function env(): string
     {
-        return $this->server($this->server_map['env']);
+        return $this->server('SERVER_SOFTWARE');
     }
 
     public function host(): string
     {
-        return $this->server($this->server_map['host']);
+        return $this->server('HTTP_HOST');
     }
 
     public function port(): int
     {
-        return (int) $this->server($this->server_map['port']);
+        return (int) $this->server('SERVER_PORT');
     }
 
     public function indexFile(): string
     {
-        return $this->server($this->server_map['indexFile']);
+        return $this->server('SCRIPT_NAME');
     }
 
     public function userAgent(): string
     {
-        return $this->server('userAgent');
+        return $this->server('HTTP_USER_AGENT');
     }
 
     public function accept(): string
     {
-        return $this->server('accept');
+        return $this->server('HTTP_ACCEPT');
     }
 
     public function lang(): string
     {
-        return $this->server('lang');
+        return $this->server('HTTP_ACCEPT_LANGUAGE');
     }
 
     public function encoding(): string
     {
-        return $this->server('encoding');
+        return $this->server('HTTP_ACCEPT_ENCODING');
     }
 
     public function method(): string
     {
-        return $this->server('method');
+        return $this->server('REQUEST_METHOD');
     }
 
     public function pathInfo(): string
     {
-        return (string) $this->server('pathInfo');
+        return (string) $this->server('PATH_INFO');
     }
 }
