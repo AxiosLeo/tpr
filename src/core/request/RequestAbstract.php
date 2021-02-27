@@ -104,6 +104,10 @@ abstract class RequestAbstract
         return 0 === strcasecmp('options', $this->method());
     }
 
+    abstract public function contentType(): string;
+
+    abstract public function content(): string;
+
     protected function input($array, $name = null, $default = null)
     {
         if (null === $name) {
