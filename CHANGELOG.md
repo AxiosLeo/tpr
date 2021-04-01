@@ -1,5 +1,9 @@
 # Change Log
 
+## 5.0.10 2021-04-01
+
+- Upgrade denpendencies
+
 ## 5.0.9 2021-02-26
 
 - Fix copy method of Files.
