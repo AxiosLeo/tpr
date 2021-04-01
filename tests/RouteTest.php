@@ -38,7 +38,7 @@ class RouteTest extends TestCase
         ],
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Container::bind('request', DefaultRequest::class);

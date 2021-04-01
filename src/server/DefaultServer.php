@@ -74,7 +74,8 @@ final class DefaultServer extends ServerHandler implements ServerInterface
                     CONSOLE_STYLE_BACKGROUND_31 . "Class Not Exist. Please check namespace ! \n" . CONSOLE_STYLE_DEFAULT .
                     CONSOLE_STYLE_BACKGROUND_33 . 'target class => ' . $class . CONSOLE_STYLE_DEFAULT . "\n" .
                     "---------------------------------------------------\n";
-                die();
+
+                exit();
             }
             $command = new $class();
             $app->add($command);

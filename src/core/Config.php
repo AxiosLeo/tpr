@@ -56,7 +56,7 @@ final class Config
 
     public function loadFile($file_path)
     {
-        $ext    = pathinfo($file_path, PATHINFO_EXTENSION);
+        $ext    = pathinfo($file_path, \PATHINFO_EXTENSION);
         $group  = str_replace([Path::config() . \DIRECTORY_SEPARATOR, '.' . $ext], '', $file_path);
         $prefix = implode('.', explode(\DIRECTORY_SEPARATOR, $group));
         $this->config->set($prefix, array_merge(\Noodlehaus\Config::load($file_path)->all(), $this->config->get($prefix, [])));

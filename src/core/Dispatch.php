@@ -62,6 +62,7 @@ final class Dispatch
             } else {
                 $status = $this->route->find($pathInfo);
                 $result = null;
+
                 switch ($status) {
                     case Route::HAS_FOUND:
                         $route_info = $this->route->getRouteInfo();
@@ -70,10 +71,12 @@ final class Dispatch
                         self::$mapping[$pathInfo] = $route_info;
 
                         break;
+
                     case Route::NOT_SUPPORTED_METHOD:
                         Container::response()->error(405, 'Not Allowed Method');
 
                         break;
+
                     case Route::NOT_FOUND:
                         if (App::drive()->getConfig()->force_route) {
                             Container::response()->error(404, 'Route Not Found');

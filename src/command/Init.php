@@ -41,6 +41,8 @@ final class Init extends Console
         if (!$init->init()) {
             $this->output->success('Initialize application successful. Created on ' . $dir);
         }
+
+        return 0;
     }
 
     private function inputNamespace(string $app_name)

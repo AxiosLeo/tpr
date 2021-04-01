@@ -80,6 +80,7 @@ abstract class Controller
         header('Status: ' . $message, true, $code);
 
         header('Location: ' . $destination);
+
         exit();
     }
 }

@@ -23,7 +23,7 @@ final class Lang
         if (file_exists(Path::langs())) {
             $langs_file = Files::search(Path::langs(), ['php']);
             foreach ($langs_file as $filepath) {
-                $lang_set               = basename($filepath, '.' . pathinfo($filepath, PATHINFO_EXTENSION));
+                $lang_set               = basename($filepath, '.' . pathinfo($filepath, \PATHINFO_EXTENSION));
                 $this->files[$lang_set] = $filepath;
             }
         }

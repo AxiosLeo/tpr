@@ -34,11 +34,13 @@ class InitApp extends Console
         if (null === $web_server) {
             $web_server = $this->selectServer();
         }
+
         switch ($web_server) {
             case 'php built-in web server':
                 $this->shell('cd ' . $index_dir . ' && php -S localhost:8088 -t ./');
 
                 break;
+
             case 'workerman http web server':
                 $workerman = Path::join($index_dir, 'workerman.php');
                 $this->shell('php ' . $workerman . ' start -d');
@@ -53,6 +55,7 @@ class InitApp extends Console
             'php built-in web server',
             'workerman http web server',
         ], 'php built-in web server');
+
         switch ($web_server) {
             case 'workerman http web server':
                 $this->genWorkermanIndex();
@@ -126,7 +129,7 @@ EOF,
             'config/routes.php'                              => <<<'EOF'
 <?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Route
-// you can write routes data in here. 
+// you can write routes data in here.
 return [
 ];
 EOF,
@@ -134,7 +137,7 @@ EOF,
             'config/events.php'                              => <<<'EOF'
 <?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Event
-// you can write events data in here. 
+// you can write events data in here.
 return [
   // <event-name>::<class-name>::<function-name>
 ];
@@ -209,11 +212,11 @@ App::default()
         'remove_headers'  => [],              // remove some header before send response
         'server_options'  => [],              // for ServerHandler custom config.
         'response_config' => [],              // response config, see detail on \tpr\\models\\ResponseModel.
-        
+
         'default_content_type_cgi' => 'html', // default content-type on cgi mode
         'default_content_type_ajax'=> 'json', // default content-type on api request
         'default_content_type_cli' => 'text', // default content-type on command line mode
-        
+
         'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}',  // controller namespace spelling rule
     ])
     ->run();
@@ -300,7 +303,7 @@ EOF;
     {
         foreach ($files as $path => $content) {
             $p = Path::join($this->path->root, $path);
-            Files::save($p, $content . PHP_EOL);
+            Files::save($p, $content . \PHP_EOL);
         }
     }
 }

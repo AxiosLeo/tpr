@@ -54,7 +54,7 @@ class Path
 
     public static function join(string ...$paths): string
     {
-        $is_win = PHP_SHLIB_SUFFIX === 'dll';
+        $is_win = \PHP_SHLIB_SUFFIX === 'dll';
         if (0 === \count($paths)) {
             throw new \InvalidArgumentException('At least one parameter needs to be passed in.');
         }

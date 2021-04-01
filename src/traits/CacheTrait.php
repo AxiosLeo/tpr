@@ -48,7 +48,7 @@ trait CacheTrait
         }
         if (!isset(self::$cache_data[$key])) {
             self::$cache_data[$key] = $data;
-            Files::save($cache_file, '<?php' . PHP_EOL . 'return ' . var_export($data, true) . ';' . PHP_EOL);
+            Files::save($cache_file, '<?php' . \PHP_EOL . 'return ' . var_export($data, true) . ';' . \PHP_EOL);
         }
 
         unset($cache_file, $cache_time, $count);

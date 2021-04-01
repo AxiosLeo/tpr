@@ -8,7 +8,7 @@ use tpr\Console;
 
 trait CommandTrait
 {
-    protected function fixed(string $str = '', int $length = 15, int $pad_type = STR_PAD_RIGHT, string $filler = ' '): string
+    protected function fixed(string $str = '', int $length = 15, int $pad_type = \STR_PAD_RIGHT, string $filler = ' '): string
     {
         return str_pad($str, $length, $filler, $pad_type);
     }

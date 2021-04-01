@@ -34,7 +34,7 @@ final class ResponseModel extends Model
     public array  $template_func     = [];  // func_name => callable
 
     // json&jsonp
-    public int    $json_options  = JSON_UNESCAPED_UNICODE;
+    public int    $json_options  = \JSON_UNESCAPED_UNICODE;
     public string $jsonp_handler = 'jsonpReturn';
 
     // xml

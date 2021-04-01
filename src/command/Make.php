@@ -43,7 +43,8 @@ final class Make extends Console
         $command_name = $this->input->getArgument('CommandName');
         if (empty($command_name)) {
             $this->output->error('command name cannot be empty');
-            die();
+
+            exit();
         }
 
         $class_name = ucfirst($command_name);
@@ -99,5 +100,7 @@ $this->output->writeln("this is ' . $command_name . ' command");
 
             throw $e;
         }
+
+        return 0;
     }
 }
