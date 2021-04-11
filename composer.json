@@ -43,7 +43,8 @@
       "tpr\\tests\\": "tests/"
     },
     "files": [
-      "global.php"
+      "global.php",
+      "functions/fs.php"
     ]
   },
   "config": {
