@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use tpr\App;
 use tpr\Console;
-use tpr\Files;
 use tpr\Path;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Run;
@@ -90,7 +89,7 @@ $this->output->writeln("this is ' . $command_name . ' command");
 
             $printer = new PsrPrinter();
             $content = $printer->printNamespace($namespace);
-            Files::save($save_path, "<?php\n\n" . $content);
+            \tpr\functions\fs\write($save_path, "<?php\n\n" . $content);
 
             $this->output->success('Done! Save Path : ' . $save_path);
         } catch (Exception $e) {

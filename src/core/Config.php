@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use tpr\App;
+use function tpr\functions\fs\search;
 use tpr\library\ArrayMap;
 use tpr\Path;
 use tpr\traits\CacheTrait;
@@ -43,7 +44,7 @@ final class Config
         if (null === $path) {
             $path = Path::config();
         }
-        $config_file_list = \tpr\Files::search($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
+        $config_file_list = search($path, ['yaml', 'yml', 'json', 'ini', 'php', 'xml']);
         foreach ($config_file_list as $filepath) {
             $this->loadFile($filepath);
         }

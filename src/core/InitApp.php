@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use tpr\Console;
-use tpr\Files;
+use function tpr\functions\fs\write;
 use tpr\models\AppPathModel;
 use tpr\Path;
 use tpr\traits\CommandTrait;
@@ -176,7 +176,7 @@ EOF,
   }
 }
 EOF;
-        Files::save(Path::join($this->path->root, 'composer.json'), $content);
+        \tpr\functions\fs\write(Path::join($this->path->root, 'composer.json'), $content);
         $this->shell('cd ' . $this->dir . ' && composer install');
     }
 
@@ -189,7 +189,7 @@ EOF;
         if (file_exists($gen_path)) {
             return;
         }
-        Files::save(
+        write(
             $gen_path,
             <<<EOF
 <?php
@@ -251,7 +251,7 @@ App::drive('workerman')->config([
 ])->run();
 
 EOF;
-        Files::save($gen_path, $content);
+        write($gen_path, $content);
         $this->requireLibrary('axios/tpr-workerman');
     }
 
@@ -303,7 +303,7 @@ EOF;
     {
         foreach ($files as $path => $content) {
             $p = Path::join($this->path->root, $path);
-            Files::save($p, $content . \PHP_EOL);
+            write($p, $content . \PHP_EOL);
         }
     }
 }
