@@ -6,7 +6,7 @@ namespace tpr\functions\fs;
 
 use tpr\Path;
 
-function write(string $filename, string $text, string $mode, int $new_line = 0): void
+function write(string $filename, string $text, string $mode = 'w+', int $new_line = 0): void
 {
     if (!file_exists(\dirname($filename))) {
         @mkdir(\dirname($filename), 0755, true);

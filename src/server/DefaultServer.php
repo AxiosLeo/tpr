@@ -14,7 +14,7 @@ use tpr\core\Response;
 use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
-use tpr\Files;
+use function tpr\functions\fs\search;
 use tpr\Path;
 
 final class DefaultServer extends ServerHandler implements ServerInterface
@@ -63,7 +63,7 @@ final class DefaultServer extends ServerHandler implements ServerInterface
             }
         }
         Event::trigger('app_load_command');
-        $command_files = Files::search(Path::command(), ['php']);
+        $command_files = search(Path::command(), ['php']);
         foreach ($command_files as $filepath) {
             require_once $filepath;
             $tmp   = str_replace(['.php', Path::command()], '', $filepath);

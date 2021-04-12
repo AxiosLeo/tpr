@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tpr\traits;
 
 use tpr\App;
-use tpr\Files;
+use function tpr\functions\fs\remove;
 use tpr\Path;
 
 trait CacheTrait
@@ -35,7 +35,7 @@ trait CacheTrait
         if (null === $data) {
             if (!isset(self::$cache_data[$key])) {
                 if (!file_exists($cache_file)) {
-                    Files::remove($key);
+                    remove($key);
 
                     return null;
                 }
@@ -48,7 +48,7 @@ trait CacheTrait
         }
         if (!isset(self::$cache_data[$key])) {
             self::$cache_data[$key] = $data;
-            Files::save($cache_file, '<?php' . \PHP_EOL . 'return ' . var_export($data, true) . ';' . \PHP_EOL);
+            \tpr\functions\fs\write($cache_file, '<?php' . \PHP_EOL . 'return ' . var_export($data, true) . ';' . \PHP_EOL);
         }
 
         unset($cache_file, $cache_time, $count);
