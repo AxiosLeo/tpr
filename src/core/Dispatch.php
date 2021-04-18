@@ -119,7 +119,7 @@ final class Dispatch
         $request->routeInfo($route_info);
         $tmp              = explode('/', $route_info->handler, 3);
         $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
-        $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
+        $this->controller = isset($tmp[1]) ? $tmp[1] : 'index';
         $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
 
         return $this->dispatch($this->module, $this->controller, $this->action, $route_info['params']);
