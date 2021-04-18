@@ -14,7 +14,6 @@ use tpr\core\Response;
 use tpr\Event;
 use tpr\exception\Handler;
 use tpr\exception\HttpResponseException;
-use function tpr\functions\fs\search;
 use tpr\Path;
 
 final class DefaultServer extends ServerHandler implements ServerInterface
@@ -49,10 +48,10 @@ final class DefaultServer extends ServerHandler implements ServerInterface
          * @var Command $command
          */
         $command_config = [
-            'name'      => isset($this->app->server_options['name']) ? $this->app->server_options['name'] : 'Command Tools',
-            'version'   => isset($this->app->server_options['version']) ? $this->app->server_options['version'] : '0.0.1',
+            'name'      => $this->app->server_options['name'] ?? 'Command Tools',
+            'version'   => $this->app->server_options['version'] ?? '0.0.1',
             'namespace' => $this->app->namespace,
-            'commands'  => isset($this->app->server_options['commands']) ? $this->app->server_options['commands'] : [],
+            'commands'  => $this->app->server_options['commands'] ?? [],
         ];
 
         $app = new Application($command_config['name'], $command_config['version']);
@@ -63,7 +62,7 @@ final class DefaultServer extends ServerHandler implements ServerInterface
             }
         }
         Event::trigger('app_load_command');
-        $command_files = search(Path::command(), ['php']);
+        $command_files = \axios\tools\Files::search(Path::command(), ['php']);
         foreach ($command_files as $filepath) {
             require_once $filepath;
             $tmp   = str_replace(['.php', Path::command()], '', $filepath);

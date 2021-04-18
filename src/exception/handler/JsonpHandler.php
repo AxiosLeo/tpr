@@ -21,7 +21,7 @@ class JsonpHandler extends Handler
      *
      * @return $this
      */
-    public function setJsonApi($jsonApi = false)
+    public function setJsonApi($jsonApi = false): self
     {
         $this->jsonApi = (bool) $jsonApi;
 
@@ -46,10 +46,8 @@ class JsonpHandler extends Handler
 
     /**
      * @throws \Exception
-     *
-     * @return null|int
      */
-    public function handle()
+    public function handle(): ?int
     {
         if (true === $this->jsonApi) {
             $response = [
@@ -74,10 +72,7 @@ class JsonpHandler extends Handler
         return Handler::QUIT;
     }
 
-    /**
-     * @return string
-     */
-    public function contentType()
+    public function contentType(): string
     {
         return 'application/javascript';
     }

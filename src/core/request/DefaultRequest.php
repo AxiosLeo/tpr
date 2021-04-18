@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tpr\core\request;
 
-use tpr\library\MimeTypes;
+use axios\tools\MimeTypes;
 
 final class DefaultRequest extends RequestAbstract implements RequestInterface
 {
@@ -112,7 +112,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
     {
         $time = $micro ? $this->server('REQUEST_TIME_FLOAT') : $this->server('REQUEST_TIME');
 
-        return null === $format ? $time : date($format, $time);
+        return null === $format ? $time : date($format, null !== $time ? (int) $time : null);
     }
 
     public function servers(): array
@@ -191,7 +191,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
         $name = strtolower($name);
 
-        return isset($headers[$name]) ? $headers[$name] : $default;
+        return $headers[$name] ?? $default;
     }
 
     /**
@@ -218,7 +218,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
             return $files;
         }
 
-        return isset($files[$name]) ? $files[$name] : null;
+        return $files[$name] ?? null;
     }
 
     public function query(): string
@@ -273,6 +273,6 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
     public function pathInfo(): string
     {
-        return (string) $this->server('PATH_INFO');
+        return $this->server('PATH_INFO');
     }
 }

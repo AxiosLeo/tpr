@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\models;
 
 use tpr\Model;
-use tpr\Path;
 
 final class AppPathModel extends Model
 {
@@ -34,7 +33,7 @@ final class AppPathModel extends Model
     public function __construct(array $data = [])
     {
         if (!isset($data['root'])) {
-            $data['root'] = Path::join($this->framework, '../../../');
+            $data['root'] = path_join($this->framework, '../../../');
         }
         parent::__construct($data);
     }

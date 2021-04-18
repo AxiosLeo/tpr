@@ -6,7 +6,6 @@ namespace tpr\core;
 
 use tpr\App;
 use tpr\Event;
-use function tpr\functions\fs\search;
 use tpr\Path;
 
 final class Lang
@@ -21,8 +20,8 @@ final class Lang
     {
         $this->default_lang_set = App::drive()->getConfig()->lang;
         if (file_exists(Path::langs())) {
-            $langs_file = search(Path::langs(), ['php']);
-            foreach ($langs_file as $filepath) {
+            $files = \axios\tools\Files::search(Path::langs(), ['php']);
+            foreach ($files as $filepath) {
                 $lang_set               = basename($filepath, '.' . pathinfo($filepath, \PATHINFO_EXTENSION));
                 $this->files[$lang_set] = $filepath;
             }

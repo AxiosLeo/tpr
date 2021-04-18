@@ -128,6 +128,6 @@ final class Event
      */
     public function get(string $event_name): array
     {
-        return isset($this->events[$event_name]) ? $this->events[$event_name] : [];
+        return $this->events[$event_name] ?? [];
     }
 }

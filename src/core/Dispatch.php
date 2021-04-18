@@ -8,8 +8,6 @@ use tpr\App;
 use tpr\Container;
 use tpr\Event;
 use tpr\exception\HttpResponseException;
-use tpr\library\Helper;
-use tpr\Path;
 
 final class Dispatch
 {
@@ -52,7 +50,6 @@ final class Dispatch
     public function run(): void
     {
         $request = Container::request();
-        $result  = null;
 
         try {
             $pathInfo = $request->pathInfo();
@@ -101,7 +98,7 @@ final class Dispatch
         Event::trigger('app_cgi_dispatch', $module, $controller, $action);
 
         // exec controller
-        $class = Helper::renderString(App::drive()->getConfig()->controller_rule, [
+        $class = render_str(App::drive()->getConfig()->controller_rule, [
             'app_namespace' => $this->app_namespace,
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
@@ -118,9 +115,9 @@ final class Dispatch
     {
         $request->routeInfo($route_info);
         $tmp              = explode('/', $route_info->handler, 3);
-        $this->module     = isset($tmp[0]) ? $tmp[0] : 'index';
-        $this->controller = isset($tmp[1]) ? $tmp[2] : 'index';
-        $this->action     = isset($tmp[2]) ? $tmp[2] : 'index';
+        $this->module     = $tmp[0] ?? 'index';
+        $this->controller = $tmp[1] ?? 'index';
+        $this->action     = $tmp[2] ?? 'index';
 
         return $this->dispatch($this->module, $this->controller, $this->action, $route_info['params']);
     }
@@ -128,7 +125,7 @@ final class Dispatch
     private function resolve($path_info)
     {
         if (null !== $path_info) {
-            $path_info = Path::join('', $path_info);
+            $path_info = path_join('', $path_info);
             $tmp       = explode('/', $path_info, 3);
             $path      = [];
             foreach ($tmp as $item) {
@@ -136,9 +133,9 @@ final class Dispatch
                 $path[] = $p;
             }
         }
-        $module     = isset($path[0]) ? $path[0] : 'index';
-        $controller = isset($path[1]) ? $path[1] : 'index';
-        $action     = isset($path[2]) ? $path[2] : 'index';
+        $module     = $path[0] ?? 'index';
+        $controller = $path[1] ?? 'index';
+        $action     = $path[2] ?? 'index';
 
         return $this->dispatch($module, $controller, $action);
     }

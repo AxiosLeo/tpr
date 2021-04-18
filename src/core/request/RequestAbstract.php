@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tpr\core\request;
 
+use axios\tools\XMLParser;
 use tpr\App;
 use tpr\Event;
-use tpr\library\Helper;
 use tpr\models\RouteInfoModel;
 
 abstract class RequestAbstract
@@ -39,7 +39,7 @@ abstract class RequestAbstract
             return $this->setRequestData('params', $params);
         });
 
-        return isset($params[$name]) ? $params[$name] : $default;
+        return $params[$name] ?? $default;
     }
 
     public function routeInfo(?RouteInfoModel $routeInfo = null)
@@ -113,20 +113,20 @@ abstract class RequestAbstract
         if (null === $name) {
             return $array;
         }
-        $value = isset($array[$name]) ? $array[$name] : $default;
+        $value = $array[$name] ?? $default;
         $data  = ['name' => $name, 'value' => $value];
         Event::listen('filter_request_data', $data);
 
         return $data['value'];
     }
 
-    protected function parseContent()
+    protected function parseContent(): array
     {
         $type = $this->contentType();
         if ('json' === $type) {
             $data = (array) json_decode($this->content(), true);
         } elseif ('xml' === $type) {
-            $data = Helper::xmlToArray($this->content());
+            $data = XMLParser::decode($this->content());
         } else {
             parse_str($this->content(), $data);
         }

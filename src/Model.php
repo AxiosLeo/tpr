@@ -114,9 +114,9 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         return serialize($this->toArray());
     }
 
-    public function unserialize($serialized): self
+    public function unserialize($data): self
     {
-        $data  = unserialize($serialized);
+        $data  = unserialize((string) $data);
         $class = static::class;
         $model = new $class($data);
 

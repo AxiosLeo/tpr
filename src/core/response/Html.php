@@ -6,7 +6,6 @@ namespace tpr\core\response;
 
 use tpr\Container;
 use tpr\core\Dispatch;
-use tpr\Path;
 use Twig\TwigFunction;
 
 class Html extends ResponseAbstract
@@ -29,12 +28,12 @@ class Html extends ResponseAbstract
         if ('' === $tmpl_path) {
             /** @var Dispatch $dispatch */
             $dispatch = Container::get('cgi_dispatch');
-            $dir      = Path::join($dispatch->getModuleName(), $dispatch->getControllerName()) . \DIRECTORY_SEPARATOR;
+            $dir      = path_join($dispatch->getModuleName(), $dispatch->getControllerName()) . \DIRECTORY_SEPARATOR;
             $file     = $dispatch->getActionName();
         } elseif (false !== strpos($tmpl_path, ':')) {
             $tmp  = explode(':', $tmpl_path);
             $file = array_pop($tmp);
-            $dir  = Path::join(...$tmp);
+            $dir  = path_join(...$tmp);
             unset($tmp);
         } else {
             $dir  = \DIRECTORY_SEPARATOR;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
+use axios\tools\ArrayMap;
 use tpr\App;
 use tpr\Container;
-use tpr\library\ArrayMap;
 use tpr\models\RouteInfoModel;
 use tpr\traits\CacheTrait;
 
@@ -45,9 +45,8 @@ final class Route
         $total   = \count($trace);
         $default = null;
         $params  = [];
-        $curr    = null;
         while (true) {
-            $curr = isset($trace[$step]) ? $trace[$step] : null;
+            $curr = $trace[$step] ?? null;
             if (isset($data[$curr])) {
                 $data = $data[$curr];
             } elseif (isset($data['*'])) {
@@ -108,7 +107,7 @@ final class Route
             }
             $key        = implode('$', $trace);
             $method     = isset($route['method']) ? strtolower($route['method']) : 'all';
-            $intro      = isset($route['intro']) ? $route['intro'] : '';
+            $intro      = $route['intro'] ?? '';
             $key        = $key . '$__route';
             $route_info = [
                 'path'    => $route['path'],
@@ -127,7 +126,7 @@ final class Route
                 }
             }
         }
-        $this->data = $array->all();
+        $this->data = $array->get();
         unset($array);
         if (!App::debugMode()) {
             $this->cache($this->data);
