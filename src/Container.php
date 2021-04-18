@@ -54,7 +54,7 @@ final class Container implements ArrayAccess
         if (!self::has('template')) {
             $twig = new Environment(new FilesystemLoader(Path::views()), []);
             if (!App::debugMode()) {
-                $twig->setCache(Path::join(Path::cache(), 'views'));
+                $twig->setCache(path_join(Path::cache(), 'views'));
             }
             self::bindWithObj('template', $twig);
         } else {
@@ -122,27 +122,27 @@ final class Container implements ArrayAccess
         }
     }
 
-    public function offsetExists($key): bool
+    public function offsetExists($offset): bool
     {
-        return self::has($key);
+        return self::has($offset);
     }
 
-    public function offsetGet($key)
+    public function offsetGet($offset)
     {
-        return self::get($key);
+        return self::get($offset);
     }
 
-    public function offsetSet($key, $value): void
+    public function offsetSet($offset, $value): void
     {
         if (\is_string($value)) {
-            self::bind($key, $value);
+            self::bind($offset, $value);
         } else {
-            self::bindWithObj($key, $value);
+            self::bindWithObj($offset, $value);
         }
     }
 
-    public function offsetUnset($key): void
+    public function offsetUnset($offset): void
     {
-        self::delete($key);
+        self::delete($offset);
     }
 }

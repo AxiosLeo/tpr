@@ -14,12 +14,12 @@ namespace tpr;
  */
 class Lang extends Facade
 {
-    protected static function getContainName()
+    protected static function getContainName(): string
     {
         return 'lang';
     }
 
-    protected static function getFacadeClass()
+    protected static function getFacadeClass(): string
     {
         return core\Lang::class;
     }

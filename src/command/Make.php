@@ -31,10 +31,8 @@ final class Make extends Console
 
     /**
      * @throws Exception
-     *
-     * @return int|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         unset($input, $output);
@@ -89,7 +87,7 @@ $this->output->writeln("this is ' . $command_name . ' command");
 
             $printer = new PsrPrinter();
             $content = $printer->printNamespace($namespace);
-            \tpr\functions\fs\write($save_path, "<?php\n\n" . $content);
+            \axios\tools\Files::write($save_path, "<?php\n\n" . $content);
 
             $this->output->success('Done! Save Path : ' . $save_path);
         } catch (Exception $e) {

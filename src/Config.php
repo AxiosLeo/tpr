@@ -14,12 +14,12 @@ namespace tpr;
  */
 final class Config extends Facade
 {
-    protected static function getContainName()
+    protected static function getContainName(): string
     {
         return 'config';
     }
 
-    protected static function getFacadeClass()
+    protected static function getFacadeClass(): string
     {
         return core\Config::class;
     }

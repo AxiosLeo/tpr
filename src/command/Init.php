@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use tpr\Console;
 use tpr\core\InitApp;
-use tpr\Path;
 use tpr\traits\CommandTrait;
 
 final class Init extends Console
@@ -23,17 +22,17 @@ final class Init extends Console
             ->setAliases(['create'])
             ->setDescription('Quickly initialize an application')
             ->addArgument('app_name', InputArgument::REQUIRED)
-            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, '');
+            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         unset($input, $output);
         $app_name = $this->input->getArgument('app_name');
         $dir      = (string) $this->input->getOption('output');
         if (empty($dir)) {
-            $dir = Path::join(getcwd(), $app_name);
+            $dir = path_join(getcwd(), $app_name);
         }
         $namespace = $this->inputNamespace($app_name);
 

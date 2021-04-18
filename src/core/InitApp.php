@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace tpr\core;
 
 use tpr\Console;
-use function tpr\functions\fs\write;
 use tpr\models\AppPathModel;
-use tpr\Path;
 use tpr\traits\CommandTrait;
 
 class InitApp extends Console
 {
     use CommandTrait;
 
-    private string        $dir;
-    private ?string       $app_name;
-    private ?string       $namespace;
-    private AppPathModel  $path;
+    private string       $dir;
+    private ?string      $app_name;
+    private ?string      $namespace;
+    private AppPathModel $path;
+    private bool         $has_install = false;
 
     public function __construct(string $project_dir, string $app_name = null, string $base_namespace = null)
     {
-        parent::__construct(null);
+        parent::__construct();
         $this->dir       = $project_dir;
         $this->app_name  = $app_name;
         $this->namespace = $base_namespace;
@@ -30,20 +29,19 @@ class InitApp extends Console
 
     public function start(?string $web_server = null)
     {
-        $index_dir = Path::join($this->path->root, $this->path->index);
+        $index_dir = path_join($this->path->root, $this->path->index);
         if (null === $web_server) {
             $web_server = $this->selectServer();
         }
 
         switch ($web_server) {
             case 'php built-in web server':
-                $this->shell('cd ' . $index_dir . ' && php -S localhost:8088 -t ./');
+                exec_command('php -S localhost:8088 -t ./', $index_dir);
 
                 break;
 
             case 'workerman http web server':
-                $workerman = Path::join($index_dir, 'workerman.php');
-                $this->shell('php ' . $workerman . ' start -d');
+                exec_command('php workerman.php start -d', $index_dir);
 
                 break;
         }
@@ -82,6 +80,9 @@ class InitApp extends Console
         $web_server = $this->selectServer();
         $start      = $this->output->confirm('start web server right now', true);
         if ($start) {
+            if (!$this->has_install) {
+                exec_command('composer install', $this->dir);
+            }
             $this->start($web_server);
         }
 
@@ -93,10 +94,10 @@ class InitApp extends Console
         $tpr_version = TPR_FRAMEWORK_VERSION;
         $this->genFiles([
             // controller
-            $this->path->app . '/index/controller/Index.php' => <<<EOF
+            $this->path->app . '/index/controller/Index.php' => '
 <?php
 
-namespace {$this->namespace}\\index\\controller;
+namespace ' . $this->namespace . '\\index\\controller;
 
 use tpr\\Controller;
 
@@ -104,14 +105,14 @@ class Index extends Controller
 {
     public function index()
     {
-        return \$this->fetch();
+        return $this->fetch();
     }
 }
-EOF,
+',
             // generate library dir
             'library/README.md'                              => 'you can write code of utils in here.',
             // generate views dir
-            'views/index/index/index.html'                   => <<<EOF
+            'views/index/index/index.html'                   => '
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,31 +121,31 @@ EOF,
 <body>
 <!-- Document : https://twig.symfony.com/doc/2.x/   -->
 
-<h1>TPR Framework Version {$tpr_version}</h1>
+<h1>TPR Framework Version ' . $tpr_version . '</h1>
 
 </body>
 </html>
-EOF,
+',
             // generate routes configuration file
-            'config/routes.php'                              => <<<'EOF'
+            'config/routes.php'                              => '
 <?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Route
 // you can write routes data in here.
 return [
 ];
-EOF,
+',
             // generate events configuration file
-            'config/events.php'                              => <<<'EOF'
+            'config/events.php'                              => '
 <?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Event
 // you can write events data in here.
 return [
   // <event-name>::<class-name>::<function-name>
 ];
-EOF,
+',
             // generate .php_cs.dist&.gitignore
-            '.php_cs.dist'                                   => file_get_contents(Path::join(TPR_FRAMEWORK_PATH, '.php_cs.dist')),
-            '.gitignore'                                     => file_get_contents(Path::join(TPR_FRAMEWORK_PATH, '.gitignore')),
+            '.php_cs.dist'                                   => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.php_cs.dist')),
+            '.gitignore'                                     => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.gitignore')),
         ]);
     }
 
@@ -176,8 +177,11 @@ EOF,
   }
 }
 EOF;
-        \tpr\functions\fs\write(Path::join($this->path->root, 'composer.json'), $content);
-        $this->shell('cd ' . $this->dir . ' && composer install');
+        \axios\tools\Files::write(path_join($this->path->root, 'composer.json'), $content);
+        if ($this->output->confirm('install composer libraries now?', true)) {
+            exec_command('composer install', $this->dir);
+            $this->has_install = true;
+        }
     }
 
     /**
@@ -185,20 +189,20 @@ EOF;
      */
     private function genIndex()
     {
-        $gen_path = Path::join($this->path->root, $this->path->index, 'index.php');
+        $gen_path = path_join($this->path->root, $this->path->index, 'index.php');
         if (file_exists($gen_path)) {
             return;
         }
-        write(
+        \axios\tools\Files::write(
             $gen_path,
-            <<<EOF
+            "
 <?php
 
 namespace {$this->namespace}\\index;
 
 use tpr\\App;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . \"/../vendor/autoload.php';
 
 App::debugMode(true);
 
@@ -211,27 +215,27 @@ App::default()
         'force_route'     => false,           // forces use routing
         'remove_headers'  => [],              // remove some header before send response
         'server_options'  => [],              // for ServerHandler custom config.
-        'response_config' => [],              // response config, see detail on \tpr\\models\\ResponseModel.
+        'response_config' => [],              // response config, see detail on \\tpr\\models\\ResponseModel.
 
         'default_content_type_cgi' => 'html', // default content-type on cgi mode
         'default_content_type_ajax'=> 'json', // default content-type on api request
         'default_content_type_cli' => 'text', // default content-type on command line mode
 
-        'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}',  // controller namespace spelling rule
+        'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}\",  // controller namespace spelling rule
     ])
     ->run();
-EOF
+"
         );
     }
 
     private function genWorkermanIndex()
     {
-        $gen_path = Path::join($this->path->root, $this->path->index, 'workerman.php');
+        $gen_path = path_join($this->path->root, $this->path->index, 'workerman.php');
         if (file_exists($gen_path)) {
             return;
         }
         $workerman_driver = '\\tpr\\server\\WorkermanServer::class';
-        $content          = <<<EOF
+        $content          = "
 <?php
 
 namespace {$this->namespace}\\index;
@@ -249,9 +253,8 @@ App::drive('workerman')->config([
         'port'     => 8088,
     ]
 ])->run();
-
-EOF;
-        write($gen_path, $content);
+";
+        \axios\tools\Files::write($gen_path, $content);
         $this->requireLibrary('axios/tpr-workerman');
     }
 
@@ -276,7 +279,7 @@ App::default()->config([
     'namespace'      => '{$namespace}',
     'server_options' => [
         'commands' => [
-            'make' => \\tpr\\command\\Make::class
+            'make' => \tpr\\command\\Make::class
         ]
     ]
 ])->run();
@@ -287,7 +290,9 @@ EOF;
             'tpr'                => $content,
         ]);
         $this->requireLibrary('nette/php-generator', true);
-        $this->shell('chmod 755 ' . Path::join($this->path->root, 'tpr'));
+        if ('WIN' !== substr(\PHP_OS, 0, 3)) {
+            exec_command('chmod 755 ./tpr', $this->path->root);
+        }
     }
 
     private function requireLibrary(string $package, bool $dev = false)
@@ -296,14 +301,14 @@ EOF;
         if ($dev) {
             $cmd .= ' --dev';
         }
-        $this->shell($cmd);
+        exec_command($cmd);
     }
 
     private function genFiles(array $files)
     {
         foreach ($files as $path => $content) {
-            $p = Path::join($this->path->root, $path);
-            write($p, $content . \PHP_EOL);
+            $p = path_join($this->path->root, $path);
+            \axios\tools\Files::write($p, $content . \PHP_EOL);
         }
     }
 }

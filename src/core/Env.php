@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tpr\core;
 
+use axios\tools\ArrayMap;
 use Noodlehaus\Parser\Ini;
 use tpr\exception\FileNotFoundException;
-use tpr\library\ArrayMap;
 use tpr\Path;
 
 class Env
@@ -21,11 +21,11 @@ class Env
 
     public function load(string $file): void
     {
-        $env_path = Path::join(Path::root(), $file);
+        $env_path = path_join(Path::root(), $file);
         if (file_exists($env_path)) {
             $env = \Noodlehaus\Config::load($env_path, new Ini())->all();
             if (\is_array($env)) {
-                $this->env->set($env);
+                $this->env->set($env, null);
             }
         } else {
             throw new FileNotFoundException($file);
@@ -35,7 +35,7 @@ class Env
     public function get($key = null, $default = null)
     {
         if (null === $key) {
-            return $this->env->all();
+            return $this->env->get();
         }
         $val = $this->env->get($key);
         if (null !== $val) {

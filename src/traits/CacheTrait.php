@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tpr\traits;
 
 use tpr\App;
-use function tpr\functions\fs\remove;
 use tpr\Path;
 
 trait CacheTrait
@@ -19,7 +18,7 @@ trait CacheTrait
         self::$cache_data = [];
         $cache_time       = App::drive()->getConfig()->cache_time;
         $count            = 0 === $cache_time ? 'cache' : (int) (time() / $cache_time);
-        $cache_file       = Path::join(Path::cache(), self::$cache_key, (string) $count . '.php');
+        $cache_file       = path_join(Path::cache(), self::$cache_key, $count . '.php');
         @unlink($cache_file);
     }
 
@@ -31,11 +30,11 @@ trait CacheTrait
         $cache_time = App::drive()->getConfig()->cache_time;
         $count      = 0 === $cache_time ? 'cache' : (int) (time() / $cache_time);
         $key        = self::$cache_key;
-        $cache_file = Path::join(Path::cache(), $key, (string) $count . '.php');
+        $cache_file = path_join(Path::cache(), $key, $count . '.php');
         if (null === $data) {
             if (!isset(self::$cache_data[$key])) {
                 if (!file_exists($cache_file)) {
-                    remove($key);
+                    \axios\tools\Files::remove($key);
 
                     return null;
                 }
@@ -48,7 +47,7 @@ trait CacheTrait
         }
         if (!isset(self::$cache_data[$key])) {
             self::$cache_data[$key] = $data;
-            \tpr\functions\fs\write($cache_file, '<?php' . \PHP_EOL . 'return ' . var_export($data, true) . ';' . \PHP_EOL);
+            \axios\tools\Files::write($cache_file, '<?php' . \PHP_EOL . 'return ' . var_export($data, true) . ';' . \PHP_EOL);
         }
 
         unset($cache_file, $cache_time, $count);

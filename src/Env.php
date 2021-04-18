@@ -16,12 +16,12 @@ use tpr\core\Env as CoreEnv;
  */
 class Env extends Facade
 {
-    protected static function getContainName()
+    protected static function getContainName(): string
     {
         return 'env';
     }
 
-    protected static function getFacadeClass()
+    protected static function getFacadeClass(): string
     {
         return CoreEnv::class;
     }

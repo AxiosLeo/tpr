@@ -11,10 +11,10 @@ class ValidateException extends \RuntimeException
     public function __construct(string $prop_name, string $message = '')
     {
         $this->prop_name = $prop_name;
-        parent::__construct($message, 400, null);
+        parent::__construct($message, 400);
     }
 
-    public function getProperTyName()
+    public function getProperTyName(): string
     {
         return $this->prop_name;
     }

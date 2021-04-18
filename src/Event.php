@@ -23,12 +23,12 @@ class Event extends Facade
         self::instance()->listen($event_name, $data, $callback);
     }
 
-    protected static function getContainName()
+    protected static function getContainName(): string
     {
         return 'event';
     }
 
-    protected static function getFacadeClass()
+    protected static function getFacadeClass(): core\Event
     {
         return self::instance();
     }

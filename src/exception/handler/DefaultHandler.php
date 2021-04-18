@@ -8,10 +8,7 @@ use Whoops\Handler\Handler;
 
 class DefaultHandler extends Handler
 {
-    /**
-     * @return int
-     */
-    public function handle()
+    public function handle(): int
     {
         echo 'something error; TPR Version :' . TPR_FRAMEWORK_VERSION;
 

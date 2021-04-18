@@ -8,28 +8,6 @@ use tpr\Console;
 
 trait CommandTrait
 {
-    protected function fixed(string $str = '', int $length = 15, int $pad_type = \STR_PAD_RIGHT, string $filler = ' '): string
-    {
-        return str_pad($str, $length, $filler, $pad_type);
-    }
-
-    protected function shell($cmd, $show_command = false)
-    {
-        while (@ob_end_flush()) {
-            continue;
-        } // end all output buffers if any
-
-        if ($show_command) {
-            Console::output()->writeln($this->green($cmd));
-        }
-
-        $proc = popen($cmd, 'r');
-        while (!feof($proc)) {
-            echo fread($proc, 4096);
-            @flush();
-        }
-    }
-
     protected function action($action_list, $default = null, $use_argument = true, $use_option = true, $message = 'select an action ')
     {
         $action = null;
