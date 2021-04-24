@@ -23,7 +23,7 @@
   },
   "require": {
     "php": ">=7.4",
-    "axios/tools": "^2.0",
+    "axios/tools": "~2.0.0",
     "filp/whoops": "^2",
     "hassankhan/config": "^2.0",
     "rakit/validation": "^1",
@@ -43,8 +43,7 @@
       "tpr\\tests\\": "tests/"
     },
     "files": [
-      "global.php",
-      "functions/fs.php"
+      "global.php"
     ]
   },
   "config": {
