@@ -302,7 +302,7 @@ EOF;
     {
         foreach ($files as $path => $content) {
             $p = path_join($this->path->root, $path);
-            \axios\tools\Files::write($p, $content . \PHP_EOL);
+            \axios\tools\Files::write($p, $content);
         }
     }
 }
