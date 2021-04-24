@@ -34,8 +34,6 @@ trait CacheTrait
         if (null === $data) {
             if (!isset(self::$cache_data[$key])) {
                 if (!file_exists($cache_file)) {
-                    \axios\tools\Files::remove($key);
-
                     return null;
                 }
                 self::$cache_data[$key] = require_once $cache_file;
