@@ -102,7 +102,7 @@ final class Dispatch
             'app_namespace' => $this->app_namespace,
             'module'        => $this->module,
             'controller'    => ucfirst($this->controller),
-        ]);
+        ], '{', '}');
         if (!class_exists($class) || !method_exists($class, $this->action)) {
             throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $this->action, 404);
         }
