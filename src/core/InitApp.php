@@ -94,8 +94,7 @@ class InitApp extends Console
         $tpr_version = TPR_FRAMEWORK_VERSION;
         $this->genFiles([
             // controller
-            $this->path->app . '/index/controller/Index.php' => '
-<?php
+            $this->path->app . '/index/controller/Index.php' => '<?php
 
 namespace ' . $this->namespace . '\\index\\controller;
 
@@ -112,8 +111,7 @@ class Index extends Controller
             // generate library dir
             'library/README.md'                              => 'you can write code of utils in here.',
             // generate views dir
-            'views/index/index/index.html'                   => '
-<!DOCTYPE html>
+            'views/index/index/index.html'                   => '<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Welcome</title>
@@ -127,16 +125,14 @@ class Index extends Controller
 </html>
 ',
             // generate routes configuration file
-            'config/routes.php'                              => '
-<?php
+            'config/routes.php'                              => '<?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Route
 // you can write routes data in here.
 return [
 ];
 ',
             // generate events configuration file
-            'config/events.php'                              => '
-<?php
+            'config/events.php'                              => '<?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Event
 // you can write events data in here.
 return [
@@ -158,7 +154,7 @@ return [
         $content  = <<<EOF
 {
   "require": {
-    "axios/tpr": "^5.0"
+    "axios/tpr": "~5.1.0"
   },
   "autoload": {
     "psr-4": {
@@ -195,14 +191,13 @@ EOF;
         }
         \axios\tools\Files::write(
             $gen_path,
-            "
-<?php
+            "<?php
 
 namespace {$this->namespace}\\index;
 
 use tpr\\App;
 
-require_once __DIR__ . \"/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 App::debugMode(true);
 
@@ -221,7 +216,7 @@ App::default()
         'default_content_type_ajax'=> 'json', // default content-type on api request
         'default_content_type_cli' => 'text', // default content-type on command line mode
 
-        'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}\",  // controller namespace spelling rule
+        'dispatch_rule'            => '{app_namespace}\\{module}\\controller\\{controller}',  // controller namespace spelling rule
     ])
     ->run();
 "
@@ -235,8 +230,7 @@ App::default()
             return;
         }
         $workerman_driver = '\\tpr\\server\\WorkermanServer::class';
-        $content          = "
-<?php
+        $content          = "<?php
 
 namespace {$this->namespace}\\index;
 
@@ -279,7 +273,7 @@ App::default()->config([
     'namespace'      => '{$namespace}',
     'server_options' => [
         'commands' => [
-            'make' => \tpr\\command\\Make::class
+            'make' => \\tpr\\command\\Make::class
         ]
     ]
 ])->run();
