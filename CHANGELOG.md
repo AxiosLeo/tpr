@@ -1,5 +1,14 @@
 # Change Log
 
+## 5.1.0 2021-04-24
+
+- Deprecated Files Operator class
+- Require axios/tools ~2.1.0
+
+## 5.0.11 2021-04-24
+
+- Fix render class name
+
 ## 5.0.10 2021-04-01
 
 - Upgrade denpendencies
