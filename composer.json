@@ -23,7 +23,7 @@
   },
   "require": {
     "php": ">=7.4",
-    "axios/tools": "^2.1",
+    "axios/tools": "~2.1.0",
     "filp/whoops": "^2",
     "hassankhan/config": "^2.0",
     "rakit/validation": "^1",
