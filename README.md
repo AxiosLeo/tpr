@@ -38,7 +38,7 @@ php tpr
 composer global require axios/tpr
 
 # set `~/.composer/vendor/bin` or `~/.config/composer/vendor/bin` to your PATH environment variable
-tpr-cli create <app-name>
+tpr-cli init <app-name>
 ```
 
 ## Demo project
