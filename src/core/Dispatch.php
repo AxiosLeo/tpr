@@ -126,6 +126,7 @@ final class Dispatch
     {
         if (null !== $path_info) {
             $path_info = path_join('', $path_info);
+            $path_info = str_replace('\\', '/', $path_info);
             $tmp       = explode('/', $path_info, 3);
             $path      = [];
             foreach ($tmp as $item) {
