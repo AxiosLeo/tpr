@@ -29,8 +29,35 @@ class DispatchTest extends TestCase
         $this->assertEquals('exec result', $res);
     }
 
+    public function testResolvePathInfo()
+    {
+        $this->assertEquals(['a', 'b', 'c'], $this->resolvePathInfo('/a/b/c'));
+        $this->assertEquals(['a', 'b', 'index'], $this->resolvePathInfo('/a/b'));
+        $this->assertEquals(['a', 'index', 'index'], $this->resolvePathInfo('/a'));
+        $this->assertEquals(['index', 'index', 'index'], $this->resolvePathInfo('/'));
+        $this->assertEquals(['index', 'index', 'index'], $this->resolvePathInfo(''));
+    }
+
     public function doExec(): string
     {
         return 'exec result';
+    }
+
+    private function resolvePathInfo($path_info): array
+    {
+        $path_info = path_join('', $path_info);
+        $path_info = str_replace('\\', '/', $path_info);
+        $tmp       = explode('/', $path_info, 3);
+        $path      = [];
+        foreach ($tmp as $item) {
+            $p      = $item ?: 'index';
+            $path[] = $p;
+        }
+
+        $module     = $path[0] ?? 'index';
+        $controller = $path[1] ?? 'index';
+        $action     = $path[2] ?? 'index';
+
+        return [$module, $controller, $action];
     }
 }
