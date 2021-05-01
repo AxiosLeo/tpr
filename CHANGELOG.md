@@ -1,5 +1,9 @@
 # Change Log
 
+## 5.1.1 2021-05-01
+
+- Fix resolve path info error on win system
+
 ## 5.1.0 2021-04-24
 
 - Deprecated Files Operator class
