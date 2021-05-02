@@ -1,5 +1,13 @@
 # Change Log
 
+## 5.0.12 2021-05-02
+
+- Fix resolve path info on win system
+
+## 5.0.11 2021-04-24
+
+- Deprecated fs helper methods
+
 ## 5.0.10 2021-04-01
 
 - Upgrade denpendencies
