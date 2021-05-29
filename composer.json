@@ -32,8 +32,8 @@
     "twig/twig": "^3.3"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.19",
     "nette/php-generator": "*",
-    "friendsofphp/php-cs-fixer": "*",
     "phpunit/phpunit": "*",
     "symfony/var-dumper": "*"
   },

@@ -14,9 +14,9 @@ final class Route
 {
     use CacheTrait;
 
-    const HAS_FOUND            = 0;
-    const NOT_FOUND            = 404;
-    const NOT_SUPPORTED_METHOD = 405;
+    public const HAS_FOUND            = 0;
+    public const NOT_FOUND            = 404;
+    public const NOT_SUPPORTED_METHOD = 405;
 
     private array           $routes;
     private array           $data;
