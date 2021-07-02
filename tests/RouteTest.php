@@ -31,6 +31,12 @@ class RouteTest extends TestCase
             'intro'   => 'has param',
         ],
         [
+            'path'    => '/test/test/{:title}/abc/{:bar}',
+            'method'  => 'all',
+            'handler' => 'index/index/index',
+            'intro'   => 'has param',
+        ],
+        [
             'path'    => '/has/**/text/{:name}',
             'method'  => 'post',
             'handler' => 'index/index/index:routeHandler',
@@ -64,6 +70,11 @@ class RouteTest extends TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         Container::bindWithObj('request', $request);
         $res = $this->route->find('/test/123/title/foo/bar');
+        $this->assertEquals(Route::HAS_FOUND, $res);
+
+        $res = $this->route->find('/test/test/title/abc/bar');
+        $r   = $this->route->getRouteInfo();
+        $this->assertEquals('/test/test/title/abc/bar', $r['pathinfo']);
         $this->assertEquals(Route::HAS_FOUND, $res);
     }
 
