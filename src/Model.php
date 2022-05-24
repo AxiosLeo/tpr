@@ -19,6 +19,9 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         $this->unmarshall($data);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __toString(): string
     {
         return $this->serialize();
@@ -76,7 +79,7 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         return null !== $this->{$offset};
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->{$offset};
     }
@@ -86,7 +89,7 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         $this->{$offset} = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->{$offset} = null;
     }
@@ -130,5 +133,18 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         }
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return $this->toArray();
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $class = static::class;
+        $model = new $class($data);
+
+        $this->inherit($model, $model->properties());
     }
 }

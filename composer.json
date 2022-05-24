@@ -22,7 +22,7 @@
     "issues": "https://github.com/AxiosCros/tpr/issues"
   },
   "require": {
-    "php": ">=7.4,<8.1",
+    "php": ">=7.4,<=8.1",
     "axios/tools": "~2.1.0",
     "filp/whoops": "^2",
     "hassankhan/config": "^2.0",

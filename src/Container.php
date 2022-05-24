@@ -127,7 +127,7 @@ final class Container implements ArrayAccess
         return self::has($offset);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): ?object
     {
         return self::get($offset);
     }
