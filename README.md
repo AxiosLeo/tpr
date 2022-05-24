@@ -9,7 +9,7 @@
 
 ## Required
 
-- PHP 7.4 or PHP 8
+- PHP 7.4 or PHP 8.0
 
 ## Install
 
