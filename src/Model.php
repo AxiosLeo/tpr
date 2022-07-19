@@ -8,7 +8,7 @@ use Rakit\Validation\Validation;
 use Rakit\Validation\Validator;
 use tpr\exception\ValidateException;
 
-class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
+class Model implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     protected array $_rules    = [];
     protected array $_messages = [];
@@ -76,7 +76,7 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         return null !== $this->{$offset};
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->{$offset};
     }
@@ -86,7 +86,7 @@ class Model implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countab
         $this->{$offset} = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->{$offset} = null;
     }

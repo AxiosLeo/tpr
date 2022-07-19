@@ -6,6 +6,7 @@ namespace tpr\core;
 
 use tpr\Console;
 use tpr\models\AppPathModel;
+use tpr\Path;
 use tpr\traits\CommandTrait;
 
 class InitApp extends Console
@@ -29,7 +30,7 @@ class InitApp extends Console
 
     public function start(?string $web_server = null)
     {
-        $index_dir = path_join($this->path->root, $this->path->index);
+        $index_dir = Path::join($this->path->root, $this->path->index);
         if (null === $web_server) {
             $web_server = $this->selectServer();
         }
@@ -109,9 +110,9 @@ class Index extends Controller
 }
 ',
             // generate library dir
-            'library/README.md'                              => 'you can write code of utils in here.',
+            'library/README.md' => 'you can write code of utils in here.',
             // generate views dir
-            'views/index/index/index.html'                   => '<!DOCTYPE html>
+            'views/index/index/index.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Welcome</title>
@@ -125,14 +126,14 @@ class Index extends Controller
 </html>
 ',
             // generate routes configuration file
-            'config/routes.php'                              => '<?php
+            'config/routes.php' => '<?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Route
 // you can write routes data in here.
 return [
 ];
 ',
             // generate events configuration file
-            'config/events.php'                              => '<?php
+            'config/events.php' => '<?php
 // doc : https://github.com/AxiosCros/tpr/wiki/Event
 // you can write events data in here.
 return [
@@ -140,8 +141,8 @@ return [
 ];
 ',
             // generate .php_cs.dist&.gitignore
-            '.php_cs.dist'                                   => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.php_cs.dist')),
-            '.gitignore'                                     => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.gitignore')),
+            '.php_cs.dist' => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.php_cs.dist')),
+            '.gitignore'   => file_get_contents(path_join(TPR_FRAMEWORK_PATH, '.gitignore')),
         ]);
     }
 

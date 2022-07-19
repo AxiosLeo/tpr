@@ -59,7 +59,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
     public function post($name = null, $default = null)
     {
-        $post = $this->getRequestData('post', function () {
+        $post     = $this->getRequestData('post', function () {
             $post = array_merge($_POST, $this->parseContent());
 
             return $this->setRequestData('post', $post);
@@ -162,7 +162,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
 
     public function header($name = null, $default = null)
     {
-        $headers = $this->getRequestData('headers', function () {
+        $headers     = $this->getRequestData('headers', function () {
             $headers = [];
             if (\function_exists('apache_request_headers')) {
                 $headers = apache_request_headers();
@@ -203,7 +203,7 @@ final class DefaultRequest extends RequestAbstract implements RequestInterface
      */
     public function file($name = null)
     {
-        $files = $this->getRequestData('files', function () {
+        $files    = $this->getRequestData('files', function () {
             $list = [];
             if (isset($_FILES) && !empty($_FILES)) {
                 foreach ($_FILES as $key => $file) {

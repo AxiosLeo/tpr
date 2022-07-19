@@ -22,17 +22,17 @@
     "issues": "https://github.com/AxiosCros/tpr/issues"
   },
   "require": {
-    "php": ">=7.4,<8.1",
+    "php": ">=7.4",
     "axios/tools": "~2.1.0",
     "filp/whoops": "^2",
-    "hassankhan/config": "^2.0",
+    "hassankhan/config": "^3.0",
     "rakit/validation": "^1",
-    "symfony/console": "^5.2",
-    "symfony/yaml": "^5.2",
-    "twig/twig": "^3.3"
+    "symfony/console": "^6.1",
+    "symfony/yaml": "^6.1",
+    "twig/twig": "^3.4"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^2.19",
+    "friendsofphp/php-cs-fixer": "^3.9",
     "nette/php-generator": "*",
     "phpunit/phpunit": "*",
     "symfony/var-dumper": "*"

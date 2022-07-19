@@ -32,7 +32,7 @@ abstract class RequestAbstract
      */
     public function param($name = null, $default = null)
     {
-        $params = $this->getRequestData('params', function () {
+        $params     = $this->getRequestData('params', function () {
             $params = [];
             $params = array_merge($params, $this->put(), $this->post(), $this->get());
 

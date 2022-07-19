@@ -54,7 +54,7 @@ final class Container implements ArrayAccess
         if (!self::has('template')) {
             $twig = new Environment(new FilesystemLoader(Path::views()), []);
             if (!App::debugMode()) {
-                $twig->setCache(path_join(Path::cache(), 'views'));
+                $twig->setCache(Path::join(Path::cache(), 'views'));
             }
             self::bindWithObj('template', $twig);
         } else {
@@ -127,7 +127,7 @@ final class Container implements ArrayAccess
         return self::has($offset);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return self::get($offset);
     }

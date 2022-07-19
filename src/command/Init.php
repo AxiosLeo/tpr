@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use tpr\Console;
 use tpr\core\InitApp;
+use tpr\Path;
 use tpr\traits\CommandTrait;
 
 final class Init extends Console
@@ -32,7 +33,7 @@ final class Init extends Console
         $app_name = $this->input->getArgument('app_name');
         $dir      = (string) $this->input->getOption('output');
         if (empty($dir)) {
-            $dir = path_join(getcwd(), $app_name);
+            $dir = Path::join(getcwd(), $app_name);
         }
         $namespace = $this->inputNamespace($app_name);
 

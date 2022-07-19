@@ -35,7 +35,7 @@ class Path
         }
 
         self::$cache[$name] = self::configurate()->{$name} ?
-            path_join(self::configurate()->root, self::configurate()->{$name}) : self::configurate()->root;
+            self::join(self::configurate()->root, self::configurate()->{$name}) : self::configurate()->root;
 
         return self::$cache[$name];
     }

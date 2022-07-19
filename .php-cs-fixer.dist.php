@@ -5,8 +5,15 @@
  * you can change this configuration by importing this file.
  */
 
-return PhpCsFixer\Config::create()
-    ->setRiskyAllowed(true)
+$finder = PhpCsFixer\Finder::create()
+    ->exclude('somedir')
+    ->notPath('src/Symfony/Component/Translation/Tests/fixtures/resources.php')
+    ->in(__DIR__)
+;
+
+$config = new PhpCsFixer\Config();
+
+return $config->setRiskyAllowed(true)
     ->setIndent('    ')
     ->setRules([
         '@PSR2'                                       => true,
@@ -16,14 +23,14 @@ return PhpCsFixer\Config::create()
         'array_syntax'                                => ['syntax' => 'short'],
         'array_indentation'                           => true,
         'combine_consecutive_unsets'                  => true,
-        'method_separation'                           => true,
+        'phpdoc_separation'                           => true,
         'single_quote'                                => true,
         'declare_equal_normalize'                     => true,
         'function_typehint_space'                     => true,
-        'hash_to_slash_comment'                       => true,
+        'single_line_comment_style'                   => true,
         'include'                                     => true,
         'lowercase_cast'                              => true,
-        'no_multiline_whitespace_before_semicolons'   => true,
+        'multiline_whitespace_before_semicolons'      => false,
         'no_leading_import_slash'                     => true,
         'no_multiline_whitespace_around_double_arrow' => true,
         'no_spaces_around_offset'                     => true,
@@ -37,23 +44,33 @@ return PhpCsFixer\Config::create()
         'space_after_semicolon'                       => true,
         'standardize_not_equals'                      => true,
         'ternary_operator_spaces'                     => true,
-        'trailing_comma_in_multiline_array'           => true,
+        'trailing_comma_in_multiline'                 => true,
         'trim_array_spaces'                           => true,
         'unary_operator_spaces'                       => true,
         'whitespace_after_comma_in_array'             => true,
-        'no_extra_consecutive_blank_lines'            => [
-            'curly_brace_block',
-            'extra',
-            'parenthesis_brace_block',
-            'square_brace_block',
-            'throw',
-            'use',
+        'no_extra_blank_lines'                        => [
+            'tokens' => [
+                'curly_brace_block',
+                'extra',
+                'parenthesis_brace_block',
+                'square_brace_block',
+                'throw',
+                'use',
+            ],
         ],
-        'binary_operator_spaces'       => [
-            'align_double_arrow' => true,
-            'align_equals'       => true,
+        'binary_operator_spaces' => [
+            // 'align_double_arrow' => true,
+            // 'align_equals'       => true,
+            'operators' => [
+                '=>'  => 'align_single_space_minimal',
+                '|'   => 'align_single_space_minimal',
+                '===' => 'align_single_space_minimal',
+                '+='  => 'align_single_space',
+                '='   => 'align_single_space',
+                'xor' => 'align_single_space',
+            ],
         ],
-        'braces'                                    => [
+        'braces' => [
             'allow_single_line_closure' => true,
         ],
     ])
@@ -63,4 +80,4 @@ return PhpCsFixer\Config::create()
             ->exclude('tests')
             ->exclude('runtime')
             ->in(__DIR__)
-  );
+    );
