@@ -21,17 +21,13 @@ final class Event
 
     /**
      * register event by class method.
-     *
-     * @param $event_name
-     * @param $class
-     * @param $method
      */
-    public function register(string $event_name, string $class, string $method): void
+    public function register(string $event_name, string $class, string $method, array $construct_params = []): void
     {
         if (!class_exists($class) || !method_exists($class, $method)) {
             throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $method, 404);
         }
-        $obj = new $class();
+        $obj = new $class(...$construct_params);
         $this->registerWithObj($event_name, $obj, $method);
     }
 

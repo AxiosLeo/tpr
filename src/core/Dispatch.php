@@ -89,7 +89,7 @@ final class Dispatch
         }
     }
 
-    public function dispatch($module, $controller, $action, array $params = [])
+    public function dispatch($module, $controller, $action, array $params = [], array $construct_params = [])
     {
         $this->module     = $module;
         $this->controller = $controller;
@@ -106,7 +106,7 @@ final class Dispatch
         if (!class_exists($class) || !method_exists($class, $this->action)) {
             throw new \RuntimeException('Class or Method Not Exist : ' . $class . ':' . $this->action, 404);
         }
-        $class = new $class();
+        $class = new $class(...$construct_params);
 
         return \call_user_func_array([$class, $this->action], $params);
     }

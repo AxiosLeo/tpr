@@ -25,7 +25,7 @@ class DispatchTest extends TestCase
     {
         $dispatch = new Dispatch('app');
         Config::set('app.route_class_name', self::class);
-        $res = $dispatch->dispatch('', '', 'doExec');
+        $res = $dispatch->dispatch('', '', 'doExec', [], ['DispatchTest']);
         $this->assertEquals('exec result', $res);
     }
 

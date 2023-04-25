@@ -6,6 +6,7 @@ namespace tpr\tests;
 
 use PHPUnit\Framework\TestCase;
 use tpr\Event;
+use tpr\tests\mock\EventMock;
 
 /**
  * @internal
@@ -16,7 +17,7 @@ class EventTest extends TestCase
     public function testEvent()
     {
         // register with class name
-        Event::register('test_event_register', self::class, 'handle');
+        Event::register('test_event_register', self::class, 'handle', ['EventTest']);
         Event::listen('test_event_register', $data);
         $this->assertEquals(0, $data);
         Event::listen('test_event_register', $data);
@@ -24,7 +25,7 @@ class EventTest extends TestCase
         Event::delete('test_event_register');
 
         // register with object
-        $object = new self();
+        $object = new self('EventTest');
         Event::registerWithObj('test_event_register', $object, 'handle');
         $data = null;
         Event::listen('test_event_register', $data);

@@ -7,7 +7,7 @@ namespace tpr;
 /**
  * Class Event.
  *
- * @method void  register(string $event_name, string $class, string $method)        static
+ * @method void  register(string $event_name, string $class, string $method, array $construct_params = [])        static
  * @method void  registerWithObj(string $event_name, object $class, string $method) static
  * @method void  on(string $event_name, \Closure $closure)                          static
  * @method void  trigger(string $event_name, ...$params)                            static
