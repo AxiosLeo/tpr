@@ -9,23 +9,21 @@ use tpr\mimey\MimeTypes;
 
 /**
  * @internal
+ *
  * @coversNothing
  */
 class MimeyTest extends TestCase
 {
-    public function test1()
+    public function testMimeyTest()
     {
-        $mimes       = new MimeTypes();
+        $mimes = new MimeTypes();
         $type = 'text/html; charset=utf-8';
         if (strpos($type, ';')) {
-            $tmp  = explode(';', $type);
+            $tmp = explode(';', $type);
             $type = $tmp[0];
             unset($tmp);
-        } else {
-            $type = $type;
         }
         $contentType = $mimes->getExtension(trim($type));
-        var_dump($contentType);
         $this->assertEquals('html', $contentType);
     }
 }

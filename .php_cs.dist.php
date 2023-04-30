@@ -1,15 +1,15 @@
 <?php
 /*
  * This document has been generated with
- * https://mlocati.github.io/php-cs-fixer-configurator/#version:2.15|configurator
+ * https://mlocati.github.io/php-cs-fixer-configurator/#version:3.16|configurator
  * you can change this configuration by importing this file.
  */
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('somedir')
-    ->notPath('src/Symfony/Component/Translation/Tests/fixtures/resources.php')
-    ->in(__DIR__)
-;
+    ->exclude('vendor')
+    ->exclude('tests')
+    ->exclude('runtime')
+    ->in(__DIR__);
 
 $config = new PhpCsFixer\Config();
 
@@ -18,7 +18,7 @@ return $config->setRiskyAllowed(true)
     ->setRules([
         '@PSR2'                                       => true,
         '@PhpCsFixer'                                 => true,
-        '@Symfony:risky'                              => true,
+        '@Symfony'                                    => true,
         'concat_space'                                => ['spacing' => 'one'],
         'array_syntax'                                => ['syntax' => 'short'],
         'array_indentation'                           => true,
@@ -59,8 +59,6 @@ return $config->setRiskyAllowed(true)
             ],
         ],
         'binary_operator_spaces' => [
-            // 'align_double_arrow' => true,
-            // 'align_equals'       => true,
             'operators' => [
                 '=>'  => 'align_single_space_minimal',
                 '|'   => 'align_single_space_minimal',
@@ -70,14 +68,5 @@ return $config->setRiskyAllowed(true)
                 'xor' => 'align_single_space',
             ],
         ],
-        'braces' => [
-            'allow_single_line_closure' => true,
-        ],
     ])
-    ->setFinder(
-        PhpCsFixer\Finder::create()
-            ->exclude('vendor')
-            ->exclude('tests')
-            ->exclude('runtime')
-            ->in(__DIR__)
-    );
+    ->setFinder($finder);
