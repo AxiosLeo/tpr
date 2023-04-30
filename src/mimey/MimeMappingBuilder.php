@@ -4,7 +4,7 @@
  * **************************************************************************************************** *
  * Code reference declaration:                                                                          *
  * Since the original author is no longer maintained and does not support PHP8.1,                       *
- * the source file of the 'ralouphie/mimey' package is used here and is compatible with PHP8.1.         *
+ * the source file of the 'ralouphie/mimey' package is used here and is compatible with PHP8.1.         *.
  *                                                                                                      *
  * repo link: https://github.com/ralouphie/mimey                                                        *
  * **************************************************************************************************** *
@@ -18,14 +18,14 @@ namespace tpr\mimey;
 class MimeMappingBuilder
 {
     /** @var array The mapping array. */
-    protected $mapping;
+    protected array $mapping;
 
     /**
      * Create a new mapping builder.
      *
      * @param array $mapping An associative array containing two entries. See `MimeTypes` constructor for details.
      */
-    private function __construct($mapping)
+    private function __construct(array $mapping)
     {
         $this->mapping = $mapping;
     }
@@ -33,15 +33,15 @@ class MimeMappingBuilder
     /**
      * Add a conversion.
      *
-     * @param string $mime The MIME type.
-     * @param string $extension The extension.
-     * @param bool   $prepend_extension Whether this should be the preferred conversion for MIME type to extension.
-     * @param bool   $prepend_mime Whether this should be the preferred conversion for extension to MIME type.
+     * @param string $mime              the MIME type
+     * @param string $extension         the extension
+     * @param bool   $prepend_extension whether this should be the preferred conversion for MIME type to extension
+     * @param bool   $prepend_mime      whether this should be the preferred conversion for extension to MIME type
      */
-    public function add($mime, $extension, $prepend_extension = true, $prepend_mime = true)
+    public function add(string $mime, string $extension, bool $prepend_extension = true, bool $prepend_mime = true): void
     {
-        $existing_extensions = empty($this->mapping['extensions'][$mime]) ? array() : $this->mapping['extensions'][$mime];
-        $existing_mimes = empty($this->mapping['mimes'][$extension]) ? array() : $this->mapping['mimes'][$extension];
+        $existing_extensions = empty($this->mapping['extensions'][$mime]) ? [] : $this->mapping['extensions'][$mime];
+        $existing_mimes      = empty($this->mapping['mimes'][$extension]) ? [] : $this->mapping['mimes'][$extension];
         if ($prepend_extension) {
             array_unshift($existing_extensions, $extension);
         } else {
@@ -57,9 +57,9 @@ class MimeMappingBuilder
     }
 
     /**
-     * @return array The mapping.
+     * @return array the mapping
      */
-    public function getMapping()
+    public function getMapping(): array
     {
         return $this->mapping;
     }
@@ -67,25 +67,26 @@ class MimeMappingBuilder
     /**
      * Compile the current mapping to PHP.
      *
-     * @return string The compiled PHP code to save to a file.
+     * @return string the compiled PHP code to save to a file
      */
-    public function compile()
+    public function compile(): string
     {
-        $mapping = $this->getMapping();
+        $mapping        = $this->getMapping();
         $mapping_export = var_export($mapping, true);
-        return "<?php return $mapping_export;";
+
+        return "<?php return {$mapping_export};";
     }
 
     /**
      * Save the current mapping to a file.
      *
-     * @param string   $file    The file to save to.
-     * @param int      $flags   Flags for `file_put_contents`.
-     * @param resource $context Context for `file_put_contents`.
+     * @param string   $file    the file to save to
+     * @param int|null $flags   flags for `file_put_contents`
+     * @param resource $context context for `file_put_contents`
      *
-     * @return int|bool The number of bytes that were written to the file, or false on failure.
+     * @return bool|int the number of bytes that were written to the file, or false on failure
      */
-    public function save($file, $flags = null, $context = null)
+    public function save(string $file, int $flags = null, $context = null): bool|int
     {
         return file_put_contents($file, $this->compile(), $flags, $context);
     }
@@ -93,9 +94,9 @@ class MimeMappingBuilder
     /**
      * Create a new mapping builder based on the built-in types.
      *
-     * @return MimeMappingBuilder A mapping builder with built-in types loaded.
+     * @return MimeMappingBuilder a mapping builder with built-in types loaded
      */
-    public static function create()
+    public static function create(): MimeMappingBuilder
     {
         return self::load(dirname(__DIR__) . '/mime.types.php');
     }
@@ -103,22 +104,22 @@ class MimeMappingBuilder
     /**
      * Create a new mapping builder based on types from a file.
      *
-     * @param string $file The compiled PHP file to load.
+     * @param string $file the compiled PHP file to load
      *
-     * @return MimeMappingBuilder A mapping builder with types loaded from a file.
+     * @return MimeMappingBuilder a mapping builder with types loaded from a file
      */
-    public static function load($file)
+    public static function load(string $file): MimeMappingBuilder
     {
-        return new self(require($file));
+        return new self(require $file);
     }
 
     /**
      * Create a new mapping builder that has no types defined.
      *
-     * @return MimeMappingBuilder A mapping builder with no types defined.
+     * @return MimeMappingBuilder a mapping builder with no types defined
      */
-    public static function blank()
+    public static function blank(): MimeMappingBuilder
     {
-        return new self(array('mimes' => array(), 'extensions' => array()));
+        return new self(['mimes' => [], 'extensions' => []]);
     }
 }
